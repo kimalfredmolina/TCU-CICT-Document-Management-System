@@ -1,0 +1,97 @@
+﻿@page
+@model Document_Management_System.Pages.AdminPage.AdminDashboardModel
+@{
+	ViewData["Title"] = "Admin Dashboard";
+	Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Admin Login - Document Management System</title>
+	<link rel="stylesheet" href="~/css/admindashboard.css" asp-append-version="true" />
+</head>
+<body>
+	<div class="sidebar">
+		<div logo-container>
+			<div class="logo-square"></div>
+			<div class="logo-text">Document MS</div>
+		</div>
+
+		<div class="nav-item">
+			<div class="nav-content">
+				<div class="nav-icon"></div>
+				<div class="latin-text">Admin Dashboard</div>
+			</div>
+		</div>
+
+		<div class="nav-item expandable document">
+			<div class="nav-content">
+				<div class="nav-square"></div>
+				<div class="nav-text">Document</div>
+			</div>
+			<div class="expand-icon">›</div>
+			<div class="sub-items">
+				<div class="sub-item">My Documents</div>
+				<div class="sub-item">Shared Documents</div>
+				<div class="sub-item">Archive</div>
+				<div class="sub-item">Templates</div>
+			</div>
+		</div>
+
+		<div class="nav-item expandable settings">
+			<div class="nav-content">
+				<div class="nav-square"></div>
+				<div class="nav-text">Settings</div>
+			</div>
+			<div class="expand-icon">›</div>
+			<div class="sub-items">
+				<div class="sub-item">General Settings</div>
+				<div class="sub-item">User Settings</div>
+				<div class="sub-item">System Settings</div>
+				<div class="sub-item">Notifications</div>
+				<div class="sub-item">Security</div>
+			</div>
+		</div>
+
+		<div class="nav-item expandable manage-user">
+			<div class="nav-content">
+				<div class="nav-square"></div>
+				<div class="nav-text">Manage User</div>
+			</div>
+			<div class="expand-icon">›</div>
+			<div class="sub-items">
+				<div class="sub-item">Add User</div>
+				<div class="sub-item">Edit User</div>
+				<div class="sub-item">Delete User</div>
+				<div class="sub-item">User Permissions</div>
+				<div class="sub-item">User Groups</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="main-content">
+		<div class="header">
+			<div class="menu-toggle">≡</div>
+			<div class="header-logo">
+				<div class="header-logo-square"></div>
+				<div class="header-text">Document MS</div>
+			</div>
+			<div class="user-icons">
+				<div class="notification-icon">
+					🔔
+					<div class="notification-dot"></div>
+				</div>
+				<div class="user-avatar">
+					<div class="avatar-content">U</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main content would go here -->
+	</div>
+
+	<script src="~/js/adminDb.js"></script>
+</body>
+</html>

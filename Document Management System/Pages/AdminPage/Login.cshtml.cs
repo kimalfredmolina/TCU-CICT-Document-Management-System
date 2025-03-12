@@ -6,12 +6,12 @@ namespace Document_Management_System.Pages.AdminPage
     public class LoginModel : PageModel
     {
         [BindProperty]
-        public InputModel Input { get; set; }
+        public required InputModel Input { get; set; }
 
         public class InputModel
         {
-            public string Username { get; set; }
-            public string Password { get; set; }
+            public required string Username { get; set; }
+            public required string Password { get; set; }
         }
 
         public IActionResult OnGet()
@@ -28,7 +28,7 @@ namespace Document_Management_System.Pages.AdminPage
             if (Input.Username == validUsername && Input.Password == validPassword)
             {
                 // Redirect to the admin dashboard or another page upon successful login
-                return RedirectToPage("/AdminPage/Dashboard");
+                return RedirectToPage("/AdminPage/AdminDashboard");
             }
 
             // If login fails, display an error message
