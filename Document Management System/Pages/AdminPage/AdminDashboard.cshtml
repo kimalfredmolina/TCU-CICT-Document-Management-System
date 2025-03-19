@@ -86,32 +86,87 @@
 		</div>
 
 		<!-- Main content would go here -->
-		<div class="Content-AdminDashboard">
-			<div class="top-content">
-                <div class="card">
-                    <div class="square"></div>
-                    <h1>Total Users</h1>
-                    <p>100</p>
-                </div>
-                <div class="card">
-                    <div class="square"></div>
-                    <h1>Total Documents</h1>
-                    <p>100</p>
-                </div>
-				<div class="card">
-					<div class="square"></div>
-                    <h1>Total Pending Task</h1>
-                    <p>100</p>
+
+		<div class="sub-content">
+
+			<div class="stats">
+				<div class="stat-card">
+					<div class="stat-icon">📂</div>
+					<div class="stat-info">
+						<h3>Total Document</h3>
+						<p>12</p>
+					</div>
 				</div>
-				<div class="card">
-					<div class="square"></div>
-					<h1>Total Categories</h1>
-					<p>100</p>
+				<div class="stat-card">
+					<div class="stat-icon">📝</div>
+					<div class="stat-info">
+						<h3>Total Categories</h3>
+						<p>17</p>
+					</div>
 				</div>
+				<div class="stat-card">
+					<div class="stat-icon">👥</div>
+					<div class="stat-info">
+						<h3>Total Doc Status</h3>
+						<p>10</p>
+					</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-icon">💬</div>
+					<div class="stat-info">
+						<h3>Total Task Pending</h3>
+						<p>60</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="chart">
+				<h2>Document by Categories</h2>
+				<canvas id="categoryChart"></canvas>
+			</div>
+
+
+			<div class="details">
+				<div class="detail-card">22</div>
+				<div class="detail-card">21</div>
+				<div class="detail-card">1</div>
+				<div class="detail-card">17</div>
 			</div>
 		</div>
 	</div>
 
 	<script src="~/js/adminDb.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // remove this and create Chart.js code and connect this
+		document.addEventListener("DOMContentLoaded", function() {
+			const ctx = document.getElementById('categoryChart').getContext('2d');
+			const categoryChart = new Chart(ctx, {
+				type: 'pie', // Type of chart
+				data: {
+					labels: ['Software Engineering', 'HR Policies', 'Confidential', 'SOP Production', 'International'],
+					datasets: [{
+						data: [3.3, 10, 13.3, 20, 53.3], // Percentages for each category
+						backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800'], // Colors for slices
+					}]
+				},
+				options: {
+					responsive: true,
+					plugins: {
+						legend: {
+							position: 'right',
+						},
+						tooltip: {
+							callbacks: {
+								label: function (tooltipItem) {
+									return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+								}
+							}
+						}
+					}
+				}
+			});
+		});
+	</script>
 </body>
 </html>

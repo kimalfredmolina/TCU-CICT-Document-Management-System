@@ -121,6 +121,11 @@ body {
     flex-grow: 1;
     background-color: #e5e5e5;
 }
+.sub-content {
+    flex-grow: 1;
+    background-color: #e5e5e5;
+    padding: 20px;
+}
 
 .header {
     display: flex;
@@ -173,4 +178,77 @@ body {
 .avatar-content {
     font-size: 14px;
     color: #555;
+}
+
+
+/* Statistics Cards */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-icon {
+    font-size: 30px;
+    color: #3498db;
+}
+
+.stat-info h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.stat-info p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+/* Chart Section */
+.chart {
+    background-color: #fff;
+    padding: 15px; /* Reduced padding */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 100%; /* Ensure the chart container takes full width */
+    height: auto; /* Adjust height to fit content */
+    margin: 0 auto; /* Center alignment */
+}
+
+    .chart h2 {
+        margin: 0 0 20px;
+    }
+
+    .chart canvas {
+        width: 100% !important; /* Ensure the canvas takes full width */
+        max-height: 400px; /* Set a maximum height for the canvas */
+        height: auto !important; /* Maintain aspect ratio */
+    }
+/* Details Section */
+.details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.detail-card {
+    background-color: #3498db;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
 }
