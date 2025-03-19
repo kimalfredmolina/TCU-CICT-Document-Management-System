@@ -1,11 +1,69 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Login Page";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login - Document Management System</title>
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="gallery-container">
+                <div class="gallery">
+                    <div class="gallery-item" id="slide-1">
+                        <img src="~/src/TCU-logo-2024-150x150.png" alt="TCU Mission">
+                    </div>
+                    <div class="gallery-item" id="slide-2">
+                        <img src="~/src/TCU-logo-2024-150x150.png" alt="TCU Mission">
+                    </div>
+                    <div class="gallery-item" id="slide-3">
+                        <img src="~/src/TCU-logo-2024-150x150.png" alt="TCU Mission">
+                    </div>
+                </div>
+            </div>
+            <div class="latin-text" id="slide-text">
+                <h1>Mission</h1>
+                <p>To nurture a vibrant culture of academic wellness responsive to the challenges of technology and the global community.</p>
+            </div>
+            <div class="dots">
+                <span class="dot active" onclick="showSlide(0)"></span>
+                <span class="dot" onclick="showSlide(1)"></span>
+                <span class="dot" onclick="showSlide(2)"></span>
+            </div>
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <button class="btn btn-primary" onclick="location.href='/AdminPage/Login'">Go to Admin Login</button>
-</div>
+        <div class="right">
+            <div class="logo">DocumentMs</div>
+            <div class="welcome">Welcome To DocumentMs</div>
+            <form>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" asp-for="Input.Username" placeholder="Enter your username" required />
+                    <span asp-validation-for="Input.Username" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="password" asp-for="Input.Password" placeholder="Enter your password" required />
+                        <span asp-validation-for="Input.Password" class="password-toggle" onclick="togglePassword()">🔒</span>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#">Forgot password?</a>
+                    </div>
+                </div>
+                <button type="submit" class="signin-btn" onclick="location.href='/AdminPage/AdminDashboard'">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/js/login-script.js"></script>
+
+</body>
+</html>

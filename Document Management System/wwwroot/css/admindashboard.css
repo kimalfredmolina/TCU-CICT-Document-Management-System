@@ -158,23 +158,6 @@ body {
     align-items: center;
 }
 
-.notification-icon {
-    margin-right: 15px;
-    font-size: 18px;
-    position: relative;
-    cursor: pointer;
-}
-
-.notification-dot {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 8px;
-    height: 8px;
-    background-color: #ff9800;
-    border-radius: 50%;
-}
-
 .user-avatar {
     width: 30px;
     height: 30px;
