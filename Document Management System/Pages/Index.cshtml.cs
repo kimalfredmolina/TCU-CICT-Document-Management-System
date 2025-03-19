@@ -6,34 +6,34 @@ namespace Document_Management_System.Pages
     public class IndexModel : PageModel
     {
         [BindProperty]
-        public required InputModel Input { get; set; }
+        public LoginInputModel Input { get; set; }
 
-        public class InputModel
+        public void OnGet()
         {
-            public required string Username { get; set; }
-            public required string Password { get; set; }
-        }
-
-        public IActionResult OnGet()
-        {
-            return Page();
         }
 
         public IActionResult OnPost()
         {
-            // Example hardcoded credentials for demonstration purposes
-            const string validUsername = "admin";
-            const string validPassword = "password123";
-
-            if (Input.Username == validUsername && Input.Password == validPassword)
+            if (!ModelState.IsValid)
             {
-                // Redirect to the admin dashboard or another page upon successful login
+                return Page();
+            }
+
+            // Add your login logic here
+            // For example, validate the username and password
+            if (Input.Username == "user" && Input.Password == "user")
+            {
                 return RedirectToPage("/AdminPage/AdminDashboard");
             }
 
-            // If login fails, display an error message
-            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return Page();
+        }
+
+        public class LoginInputModel
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
         }
     }
 }
