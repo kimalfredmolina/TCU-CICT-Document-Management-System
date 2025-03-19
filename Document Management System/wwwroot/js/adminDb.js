@@ -1,5 +1,5 @@
 // JavaScript to handle the expandable navigation items
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Get all expandable navigation items
     const navItems = document.querySelectorAll('.nav-item.expandable');
 
@@ -7,18 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     navItems.forEach(item => {
         const navContent = item.querySelector('.nav-content');
 
-        navContent.addEventListener('click', function() {
+        navContent.addEventListener('click', function () {
             // Toggle the active class on the clicked item
-            const isActive = item.classList.contains('active');
-
-            // lagay // pag gusto na marami ma-open sa nav items
-            navItems.forEach(nav => nav.classList.remove('active'));
-
-            if (isActive) {
-                item.classList.remove('active');
-            } else {
-                item.classList.add('active');
-            }
+            item.classList.toggle('active');
         });
     });
 
@@ -26,15 +17,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.querySelector('.menu-toggle');
     const sidebar = document.querySelector('.sidebar');
 
-    menuToggle.addEventListener('click', function() {
-        sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
+    menuToggle.addEventListener('click', function () {
+        sidebar.classList.toggle('hidden');
     });
 
     // Make sub-items clickable
     const subItems = document.querySelectorAll('.sub-item');
 
     subItems.forEach(subItem => {
-        subItem.addEventListener('click', function() {
+        subItem.addEventListener('click', function () {
             // Here you would typically handle navigation to the specific section
             // For this example, we'll just log the clicked item
             console.log('Navigating to:', this.textContent);
