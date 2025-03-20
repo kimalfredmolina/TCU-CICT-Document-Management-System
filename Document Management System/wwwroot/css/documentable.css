@@ -222,7 +222,7 @@ table {
 }
 
 table, th, td {
-    border: 1px solid #ddd;
+    border: 1px solid #808080;
 }
 
 th, td {
@@ -269,8 +269,8 @@ button {
     align-items: center;
 }
 
-    .pagination-buttons button {
-        padding: 5px 10px;
-        margin: 0 5px;
-        cursor: pointer;
-    }
+.pagination-buttons button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+}
