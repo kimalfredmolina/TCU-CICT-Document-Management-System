@@ -10,6 +10,10 @@ body {
     min-height: 100vh;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .sidebar {
     width: 280px;
     background-color: #2d3339;
