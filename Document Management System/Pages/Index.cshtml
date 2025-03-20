@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
 </head>
 <body>
+    <!-- Navbar with login/logout buttons --> 
+     @* <nav class="navbar">  *@
+     @*     @await Html.PartialAsync("_LoginPartial") *@
+     @* </nav>  *@
+
     <div class="container">
         <div class="left">
             <div class="gallery-container">
@@ -42,7 +47,7 @@
         <div class="right">
             <div class="logo">DocumentMs</div>
             <div class="welcome">Welcome To DocumentMs</div>
-            <form>
+            <form method="post">
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" asp-for="Input.Username" placeholder="Enter your username" required />
@@ -52,18 +57,17 @@
                     <label for="password">Password:</label>
                     <div class="password-container">
                         <input type="password" id="password" asp-for="Input.Password" placeholder="Enter your password" required />
-                        <span asp-validation-for="Input.Password" class="password-toggle" onclick="togglePassword()">🔒</span>
+                        <span class="password-toggle" onclick="togglePassword()">🔒</span>
                     </div>
                     <div class="forgot-password">
                         <a href="#">Forgot password?</a>
                     </div>
                 </div>
-                <button type="submit" class="signin-btn" onclick="location.href='/AdminPage/AdminDashboard'">Log In</button>
+                <button type="submit" class="signin-btn">Log In</button>
             </form>
         </div>
     </div>
 
     <script src="~/js/login-script.js"></script>
-
 </body>
 </html>

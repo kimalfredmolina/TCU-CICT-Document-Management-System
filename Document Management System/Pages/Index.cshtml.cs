@@ -1,34 +1,61 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Document_Management_System.Models;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace Document_Management_System.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly SignInManager<Users> _signInManager;
+        private readonly ILogger<IndexModel> _logger;
+
+        public IndexModel(SignInManager<Users> signInManager, ILogger<IndexModel> logger)
+        {
+            _signInManager = signInManager;
+            _logger = logger;
+        }
+
         [BindProperty]
-        public required InputModel Input { get; set; }
+        public InputModel Input { get; set; }
 
         public class InputModel
         {
-            public required string Username { get; set; }
-            public required string Password { get; set; }
+            [Required]
+            public string Username { get; set; }
+
+            [Required]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
         }
 
-        public IActionResult OnGet()
+        public void OnGet()
         {
-            return Page();
+            // This method is called when the page is loaded (HTTP GET request).
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            // Example hardcoded credentials for demonstration purposes
-            const string validUsername = "admin";
-            const string validPassword = "password123";
-
-            if (Input.Username == validUsername && Input.Password == validPassword)
+            if (!ModelState.IsValid)
             {
-                // Redirect to the admin dashboard or another page upon successful login
+                return Page(); // Return the page with validation errors
+            }
+
+            // Use SignInManager to authenticate the user
+            var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, isPersistent: false, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("User {Username} logged in successfully.", Input.Username);
+                // Redirect to the admin dashboard upon successful login
                 return RedirectToPage("/AdminPage/AdminDashboard");
+            }
+            else
+            {
+                _logger.LogWarning("Login attempt failed for user {Username}.", Input.Username);
             }
 
             // If login fails, display an error message

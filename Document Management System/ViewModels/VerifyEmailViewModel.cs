@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿    using System.ComponentModel.DataAnnotations;
 
-namespace Document_Management_System.ViewModels
-{
-    public class VerifyEmailViewModel
+    namespace Document_Management_System.ViewModels
     {
-        [Required(ErrorMessage ="Email is required")]
-        [EmailAddress]
-        public string email { get; set; }
+        public class VerifyEmailViewModel
+        {
+            [Required(ErrorMessage ="Email is required")]
+            [EmailAddress]
+            public string email { get; set; }
+        }
     }
-}

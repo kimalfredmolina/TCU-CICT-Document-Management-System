@@ -27,7 +27,7 @@ builder.Services.AddIdentity<Users, IdentityRole>(options =>
     .AddDefaultTokenProviders();
 
 var app = builder.Build();
-
+    
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -41,8 +41,16 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+//// Set default page
+//app.MapGet("/", context =>
+//{
+//    context.Response.Redirect("/LandingPage"); // Change to the desired page
+//    return Task.CompletedTask;
+//});
 
 app.Run();

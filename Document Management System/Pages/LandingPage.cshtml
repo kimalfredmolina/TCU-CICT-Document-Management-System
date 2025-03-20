@@ -1,0 +1,119 @@
+﻿@page
+@model Document_Management_System.Pages.LandingPageModel
+@{
+    ViewData["Title"] = "Document Management System";
+    Layout = "_Layout";
+}
+
+<header class="hero-section bg-primary text-white text-center py-5"> 
+     <div class="container"> 
+        <h1 class="display-4 mb-3">Document Management System</h1> 
+         <p class="lead mb-4">Streamline your workflow with our powerful document management solution</p> 
+         <div class="d-flex justify-content-center"> 
+             <a href="/Account/Register" class="btn btn-light btn-lg mx-2">Get Started</a> 
+             <a href="/Account/Login" class="btn btn-outline-light btn-lg mx-2">Sign In</a> 
+         </div> 
+     </div>
+ </header>
+
+<section class="features py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Key Features</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-earmark-text fs-1 text-primary mb-3"></i>
+                        <h3 class="card-title h5">Document Storage</h3>
+                        <p class="card-text">Securely store all your important documents in one centralized location.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-search fs-1 text-primary mb-3"></i>
+                        <h3 class="card-title h5">Quick Search</h3>
+                        <p class="card-text">Find any document instantly with our powerful search functionality.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people fs-1 text-primary mb-3"></i>
+                        <h3 class="card-title h5">Collaboration</h3>
+                        <p class="card-text">Share documents with team members and collaborate in real-time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="how-it-works py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="step text-center">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">1</div>
+                    <h3 class="h5">Upload</h3>
+                    <p>Upload your documents to our secure platform.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="step text-center">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">2</div>
+                    <h3 class="h5">Organize</h3>
+                    <p>Categorize and tag documents for easy retrieval.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="step text-center">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px;">3</div>
+                    <h3 class="h5">Access</h3>
+                    <p>Access your documents anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">What Our Clients Say</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <p class="card-text">"This document management system has transformed how our team works. Finding and sharing files has never been easier."</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-0">John Smith</h5>
+                                <p class="text-muted mb-0">Project Manager</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <p class="card-text">"The security features give us peace of mind, and the intuitive interface means minimal training for new staff."</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <p class="text-muted mb-0">IT Director</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <!-- Add any specific scripts for the landing page here -->
+}
