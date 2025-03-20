@@ -20,9 +20,10 @@ namespace Document_Management_System.Pages
         }
 
         [BindProperty]
+        public LoginInputModel Input { get; set; }
         public InputModel Input { get; set; }
 
-        public class InputModel
+        public void OnGet()
         {
             [Required]
             public string Username { get; set; }
@@ -32,11 +33,20 @@ namespace Document_Management_System.Pages
             public string Password { get; set; }
         }
 
+        public IActionResult OnPost()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
         public void OnGet()
         {
             // This method is called when the page is loaded (HTTP GET request).
         }
 
+            // Add your login logic here
+            // For example, validate the username and password
+            if (Input.Username == "user" && Input.Password == "user")
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -58,9 +68,14 @@ namespace Document_Management_System.Pages
                 _logger.LogWarning("Login attempt failed for user {Username}.", Input.Username);
             }
 
-            // If login fails, display an error message
-            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return Page();
+        }
+
+        public class LoginInputModel
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
         }
     }
 }

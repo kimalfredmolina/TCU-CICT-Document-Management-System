@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
     const navItems = document.querySelectorAll('.nav-item.expandable');
     navItems.forEach(item => {
         const navContent = item.querySelector('.nav-content');
@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         navContent.addEventListener('click', function () {
             const isActive = item.classList.contains('active');
             navItems.forEach(nav => nav.classList.remove('active'));
+
             if (isActive) {
                 item.classList.remove('active');
             } else {
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const sidebar = document.querySelector('.sidebar');
 
     menuToggle.addEventListener('click', function () {
-        sidebar.classList.toggle('hidden');
+        sidebar.style.display = sidebar.style.display === 'none' ? 'block' : 'none';
     });
     const subItems = document.querySelectorAll('.sub-item');
 
@@ -30,19 +31,4 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.add('sub-active');
         });
     });
-
-    const ctx = document.getElementById('documentChart').getContext('2d');
-
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Software Engineering', 'HR Policies', 'SOP Production', 'Govt Forms', 'Resume', 'Terms & Conditions', 'International'],
-            datasets: [{
-                label: 'Document Categories',
-                data: [2, 6, 12, 14, 16, 18, 32],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#F44336', '#9C27B0', '#FF9800']
-            }]
-        }
-    });
-
 });

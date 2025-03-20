@@ -20,7 +20,7 @@
 		</div>
 
 		<div class="nav-item">
-			<div class="nav-content">
+			<div class="nav-content" onclick="location.href='AdminDashboard'">
 				<div class="nav-icon"></div>
 				<div class="latin-text">Admin Dashboard</div>
 			</div>
@@ -33,10 +33,10 @@
 			</div>
 			<div class="expand-icon">›</div>
 			<div class="sub-items">
-				<div class="sub-item">My Documents</div>
-				<div class="sub-item">Shared Documents</div>
-				<div class="sub-item">Archive</div>
-				<div class="sub-item">Templates</div>
+				<div class="sub-item" onclick="location.href='DocumentTable'">Documents</div>
+				<div class="sub-item" onclick="location.href='#'">Shared Documents</div>
+				<div class="sub-item" onclick="location.href='#'">Archive</div>
+				<div class="sub-item" onclick="location.href='#'">Templates</div>
 			</div>
 		</div>
 
@@ -47,11 +47,11 @@
 			</div>
 			<div class="expand-icon">›</div>
 			<div class="sub-items">
-				<div class="sub-item">General Settings</div>
-				<div class="sub-item">User Settings</div>
-				<div class="sub-item">System Settings</div>
-				<div class="sub-item">Notifications</div>
-				<div class="sub-item">Security</div>
+				<div class="sub-item" onclick="location.href='#'">General Settings</div>
+				<div class="sub-item" onclick="location.href='#'">User Settings</div>
+				<div class="sub-item" onclick="location.href='#'">System Settings</div>
+				<div class="sub-item" onclick="location.href='#'">Notifications</div>
+				<div class="sub-item" onclick="location.href='#'">Security</div>
 			</div>
 		</div>
 
@@ -62,11 +62,11 @@
 			</div>
 			<div class="expand-icon">›</div>
 			<div class="sub-items">
-				<div class="sub-item">Add User</div>
-				<div class="sub-item">Edit User</div>
-				<div class="sub-item">Delete User</div>
-				<div class="sub-item">User Permissions</div>
-				<div class="sub-item">User Groups</div>
+				<div class="sub-item" onclick="location.href='#'">Add User</div>
+				<div class="sub-item" onclick="location.href='#'">Edit User</div>
+				<div class="sub-item" onclick="location.href='#'">Delete User</div>
+				<div class="sub-item" onclick="location.href='#'">User Permissions</div>
+				<div class="sub-item" onclick="location.href='#'">User Groups</div>
 			</div>
 		</div>
 	</div>
@@ -120,18 +120,42 @@
 				</div>
 			</div>
 
+			<div class="stats">
+				<div class="stat-card">
+					<div class="stat-icon">👥</div>
+					<div class="stat-info">
+						<h3>Total User</h3>
+						<p>12</p>
+					</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-icon">👥</div>
+					<div class="stat-info">
+						<h3>Active User</h3>
+						<p>17</p>
+					</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-icon">👥</div>
+					<div class="stat-info">
+						<h3>Inactive User</h3>
+						<p>10</p>
+					</div>
+				</div>
+				<div class="stat-card">
+                    <div class="stat-icon">➕</div>
+					<div class="stat-info">
+						<h3>Add User</h3>
+						<p>60</p>
+					</div>
+				</div>
+			</div>
+
 			<div class="chart">
 				<h2>Document by Categories</h2>
 				<canvas id="categoryChart"></canvas>
 			</div>
 
-
-			<div class="details">
-				<div class="detail-card">22</div>
-				<div class="detail-card">21</div>
-				<div class="detail-card">1</div>
-				<div class="detail-card">17</div>
-			</div>
 		</div>
 	</div>
 

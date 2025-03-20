@@ -1,0 +1,174 @@
+﻿@page
+@model Document_Management_System.Pages.AdminPage.AdminDashboardModel
+@{
+    ViewData["Title"] = "Document Table";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Table - Document Management System</title>
+    <link rel="stylesheet" href="~/css/documentable.css" asp-append-version="true" />
+</head>
+<body>
+	<div class="sidebar">
+		<div logo-container>
+			<div class="logo-square"></div>
+			<div class="logo-text">Document MS</div>
+		</div>
+
+		<div class="nav-item">
+			<div class="nav-content" onclick="location.href='AdminDashboard'">
+				<div class="nav-icon"></div>
+				<div class="latin-text">Admin Dashboard</div>
+			</div>
+		</div>
+
+		<div class="nav-item expandable document">
+			<div class="nav-content">
+				<div class="nav-square"></div>
+				<div class="nav-text">Document</div>
+			</div>
+			<div class="expand-icon">›</div>
+			<div class="sub-items">
+				<div class="sub-item" onclick="location.href='DocumentTable'">Documents</div>
+				<div class="sub-item" onclick="location.href='#'">Shared Documents</div>
+				<div class="sub-item" onclick="location.href='#'">Archive</div>
+				<div class="sub-item" onclick="location.href='#'">Templates</div>
+			</div>
+		</div>
+
+		<div class="nav-item expandable settings">
+			<div class="nav-content">
+				<div class="nav-square"></div>
+				<div class="nav-text">Settings</div>
+			</div>
+			<div class="expand-icon">›</div>
+			<div class="sub-items">
+				<div class="sub-item" onclick="location.href='#'">General Settings</div>
+				<div class="sub-item" onclick="location.href='#'">User Settings</div>
+				<div class="sub-item" onclick="location.href='#'">System Settings</div>
+				<div class="sub-item" onclick="location.href='#'">Notifications</div>
+				<div class="sub-item" onclick="location.href='#'">Security</div>
+			</div>
+		</div>
+
+		<div class="nav-item expandable manage-user">
+			<div class="nav-content">
+				<div class="nav-square"></div>
+				<div class="nav-text">Manage User</div>
+			</div>
+			<div class="expand-icon">›</div>
+			<div class="sub-items">
+				<div class="sub-item" onclick="location.href='#'">Add User</div>
+				<div class="sub-item" onclick="location.href='#'">Edit User</div>
+				<div class="sub-item" onclick="location.href='#'">Delete User</div>
+				<div class="sub-item" onclick="location.href='#'">User Permissions</div>
+				<div class="sub-item" onclick="location.href='#'">User Groups</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="main-content">
+		<div class="header">
+			<div class="menu-toggle">≡</div>
+			<div class="header-logo">
+				<div class="header-logo-square"></div>
+				<div class="header-text">Document MS</div>
+			</div>
+			<div class="user-icons">
+				<div class="user-avatar">
+					<div class="avatar-content">U</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main content would go here -->
+
+		<div class="sub-content">
+				<h1>Document List</h1>
+				<div class="top-bar">
+					<button class="add-button">+</button>
+					<input type="text" id="searchInput" placeholder="Search Document" />
+				</div>
+				<table id="documentTable">
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Name</th>
+							<th>Categories</th>
+							<th>Content Type</th>
+							<th>Size(KB)</th>
+							<th>Assign</th>
+							<th>Status</th>
+							<th>Created Date</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td>LioNel</td>
+							<td>SOP Production</td>
+							<td>application/x-msdownload</td>
+							<td>5170</td>
+							<td>Unassigned</td>
+							<td>New</td>
+							<td>2/27/2022</td>
+							<td>
+								<button class="share-button">Share</button>
+								<button class="edit-button">Edit</button>
+								<button class="delete-button">Delete</button>
+							</td>
+						</tr>
+					<tr>
+						<td>2</td>
+						<td>Kim</td>
+						<td>SOP Production</td>
+						<td>application/x-msdownload</td>
+						<td>5170</td>
+						<td>Unassigned</td>
+						<td>New</td>
+						<td>2/27/2022</td>
+						<td>
+							<button class="share-button">Share</button>
+							<button class="edit-button">Edit</button>
+							<button class="delete-button">Delete</button>
+						</td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>Deo</td>
+						<td>SOP Production</td>
+						<td>application/x-msdownload</td>
+						<td>5170</td>
+						<td>Unassigned</td>
+						<td>New</td>
+						<td>2/27/2022</td>
+						<td>
+							<button class="share-button">Share</button>
+							<button class="edit-button">Edit</button>
+							<button class="delete-button">Delete</button>
+						</td>
+					</tr>
+						<!-- Add more rows as needed -->
+					</tbody>
+				</table>
+
+				<div class="pagination">
+					<span>Showing 1 to 7 of 7 entries</span>
+					<div class="pagination-buttons">
+						<button class="prev-button">Previous</button>
+						<span>1</span>
+						<button class="next-button">Next</button>
+					</div>
+				</div>
+		</div>
+
+	</div>
+
+    <script src="~/js/docuTable.js"></script>
+</body>
+</html>
