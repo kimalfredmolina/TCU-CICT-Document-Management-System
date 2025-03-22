@@ -1,15 +1,16 @@
 ﻿@page
-@model Document_Management_System.Pages.AdminPage.AdminDashboardModel
+@model Document_Management_System.Pages.AdminPage.UserTableModel
 @{
-	ViewData["Title"] = "Admin Dashboard";
+	ViewData["Title"] = "User Table Dashboard";
 	Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Admin Dashboard - Document Management System</title>
+	<title>User Table - Document Management System</title>
 	<link rel="stylesheet" href="~/css/admindashboard.css" asp-append-version="true" />
 </head>
 <body>
@@ -89,108 +90,9 @@
 
 		<div class="sub-content">
 
-			<div class="stats">
-				<div class="stat-card">
-					<div class="stat-icon">📂</div>
-					<div class="stat-info">
-						<h3>Total Document</h3>
-						<p>12</p>
-					</div>
-				</div>
-				<div class="stat-card">
-					<div class="stat-icon">📝</div>
-					<div class="stat-info">
-						<h3>Total Categories</h3>
-						<p>17</p>
-					</div>
-				</div>
-				<div class="stat-card">
-					<div class="stat-icon">👥</div>
-					<div class="stat-info">
-						<h3>Total Doc Status</h3>
-						<p>10</p>
-					</div>
-				</div>
-				<div class="stat-card">
-					<div class="stat-icon">💬</div>
-					<div class="stat-info">
-						<h3>Total Task Pending</h3>
-						<p>60</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="stats">
-				<div class="stat-card">
-					<div class="stat-icon">👥</div>
-					<div class="stat-info">
-						<h3>Total User</h3>
-						<p>12</p>
-					</div>
-				</div>
-				<div class="stat-card">
-					<div class="stat-icon">👥</div>
-					<div class="stat-info">
-						<h3>Active User</h3>
-						<p>17</p>
-					</div>
-				</div>
-				<div class="stat-card">
-					<div class="stat-icon">👥</div>
-					<div class="stat-info">
-						<h3>Inactive User</h3>
-						<p>10</p>
-					</div>
-				</div>
-				<div class="stat-card">
-                    <div class="stat-icon">➕</div>
-					<div class="stat-info">
-						<h3>Add User</h3>
-						<p>60</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="chart">
-				<h2>Document by Categories</h2>
-				<canvas id="categoryChart"></canvas>
-			</div>
-
 		</div>
 	</div>
 
 	<script src="~/js/adminDb.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // remove this and create Chart.js code and connect this
-		document.addEventListener("DOMContentLoaded", function() {
-			const ctx = document.getElementById('categoryChart').getContext('2d');
-			const categoryChart = new Chart(ctx, {
-				type: 'pie', // Type of chart
-				data: {
-					labels: ['Software Engineering', 'HR Policies', 'Confidential', 'SOP Production', 'International'],
-					datasets: [{
-						data: [3.3, 10, 13.3, 20, 53.3], // Percentages for each category
-						backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800'], // Colors for slices
-					}]
-				},
-				options: {
-					responsive: true,
-					plugins: {
-						legend: {
-							position: 'right',
-						},
-						tooltip: {
-							callbacks: {
-								label: function (tooltipItem) {
-									return `${tooltipItem.label}: ${tooltipItem.raw}%`;
-								}
-							}
-						}
-					}
-				}
-			});
-		});
-	</script>
 </body>
 </html>
