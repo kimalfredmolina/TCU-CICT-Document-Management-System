@@ -9,6 +9,10 @@ https://www.figma.com/design/b1ObOPAk4xl4CKRE5WC7he/Untitled?node-id=0-1&t=m2k0j
 
 
 ### Pushing Changes to GitHub
+- #### 0. To check changes (optional):
+ ```bash
+git status
+ ```
 - #### 1. Add the files you only want to commit:
  ```bash
 git add <file-name>
