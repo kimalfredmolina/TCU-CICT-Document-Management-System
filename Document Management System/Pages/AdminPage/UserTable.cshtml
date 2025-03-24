@@ -1,17 +1,16 @@
 ﻿@page
 @model Document_Management_System.Pages.AdminPage.UserTableModel
 @{
-	ViewData["Title"] = "User Table Dashboard";
+	ViewData["Title"] = "User Table";
 	Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>User Table - Document Management System</title>
-	<link rel="stylesheet" href="~/css/usertable.css" asp-append-version="true" />
+	<title>Document Table - Document Management System</title>
+	<link rel="stylesheet" href="~/css/documentable.css" asp-append-version="true" />
 </head>
 <body>
 	<div class="sidebar">
@@ -28,16 +27,16 @@
 		</div>
 
 		<div class="nav-item expandable document">
-			<div class="nav-content">
+			<div class="nav-content" onclick="toggleExpand(this)">
 				<div class="nav-square"></div>
 				<div class="nav-text">Document</div>
 			</div>
 			<div class="expand-icon">›</div>
 			<div class="sub-items">
 				<div class="sub-item" onclick="location.href='DocumentTable'">Documents</div>
-				<div class="sub-item" onclick="location.href='#'">Shared Documents</div>
-				<div class="sub-item" onclick="location.href='#'">Archive</div>
-				<div class="sub-item" onclick="location.href='#'">Templates</div>
+				<div class="sub-item" onclick="location.href='AdminSharedDocs'">Shared Documents</div>
+				<div class="sub-item" onclick="location.href='AdminArchive'">Archive</div>
+				<div class="sub-item" onclick="location.href='AdminTemp'">Templates</div>
 			</div>
 		</div>
 
@@ -49,9 +48,9 @@
 			<div class="expand-icon">›</div>
 			<div class="sub-items">
 				<div class="sub-item" onclick="location.href='UserTable'">User Table</div>
-				<div class="sub-item" onclick="location.href='#'">Add User</div>
-				<div class="sub-item" onclick="location.href='#'">Edit User</div>
-				<div class="sub-item" onclick="location.href='#'">Delete User</div>
+				<div class="sub-item" onclick="location.href='AddUserPage'">Add User</div>
+				<div class="sub-item" onclick="location.href='EditPage'">Edit User</div>
+				<div class="sub-item" onclick="location.href='DeletePage'">Delete User</div>
 			</div>
 		</div>
 
@@ -89,10 +88,12 @@
 		<!-- Main content would go here -->
 
 		<div class="sub-content">
-
+			<h1>User Table</h1>
 		</div>
-	</div>
 
-	<script src="~/js/usertable.js"></script>
+	</div>
+	<script src="~/js/docuTable.js"></script>
+
 </body>
 </html>
+
