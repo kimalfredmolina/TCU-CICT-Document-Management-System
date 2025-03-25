@@ -171,7 +171,96 @@
     color: #555;
 }
 /* image upload */
-.imgupload{
-
+.imgupload {
+    background: #222;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    height: 35vh;
+    margin: auto;
+    position: relative;
+    max-width: 450px;
+    right: 280px;
+    top: 200px;
 }
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+#header {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+label {
+    float: left;
+    padding-top: 3px;
+    width: 150px;
+    font-size: 16px;
+    color: #040404;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+body {
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    gap: 200px;
+}
+
+.imgupload {
+    background: #222;
+    color: #fff;
+    height: 40vh;
+    margin: auto;
+    max-width: 450px;
+    right: 280px;
+    top: 200px;
+}
+
+.labelgroup {
+    background: gray;
+    width: 400px;
+    height: 400px;
+    /* background-position: center; */
+}
+
+#fname {
+    margin-bottom: 70px;
+    height: 25px;
+}
+
+#Email {
+    margin-bottom: 70px;
+    height: 25px;
+}
+
+#ContNO {
+    margin-bottom: 70px;
+    height: 25px;
+}
+
+#Addr {
+    margin-bottom: 70px;
+    height: 25px;
+}
+
+#submit {
+    margin-right: 240px;
+    margin-bottom: 20px;
+    height: 40px;
+    width: 500px;
+}
+
+.space {
+    padding-top: 20px;
+    height: 25px;
+}
+
 
