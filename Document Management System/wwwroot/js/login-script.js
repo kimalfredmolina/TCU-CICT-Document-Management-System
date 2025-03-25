@@ -18,7 +18,6 @@ const dots = document.querySelectorAll('.dot');
 const gallery = document.querySelector('.gallery');
 const slideText = document.getElementById('slide-text');
 
-// Define text content for each slide
 const slideTexts = [
     {
         title: "Mission:",
@@ -43,22 +42,20 @@ function showSlide(index) { // Show slide at given index
         currentSlide = index;
     }
 
-    // Update gallery position
     gallery.style.transform = `translateX(-${currentSlide * 100}%)`;
 
-    // Fade out text, update content, fade in text
     slideText.style.opacity = 0;
 
     setTimeout(() => {
-        // Update text content
+
         slideText.querySelector('h1').textContent = slideTexts[currentSlide].title;
         slideText.querySelector('p').textContent = slideTexts[currentSlide].description;
 
-        // Fade text back in
+
         slideText.style.opacity = 1;
     }, 300);
 
-    // Update dots
+
     dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === currentSlide);
     });
@@ -79,7 +76,6 @@ dots.forEach(dot => {
     });
 });
 
-// Initialize gallery
 document.addEventListener('DOMContentLoaded', () => {
     showSlide(0);
 });
