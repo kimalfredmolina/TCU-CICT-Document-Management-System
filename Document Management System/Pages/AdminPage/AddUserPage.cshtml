@@ -1,117 +1,148 @@
 ﻿@page
 @model Document_Management_System.Pages.AdminPage.AddUserPageModel
 @{
-	ViewData["Title"] = "Add User";
-	Layout = null;
+    ViewData["Title"] = "Add User";
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Document Table - Document Management System</title>
-	<link rel="stylesheet" href="~/css/documentable.css" asp-append-version="true" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add User - Document Management System</title>
+    <link rel="stylesheet" href="~/css/documentable.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adduserpage.css" asp-append-version="true" />
 </head>
 <body>
-	<div class="sidebar">
-		<div logo-container>
-			<div class="logo-square"></div>
-			<div class="logo-text">Document MS</div>
-		</div>
+    <div class="sidebar">
+        <div logo-container>
+            <div class="logo-square"></div>
+            <div class="logo-text">Document MS</div>
+        </div>
 
-		<div class="nav-item">
-			<div class="nav-content" onclick="location.href='AdminDashboard'">
-				<div class="nav-icon"></div>
-				<div class="latin-text">Admin Dashboard</div>
-			</div>
-		</div>
+        <div class="nav-item">
+            <div class="nav-content" onclick="location.href='AdminDashboard'">
+                <div class="nav-icon"></div>
+                <div class="latin-text">Admin Dashboard</div>
+            </div>
+        </div>
 
-		<div class="nav-item expandable document">
-			<div class="nav-content" onclick="toggleExpand(this)">
-				<div class="nav-square"></div>
-				<div class="nav-text">Document</div>
-			</div>
-			<div class="expand-icon">›</div>
-			<div class="sub-items">
-				<div class="sub-item" onclick="location.href='DocumentTable'">Documents</div>
-				<div class="sub-item" onclick="location.href='AdminSharedDocs'">Shared Documents</div>
-				<div class="sub-item" onclick="location.href='AdminArchive'">Archive</div>
-				<div class="sub-item" onclick="location.href='AdminTemp'">Templates</div>
-			</div>
-		</div>
+        <div class="nav-item expandable document">
+            <div class="nav-content" onclick="toggleExpand(this)">
+                <div class="nav-square"></div>
+                <div class="nav-text">Document</div>
+            </div>
+            <div class="expand-icon">›</div>
+            <div class="sub-items">
+                <div class="sub-item" onclick="location.href='DocumentTable'">Documents</div>
+                <div class="sub-item" onclick="location.href='AdminSharedDocs'">Shared Documents</div>
+                <div class="sub-item" onclick="location.href='AdminArchive'">Archive</div>
+                <div class="sub-item" onclick="location.href='AdminTemp'">Templates</div>
+            </div>
+        </div>
 
-		<div class="nav-item expandable manage-user">
-			<div class="nav-content">
-				<div class="nav-square"></div>
-				<div class="nav-text">Manage User</div>
-			</div>
-			<div class="expand-icon">›</div>
-			<div class="sub-items">
-				<div class="sub-item" onclick="location.href='UserTable'">User Table</div>
-				<div class="sub-item" onclick="location.href='AddUserPage'">Add User</div>
-				<div class="sub-item" onclick="location.href='EditPage'">Edit User</div>
-				<div class="sub-item" onclick="location.href='DeletePage'">Delete User</div>
-			</div>
-		</div>
+        <div class="nav-item expandable manage-user">
+            <div class="nav-content">
+                <div class="nav-square"></div>
+                <div class="nav-text">Manage User</div>
+            </div>
+            <div class="expand-icon">›</div>
+            <div class="sub-items">
+                <div class="sub-item" onclick="location.href='UserTable'">User Table</div>
+                <div class="sub-item" onclick="location.href='AddUserPage'">Add User</div>
+                <div class="sub-item" onclick="location.href='EditPage'">Edit User</div>
+                <div class="sub-item" onclick="location.href='DeletePage'">Delete User</div>
+            </div>
+        </div>
 
-		<div class="nav-item expandable settings">
-			<div class="nav-content">
-				<div class="nav-square"></div>
-				<div class="nav-text">Settings</div>
-			</div>
-			<div class="expand-icon">›</div>
-			<div class="sub-items">
-				<div class="sub-item" onclick="location.href='#'">General Settings</div>
-				<div class="sub-item" onclick="location.href='#'">User Settings</div>
-				<div class="sub-item" onclick="location.href='#'">System Settings</div>
-				<div class="sub-item" onclick="location.href='#'">Notifications</div>
-				<div class="sub-item" onclick="location.href='#'">Security</div>
-			</div>
-		</div>
+        <div class="nav-item expandable settings">
+            <div class="nav-content">
+                <div class="nav-square"></div>
+                <div class="nav-text">Settings</div>
+            </div>
+            <div class="expand-icon">›</div>
+            <div class="sub-items">
+                <div class="sub-item" onclick="location.href='#'">General Settings</div>
+                <div class="sub-item" onclick="location.href='#'">User Settings</div>
+                <div class="sub-item" onclick="location.href='#'">System Settings</div>
+                <div class="sub-item" onclick="location.href='#'">Notifications</div>
+                <div class="sub-item" onclick="location.href='#'">Security</div>
+            </div>
+        </div>
 
-	</div>
+    </div>
 
-	<div class="main-content">
-		<div class="header">
-			<div class="menu-toggle">≡</div>
-			<div class="header-logo">
-				<div class="header-logo-square"></div>
-				<div class="header-text">Document MS</div>
-			</div>
-			<div class="user-icons">
-				<div class="user-avatar">
-					<div class="avatar-content">U</div>
-				</div>
-			</div>
-		</div>
+    <div class="main-content">
+        <div class="header">
+            <div class="menu-toggle">≡</div>
+            <div class="header-logo">
+                <div class="header-logo-square"></div>
+                <div class="header-text">Document MS</div>
+            </div>
+            <div class="user-icons">
+                <div class="user-avatar">
+                    <div class="avatar-content">U</div>
+                </div>
+            </div>
+        </div>
 
-		<!-- Main content would go here -->
-		<!--Image box and Form-->
-		<div class="container">
-			<div class="imageinsert">
-				<div class="imgupload">
-				</div>
-				<input type="file" accept="image/*" name="image" id="file">
-				<label for="file">Upload Img</label>
-			</div>
+        <!-- Main content for Add User -->
+        <div class="container">
+            <div class="add-user-form">
+                <div class="form-header">
+                    <h2>Add User</h2>
+                </div>
 
+                <div class="profile-image">
+                    <img src="placeholder.png" alt="Profile Image" class="profile-pic" />
+                    <label for="fileInput" class="browse-button">
+                        Browse
+                        <input type="file" id="fileInput" style="display: none;" />
+                    </label>
+                </div>
 
-			<form action="/action_page.php">
-				<div class="labelgroup">
-					<div class="space">
-					</div>
-					<label for="fname">Full name:</label>
-					<input type="text" id="fname" name="fname" value=""><br>
-					<label for="lname">Email:</label>
-					<input type="text" id="Email" name="Email" value=""><br>
-					<label for="lname">Contact number:</label>
-					<input type="text" id="ContNO" name="ContNO" value=""><br>
-					<label for="lname">Address</label>
-					<input type="text" id="Addr" name="Addr" value=""><br>
-					<input type="submit" value="Submit" id="submit">
-				</div>
-			</form>
-		</div>
-		<!--TBD-->
+                <div class="user-details">
+                    <h3>User Details:</h3>
+                    <div class="form-group">
+                        <label for="fullName"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="fullName" placeholder="Full Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" placeholder="ExampleEmail@gmail.com" />
+                    </div>
+                    <div class="form-group">
+                        <label for="contactNumber"><i class="fas fa-phone"></i> Contact Number</label>
+                        <input type="tel" id="contactNumber" placeholder="Contact Number" />
+                    </div>
+                    <div class="form-group">
+                        <label for="address"><i class="fas fa-map-marker-alt"></i> Address</label>
+                        <input type="text" id="address" placeholder="Full Address" />
+                    </div>
+                    <div class="form-group">
+                        <label for="userType"><i class="fas fa-user-tag"></i> User Type</label>
+                        <select id="userType">
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-key"></i> Password</label>
+                        <input type="password" id="password" placeholder="Input Password" />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword"><i class="fas fa-key"></i> Retype Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Retype Password" />
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="save-button">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/adduser.js" asp-append-version="true"></script>
 </body>
 </html>

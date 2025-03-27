@@ -24,7 +24,7 @@ body {
     background-color: #2d3339;
     color: #fff;
     padding: 15px 0;
-    height: 100vh;
+    min-height: 100vh;
     overflow-y: auto;
 }
 
