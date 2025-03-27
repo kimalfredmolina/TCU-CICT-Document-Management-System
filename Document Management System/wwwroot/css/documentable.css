@@ -69,7 +69,6 @@ body {
 .nav-square {
     width: 20px;
     height: 20px;
-    background-color: #808080;
     margin-right: 10px;
 }
 
@@ -242,20 +241,17 @@ button {
 }
 
 .share-button {
-    background-color: #3498db;
-    color: white;
+    background-color: #e5e5e5;
     border: none;
 }
 
 .edit-button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #e5e5e5;
     border: none;
 }
 
 .delete-button {
-    background-color: #e74c3c;
-    color: white;
+    background-color: #e5e5e5;
     border: none;
 }
 
@@ -274,4 +270,8 @@ button {
     padding: 5px 10px;
     margin: 0 5px;
     cursor: pointer;
+}
+.text-box {
+    align-self: flex-end;
+    margin-bottom: 15px;
 }

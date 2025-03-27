@@ -28,7 +28,9 @@
 
 		<div class="nav-item expandable document">
 			<div class="nav-content" onclick="toggleExpand(this)">
-				<div class="nav-square"></div>
+				<div class="nav-square">
+					<img src="~/src/document-logo.png" alt="Documents Logo" class="nav-logo">
+				</div>
 				<div class="nav-text">Document</div>
 			</div>
 			<div class="expand-icon">›</div>
@@ -42,7 +44,9 @@
 
 		<div class="nav-item expandable manage-user">
 			<div class="nav-content">
-				<div class="nav-square"></div>
+				<div class="nav-square">
+					<img src="~/src/manage-userlogo.png" alt="Manage Logo" class="nav-logo">
+				</div>
 				<div class="nav-text">Manage User</div>
 			</div>
 			<div class="expand-icon">›</div>
@@ -56,7 +60,9 @@
 
 		<div class="nav-item expandable settings">
 			<div class="nav-content">
-				<div class="nav-square"></div>
+				<div class="nav-square">
+                    <img src="~/src/settings-logo.png" alt="Settings Logo" class="nav-logo">
+				</div>
 				<div class="nav-text">Settings</div>
 			</div>
 			<div class="expand-icon">›</div>
@@ -89,7 +95,51 @@
 
 		<div class="sub-content">
 			<h1>User Table</h1>
+			<div class="text-box">					
+					<input type="text" id="searchInput" placeholder="Search User"/>
+				</div>
+				<table id="documentTable">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Cellphone no.#</th>
+			<th>Date Created</th>
+			<th>Username</th>    
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>LioNel</td>
+			<td>nel@gmail.com</td>
+			<td>09504582298</td>
+			<td>3/22/2025</td>
+			<td>Lioranthea</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>Kim</td>
+			<td>kim.alfred@gmail.com</td>
+			<td>09394558761</td>
+			<td>2/27/2025</td>
+			<td>LeclercCharles23</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>Deocareza</td>
+			<td>laurence.deo@gmail.com</td>
+			<td>09506578321</td>
+			<td>3/13/2025</td>
+			<td>QuandaleDingleVsSavesta</td>
+		</tr>
+	</tbody>
+</table>
+
 		</div>
+		
+
 
 	</div>
 	<script src="~/js/docuTable.js"></script>

@@ -69,12 +69,12 @@ body {
 .nav-square {
     width: 20px;
     height: 20px;
-    background-color: #808080;
     margin-right: 10px;
 }
 
 .nav-text {
     font-size: 14px;
+    color: white;
 }
 
 .expand-icon {
