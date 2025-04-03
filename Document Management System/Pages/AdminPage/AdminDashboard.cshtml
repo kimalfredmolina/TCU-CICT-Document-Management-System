@@ -1,451 +1,123 @@
 ﻿@page
 @model Document_Management_System.Pages.AdminPage.AdminDashboardModel
 @{
-    ViewData["Title"] = "Admin Dashboard";
-    Layout = null;
+    ViewData["Title"] = "Admin dashboard";
+    Layout = "_LayoutDashboard";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Document Management System</title>
-    <link rel="stylesheet" href="~/css/admindashboard.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-</head>
-<body>
-    <div class="dashboard">
-        <!-- Sidebar -->
-        <div class="dashboard-nav">
-            <header>
-                <a href="~/src/document-logo.png" class="brand-logo"><i class="fas fa-file-upload"></i> <span>Dms</span></a>
-            </header>
 
-            <div class="container">
-                <button class="upload-btn"><i class="fas fa-plus"></i> New</button>
-                <nav class="dashboard-nav-list">
-                    <a href="AdminDashboard" class="dashboard-nav-item"><i class="fas fa-home"></i> Admin Dashboard</a>
-                    <div class="dashboard-nav-dropdown">
-                        <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
-                            <i class="fas fa-file"></i> Documents
-                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                                <path d="M6 9l6 6 6-6"></path>
-                            </svg>
-                        </a>
-                        <div class="dashboard-nav-dropdown-menu scrollable-folder-box">
-                            <ul>
-                                <li>
-                                    <span class="folder">Folder</span>
-                                    <ul class="nested">
-                                        <li class="file-html">mydoc.docx</li>
-                                        <li class="file-html">module.xlsx</li>
-                                        <li>
-                                            <span class="folder">TCU Department</span>
-                                            <ul class="nested">
-                                                <li>
-                                                    <span class="folder">CICT</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">COE</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">CHTM</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <span class="folder">Thesis</span>
-                                            <ul class="nested">
-                                                <li>
-                                                    <span class="folder">CICT</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">COE</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">CHTM</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
+<h2 class="section-title">Dashboard Overview</h2>
 
-                                        <li>
-                                            <span class="folder">ALCU</span>
-                                            <ul class="nested">
-                                                <li class="file-html">index.html</li>
-                                                <li class="file-html">services.html</li>
-                                                <li>
-                                                    <span class="folder">Anual Report</span>
-                                                    <ul class="nested">
-                                                        <li class="file-img">Alcu Anual Report.pdf</li>
-                                                        <li class="file-img">2020-01-20</li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">Anual Event</span>
-                                                    <ul class="nested">
-                                                        <li class="file-img">Alcu Event Schedule.pdf</li>
-                                                        <li class="file-img">2020-01-20</li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">Anual Meeting</span>
-                                                    <ul class="nested">
-                                                        <li class="file-img">Alcu Meeting.pdf</li>
-                                                        <li class="file-img">2020-01-20</li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <a href="#" class="dashboard-nav-item"><i class="fas fa-users"></i> Shared Documents</a>
-                    <a href="#" class="dashboard-nav-item"><i class="fas fa-history"></i> Recent</a>
-                    <a href="#" class="dashboard-nav-item"><i class="fas fa-star"></i> Starred</a>
-
-                    <!-- Manage Users Dropdown -->
-
-                    <div class="dashboard-nav-dropdown">
-                        <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
-                            <i class="fas fa-users"></i> Manage Users
-                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                                <path d="M6 9l6 6 6-6"></path>
-                            </svg>
-                        </a>
-                        <div class="dashboard-nav-dropdown-menu">
-                            <a href="#" class="dashboard-nav-dropdown-item">All</a>
-                            <a href="#" class="dashboard-nav-dropdown-item">Add New User</a>
-                            <a href="#" class="dashboard-nav-dropdown-item">Banned</a>
-                            <a href="#" class="dashboard-nav-dropdown-item">New</a>
-                        </div>
-                    </div>
-
-                    <a href="#" class="dashboard-nav-item"><i class="fas fa-cogs"></i> Settings</a>
-                    <a href="#" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </nav>
-            </div>
+<!-- Stats Cards -->
+<div class="stats-cards">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-file-alt"></i> Documents
         </div>
+        <div class="card-body">
+            <h3 class="card-title">100</h3>
+            <p class="card-text">Total Documents</p>
+        </div>
+    </div>
 
-        <!-- Main App -->
-        <div class="dashboard-app">
-            <header class="dashboard-toolbar">
-                <a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a>
-            </header>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-users"></i> Users
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">20</h3>
+            <p class="card-text">Active Users</p>
+        </div>
+    </div>
 
-            <div class="dashboard-content">
-                <div class="container">
-                    <!-- Header -->
-                    <h2 class="section-title">Dashboard Overview</h2>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-users"></i> Users
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">2</h3>
+            <p class="card-text">Inactive Users</p>
+        </div>
+    </div>
 
-                    <!-- Stats Cards -->
-                    <div class="stats-cards">
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-file-alt"></i> Documents
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title">100</h3>
-                                <p class="card-text">Total Documents</p>
-                            </div>
-                        </div>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-star"></i> Starred
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">5</h3>
+            <p class="card-text">Starred Items</p>
+        </div>
+    </div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-users"></i> Users
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title">20</h3>
-                                <p class="card-text">Active Users</p>
-                            </div>
-                        </div>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-history"></i> Recent
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">25</h3>
+            <p class="card-text">Recently Accessed</p>
+        </div>
+    </div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-users"></i> Users
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title">2</h3>
-                                <p class="card-text">Inactive Users</p>
-                            </div>
-                        </div>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-tasks"></i> Assigned Tasks
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">2</h3>
+            <p class="card-text">Total Tasks Assigned</p>
+        </div>
+    </div>
+</div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-star"></i> Starred
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title">5</h3>
-                                <p class="card-text">Starred Items</p>
-                            </div>
-                        </div>
+<!-- Charts Section -->
+<div class="charts-section">
+    <div class="chart-card">
+        <div class="card-header">
+            <i class="fas fa-chart-bar"></i> Document Uploads (Monthly)
+        </div>
+        <div class="card-body">
+            <canvas id="documentChart" width="400" height="200"></canvas>
+        </div>
+    </div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-history"></i> Recent
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title">25</h3>
-                                <p class="card-text">Recently Accessed</p>
-                            </div>
-                        </div>
+    <div class="chart-card">
+        <div class="card-header">
+            <i class="fas fa-chart-line"></i> User Activity (Weekly)
+        </div>
+        <div class="card-body">
+            <canvas id="activityChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
 
-                        <div class="card">
-                            <div class="card-header">
-                                <i class="fas fa-tasks"></i> Assigned Tasks
-                            </div>
-                            <div class="card-body">
-                                <h3 class="card-title">2</h3>
-                                <p class="card-text">Total Tasks Assigned</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Section -->
-                    <div class="charts-section">
-                        <div class="chart-card">
-                            <div class="card-header">
-                                <i class="fas fa-chart-bar"></i> Document Uploads (Monthly)
-                            </div>
-                            <div class="card-body">
-                                <canvas id="documentChart" width="400" height="200"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="chart-card">
-                            <div class="card-header">
-                                <i class="fas fa-chart-line"></i> User Activity (Weekly)
-                            </div>
-                            <div class="card-body">
-                                <canvas id="activityChart" width="400" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="charts-section">
-
-                        <div class="chart-card">
-                            <div class="card-header">
-                                <i class="fas fa-tasks"></i> Task Completion Status
-                            </div>
-                            <div class="card-body">
-                                <canvas id="taskCompletionChart" width="50" height="50"></canvas>
-                            </div>
-                        </div>
-                        <!-- Task Progress -->
-
-                        <div class="chart-card">
-                            <div class="card-header">
-                                <i class="fas fa-tasks"></i> Task Progress
-                            </div>
-                            <div class="card-body">
-                                <div class="task-progress">
-                                    <p class="task-text">Task 1: Thesis Review</p>
-                                    <div class="progress">
-                                        <div class="progress-bar" style="width: 75%;">75%</div>
-                                    </div>
-                                </div>
-
-                                <!-- Task 2: Department Document Submission -->
-                                <div class="task-progress">
-                                    <p class="task-text">Task 2: Department Document Submission</p>
-                                    <div class="progress">
-                                        <div class="progress-bar" style="width: 40%;">40%</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="charts-section">
+    <div class="chart-card">
+        <div class="card-header">
+            <i class="fas fa-tasks"></i> Task Completion Status
+        </div>
+        <div class="card-body">
+            <canvas id="taskCompletionChart" width="50" height="50"></canvas>
+        </div>
+    </div>
+    <!-- Task Progress -->
+    <div class="chart-card">
+        <div class="card-header">
+            <i class="fas fa-tasks"></i> Task Progress
+        </div>
+        <div class="card-body">
+            <div class="task-progress">
+                <p class="task-text">Task 1: Thesis Review</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 75%;">75%</div>
+                </div>
+            </div>
+            <div class="task-progress">
+                <p class="task-text">Task 2: Department Document Submission</p>
+                <div class="progress">
+                    <div class="progress-bar" style="width: 40%;">40%</div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/js/adminToggle.js"></script>
-    <script src="~/js/adminChart.js"></script>
-</body>
-</html>
+</div>

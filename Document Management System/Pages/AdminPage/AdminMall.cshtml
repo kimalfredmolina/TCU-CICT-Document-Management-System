@@ -1,0 +1,47 @@
+﻿@page
+@model Document_Management_System.Pages.AdminPage.AdminMallModel
+@{
+    ViewData["Title"] = "Admin manage all users";
+    Layout = "_LayoutDashboard";
+}
+<table id="documentTable">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Cellphone no.#</th>
+			<th>Date Created</th>
+			<th>Username</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>LioNel</td>
+			<td>nel@gmail.com</td>
+			<td>09504582298</td>
+			<td>3/22/2025</td>
+			<td>Lioranthea</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>Kim</td>
+			<td>kim.alfred@gmail.com</td>
+			<td>09394558761</td>
+			<td>2/27/2025</td>
+			<td>LeclercCharles23</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>Deocareza</td>
+			<td>laurence.deo@gmail.com</td>
+			<td>09506578321</td>
+			<td>3/13/2025</td>
+			<td>QuandaleDingleVsSavesta</td>
+		</tr>
+	</tbody>
+</table>
+@section Scripts {
+	<script src="~/js/docuTable.js"></script>
+}

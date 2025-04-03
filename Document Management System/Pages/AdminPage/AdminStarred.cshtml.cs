@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Document_Management_System.Pages.AdminPage
 {
-    public class AdminSharedDocsModel : PageModel
+    public class AdminStarredModel : PageModel
     {
         public void OnGet()
         {
