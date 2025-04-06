@@ -1,32 +1,29 @@
-﻿// Sidebar Toggle
-const menuToggle = document.querySelector('.menu-toggle');
-const dashboardNav = document.querySelector('.dashboard-nav');
+﻿document.addEventListener("DOMContentLoaded", function () {
+    // Sidebar toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const dashboardNav = document.querySelector('.dashboard-nav');
 
-menuToggle.addEventListener('click', () => {
-    dashboardNav.classList.toggle('hidden');
+    menuToggle.addEventListener('click', () => {
+        dashboardNav.classList.toggle('hidden');
+    });
+
+    // Dropdown toggle (for both label and arrow)
+    const dropdownToggles = document.querySelectorAll('.dashboard-nav-dropdown-toggle');
+
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            const parentDropdown = this.closest('.dashboard-nav-dropdown');
+            parentDropdown.classList.toggle('open');
+        });
+    });
+
+    // Auto open dropdown if current URL matches a submenu item
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.dashboard-nav-dropdown-menu .dashboard-nav-dropdown-item').forEach(item => {
+        if (item.getAttribute('href') === currentPath) {
+            const dropdown = item.closest('.dashboard-nav-dropdown');
+            dropdown.classList.add('open');
+        }
+    });
 });
-
-// Dropdown Menu Toggle
-document.querySelector('.dashboard-nav-list').addEventListener('click', (event) => {
-    const arrowIcon = event.target.closest('.arrow-icon');
-    if (!arrowIcon) return;
-
-    const toggle = arrowIcon.closest('.dashboard-nav-dropdown-toggle');
-    const dropdownMenu = toggle.nextElementSibling;
-    const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-
-    toggle.setAttribute('aria-expanded', !isExpanded);
-    dropdownMenu.style.display = isExpanded ? 'none' : 'flex';
-    arrowIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-});
-
-// Accordion Menu Toggle
-const folders = document.querySelectorAll('.folder'); 
-
-for (const folder of folders) {
-    folder.onclick = () => {
-        folder.classList.toggle('active');
-        const target_list = folder.nextElementSibling;
-        target_list.style.maxHeight = target_list.style.maxHeight ? null : '100vh';
-    }
-}

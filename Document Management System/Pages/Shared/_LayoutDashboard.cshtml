@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="~/css/admindashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="~/css/adduserpage.css" asp-append-version="true" />
-	<link rel="stylesheet" href="~/css/allusertable.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/allusertable.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/adminFiles.css" asp-append-version="true" />
 </head>
 <body>
     <div class="dashboard">
@@ -16,280 +17,43 @@
             <header>
                 <a href="~/src/document-logo.png" class="brand-logo"><i class="fas fa-file-upload"></i> <span>Dms</span></a>
             </header>
-
             <div class="container">
                 <button class="upload-btn"><i class="fas fa-plus"></i> New</button>
                 <nav class="dashboard-nav-list">
-                    <a href="AdminDashboard" class="dashboard-nav-item"><i class="fas fa-home"></i> Admin Dashboard</a>
-                    <div class="dashboard-nav-dropdown">
-                        <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
-                            <i class="fas fa-file"></i> Documents
-                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                                <path d="M6 9l6 6 6-6"></path>
-                            </svg>
-                        </a>
-                        <div class="dashboard-nav-dropdown-menu scrollable-folder-box">
-                            <ul>
-                                <li>
-                                    <span class="folder">Folder</span>
-                                    <ul class="nested">
-                                        <li class="file-html">mydoc.docx</li>
-                                        <li class="file-html">module.xlsx</li>
-                                        <li>
-                                            <span class="folder">TCU Department</span>
-                                            <ul class="nested">
-                                                <li>
-                                                    <span class="folder">CICT</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">COE</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">CHTM</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <span class="folder">Thesis</span>
-                                            <ul class="nested">
-                                                <li>
-                                                    <span class="folder">CICT</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">COE</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">CHTM</span>
-                                                    <ul class="nested">
-                                                        <li>
-                                                            <span class="folder">2024</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2023</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2022</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                        <li>
-                                                            <span class="folder">2021</span>
-                                                            <ul class="nested">
-                                                                <li class="file-img">user.png</li>
-                                                                <li class="file-img">profile.png</li>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
+                    <a href="AdminDashboard" class="dashboard-nav-item">
+                        <i class="fas fa-home"></i> Admin Dashboard
+                    </a>
 
-                                        <li>
-                                            <span class="folder">ALCU</span>
-                                            <ul class="nested">
-                                                <li class="file-html">index.html</li>
-                                                <li class="file-html">services.html</li>
-                                                <li>
-                                                    <span class="folder">Anual Report</span>
-                                                    <ul class="nested">
-                                                        <li class="file-img">Alcu Anual Report.pdf</li>
-                                                        <li class="file-img">2020-01-20</li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">Anual Event</span>
-                                                    <ul class="nested">
-                                                        <li class="file-img">Alcu Event Schedule.pdf</li>
-                                                        <li class="file-img">2020-01-20</li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <span class="folder">Anual Meeting</span>
-                                                    <ul class="nested">
-                                                        <li class="file-img">Alcu Meeting.pdf</li>
-                                                        <li class="file-img">2020-01-20</li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                    <!-- Manage Document Dropdown -->
+                    <div class="dashboard-nav-dropdown">
+                        <div class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                            <i class="fas fa-file"></i> <span class="dropdown-title">Manage Document</span>
+                            <span class="arrow-icon-container">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="dashboard-nav-dropdown-menu">
+                            <a href="AdminFiles" class="dashboard-nav-dropdown-item">Files</a>
+                            <a href="AdminFilesAdd" class="dashboard-nav-dropdown-item">Add Files</a>
                         </div>
                     </div>
+
                     <a href="AdminShared" class="dashboard-nav-item"><i class="fas fa-users"></i> Shared Documents</a>
                     <a href="AdminRecent" class="dashboard-nav-item"><i class="fas fa-history"></i> Recent</a>
                     <a href="AdminStarred" class="dashboard-nav-item"><i class="fas fa-star"></i> Starred</a>
 
                     <!-- Manage Users Dropdown -->
-
                     <div class="dashboard-nav-dropdown">
-                        <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
-                            <i class="fas fa-users"></i> Manage Users
-                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="arrow-icon">
-                                <path d="M6 9l6 6 6-6"></path>
-                            </svg>
-                        </a>
+                        <div class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                            <i class="fas fa-users"></i> <span class="dropdown-title">Manage Users</span>
+                            <span class="arrow-icon-container">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="arrow-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </div>
                         <div class="dashboard-nav-dropdown-menu">
                             <a href="AdminMall" class="dashboard-nav-dropdown-item">All Users</a>
                             <a href="AdminMnew" class="dashboard-nav-dropdown-item">Add New User</a>
@@ -300,6 +64,7 @@
                     <a href="~/Index" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </nav>
             </div>
+
         </div>
 
         <!-- Main App -->

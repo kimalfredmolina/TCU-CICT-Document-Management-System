@@ -1,0 +1,46 @@
+﻿/* Custom styles */
+.select, #locale {
+    width: 100%;
+}
+/* Table header background color */
+.fixed-table-container thead th {
+    background-color: #f0f0f0;
+}
+/* Table border */
+.table-bordered td, .table-bordered th {
+    border: 1px solid #dee2e6;
+}
+/* Pagination style */
+.pagination {
+    justify-content: flex-end;
+}
+/* Search box style */
+.search input {
+    border: 1px solid #28a745;
+}
+/* Action buttons */
+.share-btn {
+    color: #28a745;
+}
+
+.edit-btn {
+    color: #007bff;
+}
+
+.delete-btn {
+    color: #dc3545;
+}
+/* Fullscreen styling */
+.bootstrap-table.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: white;
+}
+
+    .bootstrap-table.fullscreen .fixed-table-toolbar {
+        padding: 10px;
+    }
