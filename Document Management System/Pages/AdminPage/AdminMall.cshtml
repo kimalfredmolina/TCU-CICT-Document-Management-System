@@ -4,44 +4,51 @@
     ViewData["Title"] = "Admin manage all users";
     Layout = "_LayoutDashboard";
 }
+
+<h2>Manage All Users</h2>
+
+<div class="search-container">
+    <form method="get">
+        <input type="text" name="SearchQuery" value="@Model.SearchQuery" placeholder="Search by ID, Name, or Email" />
+        <button type="submit">Search</button>
+    </form>
+</div>
+
 <table id="documentTable">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Name</th>
-			<th>Email</th>
-			<th>Cellphone no.#</th>
-			<th>Date Created</th>
-			<th>Username</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>1</td>
-			<td>LioNel</td>
-			<td>nel@gmail.com</td>
-			<td>09504582298</td>
-			<td>3/22/2025</td>
-			<td>Lioranthea</td>
-		</tr>
-		<tr>
-			<td>2</td>
-			<td>Kim</td>
-			<td>kim.alfred@gmail.com</td>
-			<td>09394558761</td>
-			<td>2/27/2025</td>
-			<td>LeclercCharles23</td>
-		</tr>
-		<tr>
-			<td>3</td>
-			<td>Deocareza</td>
-			<td>laurence.deo@gmail.com</td>
-			<td>09506578321</td>
-			<td>3/13/2025</td>
-			<td>QuandaleDingleVsSavesta</td>
-		</tr>
-	</tbody>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Cellphone no.#</th>
+            <th>Date Created</th>
+            <th>Username</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.UsersList != null && Model.UsersList.Any())
+        {
+            foreach (var user in Model.UsersList)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.fullName</td>
+                    <td>@user.Email</td>
+                    <td>@user.PhoneNumber</td>
+                    <td>@user.LockoutEnd?.DateTime.ToString("MM/dd/yyyy") ?? "N/A"</td>
+                    <td>@user.UserName</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">No users found.</td>
+            </tr>
+        }
+    </tbody>
 </table>
+
 @section Scripts {
-	<script src="~/js/docuTable.js"></script>
+    <script src="~/js/docuTable.js"></script>
 }
