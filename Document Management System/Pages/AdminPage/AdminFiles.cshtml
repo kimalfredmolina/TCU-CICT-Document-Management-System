@@ -224,6 +224,7 @@
         </div>
     </div>
 </div>
+
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -234,12 +235,14 @@
     const $table = $('#table');
     const $remove = $('#remove');
     let selections = [];
+
     // Function to get selected IDs
     function getIdSelections() {
         return $.map($table.bootstrapTable('getSelections'), function (row) {
             return row.id;
         });
     }
+
     // Response handler for server-side data
     window.responseHandler = res => {
         $.each(res.rows, function (i, row) {
@@ -247,6 +250,7 @@
         });
         return res;
     };
+
     // Detail formatter for expanded rows
     window.detailFormatter = (index, row) => {
         const html = [];
@@ -255,6 +259,7 @@
         });
         return html.join('');
     };
+
     // Formatter for action buttons
     function operateFormatter(value, row, index) {
         return [
@@ -272,53 +277,66 @@
             '</a>'
         ].join('');
     }
-    // Events for action buttons
+
+    // Events for action buttons (FIXED VIEW MODAL)
     window.operateEvents = {
         'click .share-btn': function (e, value, row) {
+            e.preventDefault();
+            e.stopPropagation();
             $('#shareModal').modal('show');
         },
         'click .edit-btn': function (e, value, row) {
+            e.preventDefault();
+            e.stopPropagation();
             $('#editName').val(row.name);
             $('#editCategories').val(row.categories);
             $('#editContentType').val(row.content_type);
             $('#editModal').modal('show');
         },
         'click .view-btn': function (e, value, row) {
-            $('#fileName').val(row.file_name || 'N/A');
-            $('#fileSize').val(`${(row.file_size / 1024).toFixed(2)} MB` || 'N/A');
-            $('#fileCategory').val(row.file_category || 'N/A');
+            e.preventDefault();
+            e.stopPropagation(); // THIS FIXES THE CHECKBOX ISSUE
+
+            // Populate modal fields
+            $('#fileName').val(row.name || 'N/A');
+            $('#fileSize').val(row.size_kb ? row.size_kb + ' KB' : 'N/A');
+            $('#fileCategory').val(row.categories || 'N/A');
             $('#uploadedBy').val(row.uploaded_by || 'N/A');
-            $('#uploadedDate').val(row.uploaded_date || 'N/A');
+            $('#uploadedDate').val(row.created_date || 'N/A');
             $('#description').val(row.description || 'N/A');
+
             // Clear previous preview
             $('#documentPreview').empty();
+
             // Display document preview based on file type
-            if (row.file_type === 'application/pdf') {
+            if (row.content_type === 'application/pdf') {
                 const pdfViewer = document.createElement('iframe');
-                pdfViewer.src = `/uploads/${row.file_name}`; // Replace with actual file URL
+                pdfViewer.src = `/uploads/${row.name}`; // Replace with actual file URL
                 pdfViewer.style.width = '100%';
                 pdfViewer.style.height = '100%';
                 $('#documentPreview').append(pdfViewer);
-            } else if (row.file_type.startsWith('image/')) {
+            } else if (row.content_type?.startsWith('image/')) {
                 const imgPreview = document.createElement('img');
-                imgPreview.src = `/uploads/${row.file_name}`; // Replace with actual file URL
+                imgPreview.src = `/uploads/${row.name}`; // Replace with actual file URL
                 imgPreview.style.maxWidth = '100%';
                 imgPreview.style.maxHeight = '100%';
                 $('#documentPreview').append(imgPreview);
-            } else if (row.file_type.startsWith('application/')) {
-                const placeholder = document.createElement('p');
-                placeholder.textContent = 'Word document preview is not available. Please download to view.';
-                $('#documentPreview').append(placeholder);
+            } else {
+                $('#documentPreview').html('<p>No preview available for this file type</p>');
             }
+
             $('#viewModal').modal('show');
         },
         'click .delete-btn': function (e, value, row) {
+            e.preventDefault();
+            e.stopPropagation();
             $table.bootstrapTable('remove', {
                 field: 'id',
                 values: [row.id]
             });
         }
     };
+
     // Initialize the table
     function initTable() {
         $table.bootstrapTable('destroy').bootstrapTable({
@@ -390,11 +408,13 @@
                 ]
             ]
         });
+
         // Enable/disable delete button based on selection
         $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
             selections = getIdSelections();
         });
+
         // Handle remove button click
         $remove.click(function () {
             const ids = getIdSelections();
@@ -405,21 +425,26 @@
             $remove.prop('disabled', true);
         });
     }
+
     $(function () {
         initTable();
         $('#locale').change(initTable);
+
         // Event listener for file upload in Edit Modal
         document.getElementById('uploadFile').addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
+
             // Validate file type
             const allowedTypes = ['application/pdf', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
             if (!allowedTypes.includes(file.type)) {
                 alert('Invalid file type. Only .doc, .docx, .pdf, and .png files are allowed.');
                 return;
             }
+
             // Clear previous preview
             document.getElementById('previewContainer').innerHTML = '';
+
             // Display preview based on file type
             if (file.type === 'application/pdf') {
                 const pdfViewer = document.createElement('iframe');
@@ -439,16 +464,19 @@
                 document.getElementById('previewContainer').appendChild(wordPlaceholder);
             }
         });
+
         // Save changes button click handler in Edit Modal
         document.getElementById('saveChangesBtn').addEventListener('click', function () {
             const name = document.getElementById('editName').value;
             const categories = document.getElementById('editCategories').value;
             const contentType = document.getElementById('editContentType').value;
             const fileInput = document.getElementById('uploadFile');
+
             if (!name || !categories || !contentType || !fileInput.files[0]) {
                 alert('Please fill out all fields and upload a file.');
                 return;
             }
+
             // Simulate saving changes (replace with actual API call)
             console.log('Saving changes...');
             console.log({
@@ -457,9 +485,11 @@
                 contentType,
                 file: fileInput.files[0].name
             });
+
             // Close the modal
             $('#editModal').modal('hide');
         });
+
         // Handle the "Edit File" button in View Modal
         $('#editFileBtn').on('click', function () {
             $('#viewModal').modal('hide');
