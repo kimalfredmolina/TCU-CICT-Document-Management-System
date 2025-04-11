@@ -10,6 +10,62 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css">
 
 <style>
+    /* Custom styles */
+    .document-list-container {
+        margin: 20px auto;
+        max-width: 90%;
+    }
+
+    .document-list-title {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .toolbar {
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+        .toolbar .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: #fff;
+        }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table th, .table td {
+        padding: 12px;
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6;
+        }
+
+    .btn {
+        font-size: 14px;
+    }
+
     .select, #locale {
         width: 100%;
     }
@@ -74,40 +130,75 @@
         color: #666;
     }
 </style>
-
-<div class="container-fluid full-height">
-    <h2 class="text-center">Document List</h2>
-    <div class="row table-container">
-        <div class="col-md-12">
-            <div id="toolbar">
-                <button id="remove" class="btn btn-danger" disabled>
-                    <i class="fa fa-trash"></i> Delete
-                </button>
-            </div>
-            <table id="table"
-                   data-toolbar="#toolbar"
-                   data-search="true"
-                   data-show-refresh="true"
-                   data-show-toggle="true"
-                   data-show-fullscreen="true"
-                   data-show-columns="true"
-                   data-show-columns-toggle-all="true"
-                   data-detail-view="true"
-                   data-show-export="true"
-                   data-click-to-select="true"
-                   data-minimum-count-columns="2"
-                   data-show-pagination-switch="true"
-                   data-pagination="true"
-                   data-id-field="id"
-                   data-page-list="[10, 25, 50, 100, all]"
-                   data-side-pagination="server"
-                   data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data"
-                   data-response-handler="responseHandler">
+<div class="container-fluid document-list-container">
+    <h2 class="document-list-title">Document List</h2>
+    <div class="toolbar">
+        <button id="remove" class="btn btn-danger" disabled>
+            <i class="fa fa-trash"></i> Delete
+        </button>
+    </div>
+            @* <table id="table" *@
+            @*        data-toolbar="#toolbar" *@
+            @*        data-search="true" *@
+            @*        data-show-refresh="true" *@
+            @*        data-show-toggle="true" *@
+            @*        data-show-fullscreen="true" *@
+            @*        data-show-columns="true" *@
+            @*        data-show-columns-toggle-all="true" *@
+            @*        data-detail-view="true" *@
+            @*        data-show-export="true" *@
+            @*        data-click-to-select="true" *@
+            @*        data-minimum-count-columns="2" *@
+            @*        data-show-pagination-switch="true" *@
+            @*        data-pagination="true" *@
+            @*        data-id-field="id" *@
+            @*        data-page-list="[10, 25, 50, 100, all]" *@
+            @*        data-side-pagination="server" *@
+            @*        data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data" *@
+            @*        data-response-handler="responseHandler"> *@
+            @* </table> *@
+        <div class="table-container">
+            <table id="table" class="table table-bordered">
+            <table id="table" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>File Name</th>
+                    <th>File Size</th>
+                    <th>File Type</th>
+                    <th>Category</th>
+                    <th>Uploaded By</th>
+                    <th>Uploaded Date</th>
+                    <th>Content Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var document in Model.Documents)
+                {
+                    <tr>
+                        <td>@document.Id</td>
+                        <td>@document.Filename</td>
+                        <td>@(document.Filesize.HasValue ? document.Filesize.Value.ToString() : "N/A")</td>
+                        <td>@document.FileType</td>
+                        <td>@(document.CategoryId.HasValue ? document.CategoryId.Value.ToString() : "N/A")</td>
+                        <td>@document.UploadedBy</td>
+                        <td>@(document.UploadedDate.HasValue ? document.UploadedDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")</td>
+                        <td>@(document.ContentType ?? "N/A")</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
             </table>
         </div>
-    </div>
 </div>
-
 <!-- Share Modal -->
 <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -147,7 +238,7 @@
             <div class="modal-body">
                 <form id="editForm">
                     <div class="mb-3">
-                        <label for="editName" class="form-label">Name</label>
+                        <label for="editName" class="form-label">File Name</label>
                         <input type="text" class="form-control" id="editName" placeholder="Enter document name">
                     </div>
                     <div class="mb-3">
@@ -238,6 +329,7 @@
         return res;
     };
 
+    // Detail formatter for expanded rows
     window.detailFormatter = (index, row) => {
         const html = [];
         $.each(row, function (key, value) {
@@ -246,6 +338,7 @@
         return html.join('');
     };
 
+    // Formatter for action buttons
     function operateFormatter(value, row, index) {
         return [
             '<a class="share-btn" href="javascript:void(0)" title="Share">',
@@ -263,28 +356,58 @@
         ].join('');
     }
 
+    // Events for action buttons (FIXED VIEW MODAL)
     window.operateEvents = {
         'click .share-btn': function (e, value, row) {
+            e.preventDefault();
+            e.stopPropagation();
             $('#shareModal').modal('show');
         },
         'click .edit-btn': function (e, value, row) {
+            e.preventDefault();
+            e.stopPropagation();
             $('#editName').val(row.name);
             $('#editCategories').val(row.categories);
             $('#editContentType').val(row.content_type);
             $('#editModal').modal('show');
         },
         'click .view-btn': function (e, value, row) {
-            $('#view-name').text(row.name || '-');
-            $('#view-categories').text(row.categories || '-');
-            $('#view-content_type').text(row.content_type || '-');
-            $('#view-size_kb').text(row.size_kb || '-');
-            $('#view-assign').text(row.assign || '-');
-            $('#view-status').text(row.status || '-');
-            $('#view-created_date').text(row.created_date || '-');
+            e.preventDefault();
+            e.stopPropagation(); // THIS FIXES THE CHECKBOX ISSUE
+
+            // Populate modal fields
+            $('#fileName').val(row.name || 'N/A');
+            $('#fileSize').val(row.size_kb ? row.size_kb + ' KB' : 'N/A');
+            $('#fileCategory').val(row.categories || 'N/A');
+            $('#uploadedBy').val(row.uploaded_by || 'N/A');
+            $('#uploadedDate').val(row.created_date || 'N/A');
+            $('#description').val(row.description || 'N/A');
+
+            // Clear previous preview
+            $('#documentPreview').empty();
+
+            // Display document preview based on file type
+            if (row.content_type === 'application/pdf') {
+                const pdfViewer = document.createElement('iframe');
+                pdfViewer.src = `/uploads/${row.name}`; // Replace with actual file URL
+                pdfViewer.style.width = '100%';
+                pdfViewer.style.height = '100%';
+                $('#documentPreview').append(pdfViewer);
+            } else if (row.content_type?.startsWith('image/')) {
+                const imgPreview = document.createElement('img');
+                imgPreview.src = `/uploads/${row.name}`; // Replace with actual file URL
+                imgPreview.style.maxWidth = '100%';
+                imgPreview.style.maxHeight = '100%';
+                $('#documentPreview').append(imgPreview);
+            } else {
+                $('#documentPreview').html('<p>No preview available for this file type</p>');
+            }
 
             $('#viewModal').modal('show');
         },
         'click .delete-btn': function (e, value, row) {
+            e.preventDefault();
+            e.stopPropagation();
             $table.bootstrapTable('remove', {
                 field: 'id',
                 values: [row.id]
@@ -292,6 +415,7 @@
         }
     };
 
+    // Initialize the table
     function initTable() {
         $table.bootstrapTable('destroy').bootstrapTable({
             height: $(window).height() - $('h2').outerHeight(true) - $('#toolbar').outerHeight(true) - 30,
@@ -312,7 +436,7 @@
                     },
                     {
                         field: 'name',
-                        title: 'Name',
+                        title: 'File Name',
                         sortable: true,
                         align: 'left'
                     },
@@ -363,11 +487,13 @@
             ]
         });
 
+        // Enable/disable delete button based on selection
         $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
             $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
             selections = getIdSelections();
         });
 
+        // Handle remove button click
         $remove.click(function () {
             const ids = getIdSelections();
             $table.bootstrapTable('remove', {
@@ -376,19 +502,28 @@
             });
             $remove.prop('disabled', true);
         });
+    }
 
+    $(function () {
+        initTable();
+        $('#locale').change(initTable);
+
+        // Event listener for file upload in Edit Modal
         document.getElementById('uploadFile').addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
 
+            // Validate file type
             const allowedTypes = ['application/pdf', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
             if (!allowedTypes.includes(file.type)) {
                 alert('Invalid file type. Only .doc, .docx, .pdf, and .png files are allowed.');
                 return;
             }
 
+            // Clear previous preview
             document.getElementById('previewContainer').innerHTML = '';
 
+            // Display preview based on file type
             if (file.type === 'application/pdf') {
                 const pdfViewer = document.createElement('iframe');
                 pdfViewer.src = URL.createObjectURL(file);
@@ -408,6 +543,7 @@
             }
         });
 
+        // Save changes button click handler in Edit Modal
         document.getElementById('saveChangesBtn').addEventListener('click', function () {
             const name = document.getElementById('editName').value;
             const categories = document.getElementById('editCategories').value;
@@ -428,13 +564,14 @@
                 file: fileInput.files[0].name
             });
 
+            // Close the modal
             $('#editModal').modal('hide');
         });
-    }
 
-    $(function () {
-        initTable();
-
-        $('#locale').change(initTable);
+        // Handle the "Edit File" button in View Modal
+        $('#editFileBtn').on('click', function () {
+            $('#viewModal').modal('hide');
+            $('#editModal').modal('show');
+        });
     });
 </script>

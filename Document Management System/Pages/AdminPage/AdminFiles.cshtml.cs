@@ -1,25 +1,43 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Document_Management_System.Data;
+using Document_Management_System.Models;
+using System.Reflection.Metadata;
 
 namespace Document_Management_System.Pages.AdminPage
 {
     public class AdminFilesModel : PageModel
     {
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly AppDbContext _dbContext;
 
-        public AdminFilesModel(IWebHostEnvironment hostEnvironment)
+        public AdminFilesModel(IWebHostEnvironment hostEnvironment, AppDbContext dbContext)
         {
             _hostEnvironment = hostEnvironment;
+            _dbContext = dbContext;
         }
 
-        // Method to handle GET requests
-        public void OnGet()
+        // Specify the namespace explicitly to resolve ambiguity
+        public List<Document_Management_System.Data.Document> Documents { get; set; } = new();
+
+        public async Task OnGetAsync()
         {
-            // Initialization logic (if needed)
+            // Fetch data from the Documents table
+            Documents = await _dbContext.Documents.ToListAsync();
         }
+
+
+        // Method to handle GET requests
+        //public void OnGet()
+        //{
+        //    // Initialization logic (if needed)
+        //}
 
         // Method to handle file uploads
         [HttpPost]
