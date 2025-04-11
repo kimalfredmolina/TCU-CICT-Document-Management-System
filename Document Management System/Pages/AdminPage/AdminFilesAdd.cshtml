@@ -1,6 +1,57 @@
 ﻿@page
 @model Document_Management_System.Pages.AdminPage.AdminFilesAddModel
 @{
-    ViewData["Title"] = "Admin Add Files";
-    Layout = "_LayoutDashboard";
+	ViewData["Title"] = "Admin Add Files";
+	Layout = "_LayoutDashboard";
 }
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="modal-dialog">
+	<div class="modal-content p-4">
+		<div class="modal-header">
+			<h5 class="modal-title">Edit Document</h5>
+		</div>
+		<div class="modal-body">
+			<form>
+				<div class="mb-3">
+					<label for="fileName" class="form-label">File Name</label>
+					<input type="text" class="form-control" id="fileName" value="Item 1">
+				</div>
+
+				<div class="mb-3">
+					<label for="categories" class="form-label">Categories</label>
+					<select class="form-select" id="categories">
+						<option selected disabled>Select category</option>
+						<option value="finance">Finance</option>
+						<option value="legal">Legal</option>
+						<option value="marketing">Marketing</option>
+						<option value="hr">Human Resources</option>
+					</select>
+				</div>
+
+				<div class="mb-3">
+					<label for="contentType" class="form-label">Content Type</label>
+					<input type="text" class="form-control" id="contentType" placeholder="Enter content type">
+				</div>
+
+				<div class="mb-3">
+					<label for="formFile" class="form-label">Upload Document/PNG / PDF / DOC Files</label>
+					<input class="form-control" type="file" id="formFile">
+				</div>
+
+				<div class="mb-3">
+					<label class="form-label">Preview:</label>
+					<textarea class="form-control" rows="6" readonly></textarea>
+				</div>
+			</form>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary">Cancel</button>
+			<button type="button" class="btn btn-primary">Save Changes</button>
+		</div>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+

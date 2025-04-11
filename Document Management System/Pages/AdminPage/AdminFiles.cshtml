@@ -4,11 +4,7 @@
     ViewData["Title"] = "Admin Files";
     Layout = "_LayoutDashboard";
 }
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css">
-
 <style>
     /* Custom styles */
     .document-list-container {
@@ -39,47 +35,19 @@
         overflow-x: auto;
     }
 
-    .table th {
-        background-color: #f8f9fa;
-        text-align: center;
-        vertical-align: middle;
-    }
-
-    .table td {
-        text-align: center;
-        vertical-align: middle;
-    }
-
     .table th, .table td {
         padding: 12px;
-    }
-
-    .table-bordered {
+        text-align: center;
+        vertical-align: middle;
         border: 1px solid #dee2e6;
     }
 
-        .table-bordered th, .table-bordered td {
-            border: 1px solid #dee2e6;
-        }
+    .table th {
+        background-color: #f8f9fa;
+    }
 
     .btn {
         font-size: 14px;
-    }
-
-    .select, #locale {
-        width: 100%;
-    }
-
-    .like {
-        margin-right: 10px;
-    }
-
-    .fixed-table-container thead th {
-        background-color: #f0f0f0;
-    }
-
-    .table-bordered td, .table-bordered th {
-        border: 1px solid #dee2e6;
     }
 
     .pagination {
@@ -129,6 +97,111 @@
         font-style: italic;
         color: #666;
     }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        width: 80%;
+        max-width: 600px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 15px;
+        border-top: 1px solid #ddd;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    /* Form Fields */
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    /* File Input */
+    input[type="file"] {
+        margin-bottom: 10px;
+    }
+
+    /* Preview Section */
+    #previewSection {
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 300px;
+        overflow-y: auto;
+    }
+
+    #previewContainer {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        color: #fff;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
 </style>
 <div class="container-fluid document-list-container">
     <h2 class="document-list-title">Document List</h2>
@@ -137,39 +210,18 @@
             <i class="fa fa-trash"></i> Delete
         </button>
     </div>
-            @* <table id="table" *@
-            @*        data-toolbar="#toolbar" *@
-            @*        data-search="true" *@
-            @*        data-show-refresh="true" *@
-            @*        data-show-toggle="true" *@
-            @*        data-show-fullscreen="true" *@
-            @*        data-show-columns="true" *@
-            @*        data-show-columns-toggle-all="true" *@
-            @*        data-detail-view="true" *@
-            @*        data-show-export="true" *@
-            @*        data-click-to-select="true" *@
-            @*        data-minimum-count-columns="2" *@
-            @*        data-show-pagination-switch="true" *@
-            @*        data-pagination="true" *@
-            @*        data-id-field="id" *@
-            @*        data-page-list="[10, 25, 50, 100, all]" *@
-            @*        data-side-pagination="server" *@
-            @*        data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data" *@
-            @*        data-response-handler="responseHandler"> *@
-            @* </table> *@
-        <div class="table-container">
-            <table id="table" class="table table-bordered">
-            <table id="table" class="table table-bordered table-hover">
+    <div class="table-container">
+        <table class="table">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>File Name</th>
+                    <th>Category</th>
+                    <th>Content Type</th>
                     <th>File Size</th>
                     <th>File Type</th>
-                    <th>Category</th>
                     <th>Uploaded By</th>
                     <th>Uploaded Date</th>
-                    <th>Content Type</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -179,53 +231,28 @@
                     <tr>
                         <td>@document.Id</td>
                         <td>@document.Filename</td>
+                        <td>@(document.CategoryId.HasValue ? document.CategoryId.Value.ToString() : "N/A")</td>
+                        <td>@(document.ContentType ?? "N/A")</td>
                         <td>@(document.Filesize.HasValue ? document.Filesize.Value.ToString() : "N/A")</td>
                         <td>@document.FileType</td>
-                        <td>@(document.CategoryId.HasValue ? document.CategoryId.Value.ToString() : "N/A")</td>
                         <td>@document.UploadedBy</td>
                         <td>@(document.UploadedDate.HasValue ? document.UploadedDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")</td>
-                        <td>@(document.ContentType ?? "N/A")</td>
                         <td>
-                            <button class="btn btn-primary btn-sm">
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="@document.Id">
                                 <i class="fa fa-edit"></i> Edit
                             </button>
-                            <button class="btn btn-danger btn-sm">
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="@document.Id">
                                 <i class="fa fa-trash"></i> Delete
                             </button>
                         </td>
                     </tr>
                 }
             </tbody>
-            </table>
-        </div>
-</div>
-<!-- Share Modal -->
-<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="shareModalLabel">Share Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="shareEmail" class="form-label">Recipient Email</label>
-                        <input type="email" class="form-control" id="shareEmail" placeholder="Enter recipient email">
-                    </div>
-                    <div class="mb-3">
-                        <label for="shareMessage" class="form-label">Message (Optional)</label>
-                        <textarea class="form-control" id="shareMessage" rows="3" placeholder="Add a message..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success">Share</button>
-            </div>
-        </div>
+        </table>
     </div>
 </div>
+<!-- Modal Overlay -->
+<div class="modal-overlay" id="modalOverlay"></div>
 
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -233,7 +260,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">Edit Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <i class="fas fa-times"></i>
+    </button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
@@ -269,246 +298,103 @@
     </div>
 </div>
 
-<!-- View Modal -->
-<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewModalLabel">View Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <dl class="row">
-                    <dt class="col-sm-3">Name:</dt>
-                    <dd class="col-sm-9" id="view-name"></dd>
-                    <dt class="col-sm-3">Categories:</dt>
-                    <dd class="col-sm-9" id="view-categories"></dd>
-                    <dt class="col-sm-3">Content Type:</dt>
-                    <dd class="col-sm-9" id="view-content_type"></dd>
-                    <dt class="col-sm-3">Size (KB):</dt>
-                    <dd class="col-sm-9" id="view-size_kb"></dd>
-                    <dt class="col-sm-3">Assign:</dt>
-                    <dd class="col-sm-9" id="view-assign"></dd>
-                    <dt class="col-sm-3">Status:</dt>
-                    <dd class="col-sm-9" id="view-status"></dd>
-                    <dt class="col-sm-3">Created Date:</dt>
-                    <dd class="col-sm-9" id="view-created_date"></dd>
-                </dl>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/extensions/locale/bootstrap-table-locale-all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.29.0/tableExport.min.js"></script>
-
 <script>
-    const $table = $('#table');
-    const $remove = $('#remove');
-    let selections = [];
+    document.addEventListener('DOMContentLoaded', function () {
+        // Open Modal Function
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'block';
+        }
 
-    // Function to get selected IDs
-    function getIdSelections() {
-        return $.map($table.bootstrapTable('getSelections'), function (row) {
-            return row.id;
-        });
-    }
+        // Close Modal Function
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
 
-    // Response handler for server-side data
-    window.responseHandler = res => {
-        $.each(res.rows, function (i, row) {
-            row.state = $.inArray(row.id, selections) !== -1;
-        });
-        return res;
-    };
+        // Clear Modal Fields
+        function clearModalFields() {
+            document.getElementById('editName').value = '';
+            document.getElementById('editCategories').value = '';
+            document.getElementById('editContentType').value = '';
+            document.getElementById('uploadFile').value = ''; // Clear file input
+            document.getElementById('previewContainer').innerHTML = ''; // Clear preview
+        }
 
-    // Detail formatter for expanded rows
-    window.detailFormatter = (index, row) => {
-        const html = [];
-        $.each(row, function (key, value) {
-            html.push(`<p><b>${key}:</b> ${value}</p>`);
-        });
-        return html.join('');
-    };
+        // Event delegation for Edit and Delete buttons
+        const tableContainer = document.querySelector('.table-container');
+        tableContainer.addEventListener('click', function (e) {
+            const target = e.target;
 
-    // Formatter for action buttons
-    function operateFormatter(value, row, index) {
-        return [
-            '<a class="share-btn" href="javascript:void(0)" title="Share">',
-            '<i class="fa fa-share-alt"></i>',
-            '</a> ',
-            '<a class="edit-btn" href="javascript:void(0)" title="Edit">',
-            '<i class="fa fa-edit"></i>',
-            '</a> ',
-            '<a class="view-btn" href="javascript:void(0)" title="View">',
-            '<i class="fa fa-eye"></i>',
-            '</a> ',
-            '<a class="delete-btn" href="javascript:void(0)" title="Delete">',
-            '<i class="fa fa-trash"></i>',
-            '</a>'
-        ].join('');
-    }
+            // Handle Edit Button Click
+            if (target.classList.contains('edit-btn') || target.closest('.edit-btn')) {
+                const button = target.classList.contains('edit-btn') ? target : target.closest('.edit-btn');
 
-    // Events for action buttons (FIXED VIEW MODAL)
-    window.operateEvents = {
-        'click .share-btn': function (e, value, row) {
-            e.preventDefault();
-            e.stopPropagation();
-            $('#shareModal').modal('show');
-        },
-        'click .edit-btn': function (e, value, row) {
-            e.preventDefault();
-            e.stopPropagation();
-            $('#editName').val(row.name);
-            $('#editCategories').val(row.categories);
-            $('#editContentType').val(row.content_type);
-            $('#editModal').modal('show');
-        },
-        'click .view-btn': function (e, value, row) {
-            e.preventDefault();
-            e.stopPropagation(); // THIS FIXES THE CHECKBOX ISSUE
+                // Clear modal fields
+                clearModalFields();
 
-            // Populate modal fields
-            $('#fileName').val(row.name || 'N/A');
-            $('#fileSize').val(row.size_kb ? row.size_kb + ' KB' : 'N/A');
-            $('#fileCategory').val(row.categories || 'N/A');
-            $('#uploadedBy').val(row.uploaded_by || 'N/A');
-            $('#uploadedDate').val(row.created_date || 'N/A');
-            $('#description').val(row.description || 'N/A');
+                // Extract data from the button's data attributes
+                const documentId = button.getAttribute('data-id');
+                const fileName = button.getAttribute('data-filename');
+                const categoryId = button.getAttribute('data-category-id');
+                const contentType = button.getAttribute('data-content-type');
 
-            // Clear previous preview
-            $('#documentPreview').empty();
+                console.log(`Editing document with ID: ${documentId}`);
 
-            // Display document preview based on file type
-            if (row.content_type === 'application/pdf') {
-                const pdfViewer = document.createElement('iframe');
-                pdfViewer.src = `/uploads/${row.name}`; // Replace with actual file URL
-                pdfViewer.style.width = '100%';
-                pdfViewer.style.height = '100%';
-                $('#documentPreview').append(pdfViewer);
-            } else if (row.content_type?.startsWith('image/')) {
-                const imgPreview = document.createElement('img');
-                imgPreview.src = `/uploads/${row.name}`; // Replace with actual file URL
-                imgPreview.style.maxWidth = '100%';
-                imgPreview.style.maxHeight = '100%';
-                $('#documentPreview').append(imgPreview);
-            } else {
-                $('#documentPreview').html('<p>No preview available for this file type</p>');
+                // Populate the modal's form fields
+                document.getElementById('editName').value = fileName;
+                document.getElementById('editCategories').value = categoryId;
+                document.getElementById('editContentType').value = contentType;
+
+                // Open the modal
+                openModal('editModal');
             }
 
-            $('#viewModal').modal('show');
-        },
-        'click .delete-btn': function (e, value, row) {
-            e.preventDefault();
-            e.stopPropagation();
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: [row.id]
-            });
-        }
-    };
-
-    // Initialize the table
-    function initTable() {
-        $table.bootstrapTable('destroy').bootstrapTable({
-            height: $(window).height() - $('h2').outerHeight(true) - $('#toolbar').outerHeight(true) - 30,
-            locale: $('#locale').val(),
-            columns: [
-                [
-                    {
-                        field: 'state',
-                        checkbox: true,
-                        align: 'center',
-                        valign: 'middle'
-                    },
-                    {
-                        field: 'id',
-                        title: 'ID',
-                        sortable: true,
-                        align: 'center'
-                    },
-                    {
-                        field: 'name',
-                        title: 'File Name',
-                        sortable: true,
-                        align: 'left'
-                    },
-                    {
-                        field: 'categories',
-                        title: 'Categories',
-                        sortable: true,
-                        align: 'left'
-                    },
-                    {
-                        field: 'content_type',
-                        title: 'Content Type',
-                        sortable: true,
-                        align: 'left'
-                    },
-                    {
-                        field: 'size_kb',
-                        title: 'Size(KB)',
-                        sortable: true,
-                        align: 'right'
-                    },
-                    {
-                        field: 'assign',
-                        title: 'Assign',
-                        sortable: true,
-                        align: 'left'
-                    },
-                    {
-                        field: 'status',
-                        title: 'Status',
-                        sortable: true,
-                        align: 'left'
-                    },
-                    {
-                        field: 'created_date',
-                        title: 'Created Date',
-                        sortable: true,
-                        align: 'left'
-                    },
-                    {
-                        field: 'operate',
-                        title: 'Action',
-                        events: window.operateEvents,
-                        formatter: operateFormatter,
-                        align: 'center'
-                    }
-                ]
-            ]
+            // Handle Delete Button Click
+            if (target.classList.contains('delete-btn') || target.closest('.delete-btn')) {
+                const button = target.classList.contains('delete-btn') ? target : target.closest('.delete-btn');
+                const documentId = button.getAttribute('data-id');
+                if (confirm(`Are you sure you want to delete document with ID: ${documentId}?`)) {
+                    console.log(`Deleting document with ID: ${documentId}`);
+                    // Perform delete operation here
+                }
+            }
         });
 
-        // Enable/disable delete button based on selection
-        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
-            selections = getIdSelections();
+        // Save Changes Button in Edit Modal
+        document.getElementById('saveChangesBtn').addEventListener('click', function () {
+            const name = document.getElementById('editName').value;
+            const categories = document.getElementById('editCategories').value;
+            const contentType = document.getElementById('editContentType').value;
+            const fileInput = document.getElementById('uploadFile');
+
+            // Validate form inputs
+            if (!name || !categories || !contentType) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            // Collect updated data
+            const updatedData = {
+                id: document.querySelector('.edit-btn[data-id]').getAttribute('data-id'), // Get ID from the last clicked button
+                name,
+                categories,
+                contentType,
+                file: fileInput.files[0] ? fileInput.files[0].name : null // Include file name if a new file was uploaded
+            };
+
+            console.log('Saving changes...', updatedData);
+
+            // Simulate saving changes (replace with actual API call)
+            // Example: fetch('/api/update-document', { method: 'POST', body: JSON.stringify(updatedData) });
+
+            // Close the modal
+            closeModal('editModal');
         });
 
-        // Handle remove button click
-        $remove.click(function () {
-            const ids = getIdSelections();
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: ids
-            });
-            $remove.prop('disabled', true);
-        });
-    }
-
-    $(function () {
-        initTable();
-        $('#locale').change(initTable);
-
-        // Event listener for file upload in Edit Modal
+        // File Upload Preview in Edit Modal
         document.getElementById('uploadFile').addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
@@ -521,7 +407,8 @@
             }
 
             // Clear previous preview
-            document.getElementById('previewContainer').innerHTML = '';
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
 
             // Display preview based on file type
             if (file.type === 'application/pdf') {
@@ -529,27 +416,67 @@
                 pdfViewer.src = URL.createObjectURL(file);
                 pdfViewer.style.width = '100%';
                 pdfViewer.style.height = '100%';
-                document.getElementById('previewContainer').appendChild(pdfViewer);
+                previewContainer.appendChild(pdfViewer);
             } else if (file.type.startsWith('image/')) {
                 const imgPreview = document.createElement('img');
                 imgPreview.src = URL.createObjectURL(file);
                 imgPreview.style.maxWidth = '100%';
                 imgPreview.style.maxHeight = '100%';
-                document.getElementById('previewContainer').appendChild(imgPreview);
+                previewContainer.appendChild(imgPreview);
             } else if (file.type.startsWith('application/')) {
                 const wordPlaceholder = document.createElement('p');
                 wordPlaceholder.textContent = 'Word document preview is not available. Please download to view.';
-                document.getElementById('previewContainer').appendChild(wordPlaceholder);
+                previewContainer.appendChild(wordPlaceholder);
+            }
+        });
+    });
+</script>
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+        // Open Modal Function
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'block';
+        }
+
+        // Close Modal Function
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // Event delegation for Edit and Delete buttons
+        const tableContainer = document.querySelector('.table-container');
+        tableContainer.addEventListener('click', function (e) {
+            const target = e.target;
+
+            // Handle Edit Button Click
+            if (target.classList.contains('edit-btn') || target.closest('.edit-btn')) {
+                const button = target.classList.contains('edit-btn') ? target : target.closest('.edit-btn');
+                const documentId = button.getAttribute('data-id');
+                console.log(`Edit document with ID: ${documentId}`);
+                openModal('editModal');
+            }
+
+            // Handle Delete Button Click
+            if (target.classList.contains('delete-btn') || target.closest('.delete-btn')) {
+                const button = target.classList.contains('delete-btn') ? target : target.closest('.delete-btn');
+                const documentId = button.getAttribute('data-id');
+                if (confirm(`Are you sure you want to delete document with ID: ${documentId}?`)) {
+                    console.log(`Deleting document with ID: ${documentId}`);
+                    // Perform delete operation here
+                }
             }
         });
 
-        // Save changes button click handler in Edit Modal
+        // Save Changes Button in Edit Modal
         document.getElementById('saveChangesBtn').addEventListener('click', function () {
             const name = document.getElementById('editName').value;
             const categories = document.getElementById('editCategories').value;
             const contentType = document.getElementById('editContentType').value;
             const fileInput = document.getElementById('uploadFile');
 
+            // Validate form inputs
             if (!name || !categories || !contentType || !fileInput.files[0]) {
                 alert('Please fill out all fields and upload a file.');
                 return;
@@ -565,13 +492,59 @@
             });
 
             // Close the modal
-            $('#editModal').modal('hide');
+            closeModal('editModal');
         });
 
-        // Handle the "Edit File" button in View Modal
-        $('#editFileBtn').on('click', function () {
-            $('#viewModal').modal('hide');
-            $('#editModal').modal('show');
+        // Close modal when "Cancel" button is clicked
+        document.querySelectorAll('.btn-secondary').forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.closest('.modal').id;
+                closeModal(modalId);
+            });
+        });
+
+        // Close modal when "X" button is clicked
+        document.querySelectorAll('.btn-close').forEach(button => {
+            button.addEventListener('click', function () {
+                const modalId = this.closest('.modal').id;
+                closeModal(modalId);
+            });
+        });
+
+        // File Upload Preview in Edit Modal
+        document.getElementById('uploadFile').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            // Validate file type
+            const allowedTypes = ['application/pdf', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Invalid file type. Only .doc, .docx, .pdf, and .png files are allowed.');
+                return;
+            }
+
+            // Clear previous preview
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '';
+
+            // Display preview based on file type
+            if (file.type === 'application/pdf') {
+                const pdfViewer = document.createElement('iframe');
+                pdfViewer.src = URL.createObjectURL(file);
+                pdfViewer.style.width = '100%';
+                pdfViewer.style.height = '100%';
+                previewContainer.appendChild(pdfViewer);
+            } else if (file.type.startsWith('image/')) {
+                const imgPreview = document.createElement('img');
+                imgPreview.src = URL.createObjectURL(file);
+                imgPreview.style.maxWidth = '100%';
+                imgPreview.style.maxHeight = '100%';
+                previewContainer.appendChild(imgPreview);
+            } else if (file.type.startsWith('application/')) {
+                const wordPlaceholder = document.createElement('p');
+                wordPlaceholder.textContent = 'Word document preview is not available. Please download to view.';
+                previewContainer.appendChild(wordPlaceholder);
+            }
         });
     });
 </script>
