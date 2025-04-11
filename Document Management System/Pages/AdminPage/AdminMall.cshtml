@@ -46,7 +46,7 @@
     <div class="search-container">
         <form method="get" class="d-flex">
             <input type="text" name="SearchQuery" value="@Model.SearchQuery"
-                   placeholder="Search by ID, Name, or Email" class="form-control me-2" />
+                   placeholder="Search Name, or Email" class="form-control me-2" />
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
     </div>
@@ -60,7 +60,6 @@
         <!-- Disable Bootstrap Table's search -->
         <thead>
             <tr>
-                <th data-field="id" data-sortable="true">Id</th>
                 <th data-field="fullName" data-sortable="true">Name</th>
                 <th data-field="email" data-sortable="true">Email</th>
                 <th data-field="phoneNumber" data-sortable="true">Cellphone no.#</th>
@@ -75,7 +74,6 @@
                 foreach (var user in Model.UsersList)
                 {
                     <tr>
-                        <td>@user.Id</td>
                         <td>@user.fullName</td>
                         <td>@user.Email</td>
                         <td>@user.PhoneNumber</td>
