@@ -5,119 +5,301 @@
     Layout = "_LayoutDashboard";
 }
 
-<h2 class="section-title">Dashboard Overview</h2>
+<div class="dashboard-content">
+    <h1>Documents</h1>
 
-<!-- Stats Cards -->
-<div class="stats-cards">
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-file-alt"></i> Documents
-        </div>
-        <div class="card-body">
-            <h3 class="card-title">100</h3>
-            <p class="card-text">Total Documents</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-users"></i> Users
-        </div>
-        <div class="card-body">
-            <h3 class="card-title">20</h3>
-            <p class="card-text">Active Users</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-users"></i> Users
-        </div>
-        <div class="card-body">
-            <h3 class="card-title">2</h3>
-            <p class="card-text">Inactive Users</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-star"></i> Starred
-        </div>
-        <div class="card-body">
-            <h3 class="card-title">5</h3>
-            <p class="card-text">Starred Items</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-history"></i> Recent
-        </div>
-        <div class="card-body">
-            <h3 class="card-title">25</h3>
-            <p class="card-text">Recently Accessed</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-tasks"></i> Assigned Tasks
-        </div>
-        <div class="card-body">
-            <h3 class="card-title">2</h3>
-            <p class="card-text">Total Tasks Assigned</p>
-        </div>
-    </div>
-</div>
-
-<!-- Charts Section -->
-<div class="charts-section">
-    <div class="chart-card">
-        <div class="card-header">
-            <i class="fas fa-chart-bar"></i> Document Uploads (Monthly)
-        </div>
-        <div class="card-body">
-            <canvas id="documentChart" width="400" height="200"></canvas>
-        </div>
-    </div>
-
-    <div class="chart-card">
-        <div class="card-header">
-            <i class="fas fa-chart-line"></i> User Activity (Weekly)
-        </div>
-        <div class="card-body">
-            <canvas id="activityChart" width="400" height="200"></canvas>
-        </div>
-    </div>
-</div>
-
-<div class="charts-section">
-    <div class="chart-card">
-        <div class="card-header">
-            <i class="fas fa-tasks"></i> Task Completion Status
-        </div>
-        <div class="card-body">
-            <canvas id="taskCompletionChart" width="50" height="50"></canvas>
-        </div>
-    </div>
-    <!-- Task Progress -->
-    <div class="chart-card">
-        <div class="card-header">
-            <i class="fas fa-tasks"></i> Task Progress
-        </div>
-        <div class="card-body">
-            <div class="task-progress">
-                <p class="task-text">Task 1: Thesis Review</p>
-                <div class="progress">
-                    <div class="progress-bar" style="width: 75%;">75%</div>
+    <div class="stats-cards">
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3 mt-1>Total Documents</h3>
+                        <div class="stat-value">100</div>
+                        <a href="#" class="stat-link">View All</a>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
                 </div>
             </div>
-            <div class="task-progress">
-                <p class="task-text">Task 2: Department Document Submission</p>
-                <div class="progress">
-                    <div class="progress-bar" style="width: 40%;">40%</div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Active Users</h3>
+                        <div class="stat-value">20</div>
+                        <a href="#" class="stat-link">Manage</a>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Pending Tasks</h3>
+                        <div class="stat-value">5</div>
+                        <a href="#" class="stat-link">Review</a>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Avg. Completion</h3>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 75%;">75%</div>
+                        </div>
+                        <div class="pie-chart-container">
+                            <canvas id="completionPieChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="charts-section">
+        <div class="chart-card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i> Document Type Distribution
+            </div>
+            <div class="card-body">
+                <div class="document-distribution">
+                    <div class="distribution-item">
+                        <div class="distribution-label">Thesis</div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 65%;">65% (32)</div>
+                        </div>
+                    </div>
+                    <div class="distribution-item">
+                        <div class="distribution-label">ALCU</div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 40%;">40% (18)</div>
+                        </div>
+                    </div>
+                    <div class="distribution-item">
+                        <div class="distribution-label">Memo</div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 55%;">55% (27)</div>
+                        </div>
+                    </div>
+                    <div class="distribution-item">
+                        <div class="distribution-label">Task</div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 25%;">25% (12)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-actions">
+                    <button id="refreshBtn" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button id="exportBtn" class="btn btn-sm btn-outline-secondary">Export</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="card-header">
+                <i class="fas fa-tasks"></i> Priority Tasks (Due This Week)
+            </div>
+            <div class="card-body">
+                <div class="priority-tasks">
+                    <div class="task-item">
+                        <div class="task-number">1.</div>
+                        <div class="task-content">
+                            <div class="task-title">Thesis Review - Ch.4</div>
+                            <div class="task-meta">
+                                <div>Due: Tomorrow</div>
+                                <div>Assigned: Dr. Smith</div>
+                            </div>
+                            <div class="task-progress">
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-number">2.</div>
+                        <div class="task-content">
+                            <div class="task-title">ALCU Compliance Report</div>
+                            <div class="task-meta">
+                                <div>Due: Fri</div>
+                                <div>Assigned: You</div>
+                            </div>
+                            <div class="task-progress">
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 45%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-task">
+                        <button class="btn btn-outline-primary btn-block">
+                            <i class="fas fa-plus"></i> New Task
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="card-header">
+                <i class="fas fa-history"></i> Recent Activity
+            </div>
+            <div class="card-body">
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-time">10:32</div>
+                        <div class="activity-content">Jane approved "Thesis_Final"</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-time">09:15</div>
+                        <div class="activity-content">Mark uploaded "ALCU_Report"</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-time">08:50</div>
+                        <div class="activity-content">New user "Lisa" registered</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-time">Yesterday</div>
+                        <div class="activity-content">Storage limit at 85%</div>
+                    </div>
+                </div>
+                <div class="view-all">
+                    <a href="#" class="btn btn-outline-secondary btn-block">View Full Log</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="card-header">
+            <i class="fas fa-chart-line"></i> Document Type Distribution
+        </div>
+        <div class="card-body">
+            <canvas id="monthlyDistributionChart"></canvas>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pie chart for completion percentage
+            const pieCtx = document.getElementById('completionPieChart').getContext('2d');
+            const completionPieChart = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Remaining'],
+                    datasets: [{
+                        data: [75, 25],
+                        backgroundColor: [
+                            '#3498db',
+                            '#ecf0f1'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+
+            // Monthly distribution chart
+            const monthlyCtx = document.getElementById('monthlyDistributionChart').getContext('2d');
+            const monthlyDistributionChart = new Chart(monthlyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        {
+                            label: 'Thesis',
+                            data: [12, 19, 15, 8, 22, 14, 17, 9, 11, 13, 9, 7],
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                            borderColor: 'rgba(52, 152, 219, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'ALCU',
+                            data: [8, 12, 9, 7, 10, 8, 9, 5, 7, 9, 6, 4],
+                            backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                            borderColor: 'rgba(46, 204, 113, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Memo',
+                            data: [5, 9, 13, 11, 8, 10, 7, 12, 9, 6, 8, 10],
+                            backgroundColor: 'rgba(155, 89, 182, 0.7)',
+                            borderColor: 'rgba(155, 89, 182, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Task',
+                            data: [3, 5, 7, 4, 6, 8, 5, 3, 6, 4, 5, 3],
+                            backgroundColor: 'rgba(241, 196, 15, 0.7)',
+                            borderColor: 'rgba(241, 196, 15, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+
+            // Add event listeners
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                // Simulate refresh with random data
+                const datasets = monthlyDistributionChart.data.datasets;
+                datasets.forEach(dataset => {
+                    dataset.data = dataset.data.map(() => Math.floor(Math.random() * 25) + 1);
+                });
+                monthlyDistributionChart.update();
+            });
+        });
+    </script>
+}
