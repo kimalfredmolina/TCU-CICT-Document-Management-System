@@ -36,6 +36,10 @@ namespace Document_Management_System.Pages.AdminPage
             public string Password { get; set; }
 
             [Required]
+            [Phone]
+            public string PhoneNumber { get; set; }
+
+            [Required]
             [DataType(DataType.Password)]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
