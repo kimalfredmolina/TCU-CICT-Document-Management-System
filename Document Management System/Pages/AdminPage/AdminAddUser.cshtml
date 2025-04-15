@@ -152,6 +152,7 @@
     .field-input {
         flex: 1;
         padding: 8px;
+        position: relative;
     }
 
         .field-input input,
@@ -172,6 +173,16 @@
             background-position: right 15px center;
             padding-right: 40px;
         }
+
+    /* Password toggle icon */
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #666;
+    }
 
     /* Save button */
     .form-footer {
@@ -314,8 +325,9 @@
                                 <i class="fas fa-key"></i>
                                 Password
                             </div>
-                            <div class="field-input">
-                                <input asp-for="Input.Password" type="password" placeholder="Enter Password" />
+                            <div class="field-input" style="position: relative;">
+                                <input asp-for="Input.Password" type="password" placeholder="Enter Password" id="password" />
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('password', this)"></i>
                                 <span asp-validation-for="Input.Password" class="text-danger"></span>
                             </div>
                         </div>
@@ -326,8 +338,9 @@
                                 <i class="fas fa-key"></i>
                                 Retype Password
                             </div>
-                            <div class="field-input">
-                                <input asp-for="Input.ConfirmPassword" type="password" placeholder="Confirm Password" />
+                            <div class="field-input" style="position: relative;">
+                                <input asp-for="Input.ConfirmPassword" type="password" placeholder="Confirm Password" id="confirmPassword" />
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword', this)"></i>
                                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                             </div>
                         </div>
@@ -373,5 +386,19 @@
                 document.getElementById('profileImageInput').click();
             }
         });
+
+        // Toggle password visibility
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
     </script>
 }
