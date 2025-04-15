@@ -5,6 +5,7 @@
     Layout = "_LayoutDashboard";
 }
 <style>
+    /* Your existing CSS remains the same */
     body {
         background-color: #f5f7fa;
         font-family: Arial, sans-serif;
@@ -194,9 +195,10 @@
             background-color: #3aa5d2;
         }
 
-    /* Hide validation messages */
+    /* Show validation messages */
     .text-danger {
-        display: none;
+        color: #dc3545;
+        font-size: 0.875em;
     }
 
     /* Placeholder text */
@@ -222,23 +224,26 @@
             <h2>Add User</h2>
         </div>
 
-        <div class="form-content">
-            <!-- Left Column - Profile Image -->
-            <div class="profile-section">
-                <div class="profile-image-container">
-                    <img id="profileImage" src="/placeholder.svg?height=220&width=220" alt="Profile Image" style="display: none;" />
-                    <div id="defaultProfile" class="default-profile">Profile Image</div>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-content">
+                <!-- Left Column - Profile Image -->
+                <div class="profile-section">
+                    <div class="profile-image-container">
+                        <img id="profileImage" src="/placeholder.svg?height=220&width=220" alt="Profile Image" style="display: none;" />
+                        <div id="defaultProfile" class="default-profile">Profile Image</div>
+                    </div>
+                    <div class="browse-button">
+                        <input type="file" asp-for="ProfileImage" id="profileImageInput" accept="image/*" style="display: none;" onchange="previewImage(event)" />
+                        <label for="profileImageInput" style="cursor: pointer; width: 100%; display: flex;">
+                            <span style="width: 80px; background-color: transparent; color: white; display: flex; align-items: center; justify-content: center;">Browse</span>
+                            <span id="fileNameDisplay" class="file-name">No file selected</span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="ProfileImage" class="text-danger"></span>
                 </div>
-                <div class="browse-button">
-                    <label for="fileInput">Browse</label>
-                    <span class="file-name">...</span>
-                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="previewImage(event)" />
-                </div>
-            </div>
 
-            <!-- Right Column - Form -->
-            <div class="form-container">
-                <form method="post">
+                <!-- Right Column - Form -->
+                <div class="form-container">
                     <div class="user-details">
                         <h4 class="details-header">User Details:</h4>
 
@@ -249,7 +254,8 @@
                                 Full Name
                             </div>
                             <div class="field-input">
-                                <input asp-for="Input.FullName" placeholder="Enter" />
+                                <input asp-for="Input.FullName" placeholder="Enter Name" />
+                                <span asp-validation-for="Input.FullName" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -260,7 +266,8 @@
                                 Email
                             </div>
                             <div class="field-input">
-                                <input asp-for="Input.Email" placeholder="Enter" />
+                                <input asp-for="Input.Email" placeholder="Enter Email" />
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -271,7 +278,8 @@
                                 Contact Number
                             </div>
                             <div class="field-input">
-                                <input asp-for="Input.PhoneNumber" placeholder="Enter" />
+                                <input asp-for="Input.PhoneNumber" placeholder="Enter Contact Number" />
+                                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -282,7 +290,7 @@
                                 Address
                             </div>
                             <div class="field-input">
-                                <input type="text" placeholder="Enter" />
+                                <input type="text" placeholder="Enter Address" />
                             </div>
                         </div>
 
@@ -307,7 +315,8 @@
                                 Password
                             </div>
                             <div class="field-input">
-                                <input asp-for="Input.Password" type="password" placeholder="Enter" />
+                                <input asp-for="Input.Password" type="password" placeholder="Enter Password" />
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -318,7 +327,8 @@
                                 Retype Password
                             </div>
                             <div class="field-input">
-                                <input asp-for="Input.ConfirmPassword" type="password" placeholder="Confirm" />
+                                <input asp-for="Input.ConfirmPassword" type="password" placeholder="Confirm Password" />
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -326,28 +336,42 @@
                     <div class="form-footer">
                         <button type="submit" class="save-button">Save</button>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         // Image Preview
         function previewImage(event) {
+            const input = event.target;
             const reader = new FileReader();
-            reader.onload = function () {
+
+            reader.onload = function() {
                 const profileImage = document.getElementById('profileImage');
                 profileImage.src = reader.result;
                 profileImage.style.display = 'block';
                 document.getElementById('defaultProfile').style.display = 'none';
-            };
-            reader.readAsDataURL(event.target.files[0]);
 
-            // Update file name
-            const fileName = event.target.files[0].name;
-            document.querySelector('.file-name').textContent = fileName;
+                // Update file name display
+                const fileName = input.files[0]?.name || 'No file selected';
+                document.getElementById('fileNameDisplay').textContent = fileName;
+            };
+
+            if (input.files && input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
+            }
         }
+
+        // Alternative click handler if needed
+        document.querySelector('.browse-button').addEventListener('click', function(e) {
+            // If clicking on the label or button area, trigger file input
+            if (e.target.closest('label') || e.target.classList.contains('browse-button')) {
+                document.getElementById('profileImageInput').click();
+            }
+        });
     </script>
 }

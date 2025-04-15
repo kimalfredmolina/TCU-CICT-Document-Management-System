@@ -4,9 +4,11 @@ namespace Document_Management_System.ViewModels
 {
     public class RegisterViewModels
     {
+        public byte[] ProfileImage { get; set; }
+
         [Required(ErrorMessage = "Name is required.")]
         public string name { get; set; }
-
+        
         [Required(ErrorMessage = "E-Mail is required")]
         [EmailAddress]
         public string email { get; set; }

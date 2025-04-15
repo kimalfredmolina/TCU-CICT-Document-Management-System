@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Document_Management_System.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using System.IO;  // Add this for file handling
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -13,7 +14,9 @@ namespace Document_Management_System.Pages.AdminPage
         private readonly UserManager<Users> _userManager;
         private readonly ILogger<AdminMnewModel> _logger;
 
-        public AdminMnewModel(UserManager<Users> userManager, ILogger<AdminMnewModel> logger)
+        public AdminMnewModel(
+            UserManager<Users> userManager,
+            ILogger<AdminMnewModel> logger)
         {
             _userManager = userManager;
             _logger = logger;
@@ -22,25 +25,34 @@ namespace Document_Management_System.Pages.AdminPage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        [BindProperty]
+        public IFormFile ProfileImage { get; set; }  // Add this for file upload
+
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "Full name is required")]
+            [Display(Name = "Full Name")]
             public string FullName { get; set; }
 
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Email is required")]
+            [EmailAddress(ErrorMessage = "Invalid email address")]
+            [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Password is required")]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
+            [Display(Name = "Password")]
             public string Password { get; set; }
 
-            [Required]
-            [Phone]
+            [Required(ErrorMessage = "Phone number is required")]
+            [Phone(ErrorMessage = "Invalid phone number")]
+            [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Confirm password is required")]
             [DataType(DataType.Password)]
+            [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
@@ -53,28 +65,45 @@ namespace Document_Management_System.Pages.AdminPage
         {
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Model state is invalid.");
+                _logger.LogWarning("Model state is invalid. Errors: {Errors}",
+                    string.Join(", ", ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)));
                 return Page();
+            }
+
+            // Handle profile image upload
+            byte[] profileImageBytes = null;
+            if (ProfileImage != null && ProfileImage.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await ProfileImage.CopyToAsync(memoryStream);
+                    profileImageBytes = memoryStream.ToArray();
+                }
             }
 
             var user = new Users
             {
                 UserName = Input.Email,
                 Email = Input.Email,
-                fullName = Input.FullName
+                fullName = Input.FullName,
+                PhoneNumber = Input.PhoneNumber,
+                ProfileImage = profileImageBytes  // Add the profile image
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password);
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User created a new account with password.");
+                _logger.LogInformation("User created a new account with password for {Email}.", Input.Email);
                 return RedirectToPage("/AdminPage/AdminMall");
             }
 
             foreach (var error in result.Errors)
             {
-                _logger.LogError("Error creating user: {Error}", error.Description);
+                _logger.LogError("Error creating user: {ErrorCode} - {ErrorDescription}",
+                    error.Code, error.Description);
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
@@ -82,4 +111,3 @@ namespace Document_Management_System.Pages.AdminPage
         }
     }
 }
-
