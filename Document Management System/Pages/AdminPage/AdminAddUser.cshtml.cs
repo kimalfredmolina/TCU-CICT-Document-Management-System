@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Document_Management_System.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using System.IO;  // Add this for file handling
+using System.IO;  
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -26,7 +26,7 @@ namespace Document_Management_System.Pages.AdminPage
         public InputModel Input { get; set; }
 
         [BindProperty]
-        public IFormFile ProfileImage { get; set; }  // Add this for file upload
+        public IFormFile ProfileImage { get; set; }
 
         public class InputModel
         {
@@ -74,8 +74,14 @@ namespace Document_Management_System.Pages.AdminPage
 
             // Handle profile image upload
             byte[] profileImageBytes = null;
-            if (ProfileImage != null && ProfileImage.Length > 0)
+            if (ProfileImage != null)
             {
+                if (ProfileImage.Length > 2 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("ProfileImage", "The image must be less than 2MB.");
+                    return Page();
+                }
+
                 using (var memoryStream = new MemoryStream())
                 {
                     await ProfileImage.CopyToAsync(memoryStream);
@@ -97,7 +103,7 @@ namespace Document_Management_System.Pages.AdminPage
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password for {Email}.", Input.Email);
-                return RedirectToPage("/AdminPage/AdminMall");
+                return RedirectToPage("/AdminPage/AdminUserTable");
             }
 
             foreach (var error in result.Errors)
