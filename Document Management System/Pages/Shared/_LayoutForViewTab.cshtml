@@ -1,0 +1,89 @@
+﻿@page
+@model Document_Management_System.Pages.Shared._LayoutForViewTabModel
+@{
+}
+<!-- wala pa toh breadcrums ko sana
+
+    <div className="flex items-center gap-4">
+    <SidebarTrigger />
+    <Breadcrumb>
+        <BreadcrumbList>
+            {breadcrumbs.map((crumb, index) => (
+            <div key={crumb.path} className="flex items-center">
+                {index > 0 && <BreadcrumbSeparator />}
+                <BreadcrumbItem>
+                    {index === breadcrumbs.length - 1 ? (
+                    <span className="font-medium">{crumb.label}</span>
+                    ) : (
+                    <BreadcrumbLink href={crumb.path}>{crumb.label}</BreadcrumbLink>
+                    )}
+                </BreadcrumbItem>
+            </div>
+            ))}
+        </BreadcrumbList>
+    </Breadcrumb>
+</div>
+<div className="flex items-center gap-2">
+    <Button variant="outline" size="sm">
+        <RefreshCw className="h-4 w-4 mr-2" />
+        Refresh
+    </Button>
+    <Button variant="outline" size="sm" onClick={onAddFolder}>
+        <FolderPlus className="h-4 w-4 mr-2" />
+        Add File Folder
+    </Button>
+</div>
+<div className="rounded-md border bg-white">
+    <Table>
+        <TableHeader>
+            <TableRow>
+                <TableHead>File Name</TableHead>
+                <TableHead>Author</TableHead>
+                <TableHead>Date Uploaded</TableHead>
+                <TableHead>Size</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            {files.length > 0 ? (
+            files.map((file) => (
+            <TableRow key={file.id}>
+                <TableCell className="font-medium">{file.name}</TableCell>
+                <TableCell>{file.author}</TableCell>
+                <TableCell>{file.dateUploaded}</TableCell>
+                <TableCell>{file.size}</TableCell>
+                <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon">
+                            <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon">
+                            <Download className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem>Rename</DropdownMenuItem>
+                                <DropdownMenuItem>Move</DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </TableCell>
+            </TableRow>
+            ))
+            ) : (
+            <TableRow>
+                <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                    No files found. Add some files to get started.
+                </TableCell>
+            </TableRow>
+            )}
+        </TableBody>
+    </Table>
+</div>
+-->
