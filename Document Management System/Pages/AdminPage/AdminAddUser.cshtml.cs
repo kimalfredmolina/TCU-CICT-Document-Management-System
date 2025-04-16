@@ -5,7 +5,8 @@ using Microsoft.Extensions.Logging;
 using Document_Management_System.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using System.IO;  
+using System.IO;
+using System.Linq;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -72,7 +73,12 @@ namespace Document_Management_System.Pages.AdminPage
                 return Page();
             }
 
-            // Handle profile image upload
+            if (!Input.Password.Any(char.IsDigit))
+            {
+                ModelState.AddModelError("Input.Password", "Password must contain at least one digit (0-9).");
+                return Page();
+            }
+
             byte[] profileImageBytes = null;
             if (ProfileImage != null)
             {
@@ -95,7 +101,7 @@ namespace Document_Management_System.Pages.AdminPage
                 Email = Input.Email,
                 fullName = Input.FullName,
                 PhoneNumber = Input.PhoneNumber,
-                ProfileImage = profileImageBytes  // Add the profile image
+                ProfileImage = profileImageBytes
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password);
