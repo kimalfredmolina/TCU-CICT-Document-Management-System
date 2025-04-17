@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Document_Management_System.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
-using Document_Management_System.Models;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -19,8 +18,8 @@ namespace Document_Management_System.Pages.AdminPage
         private readonly UserManager<Users> _userManager;
 
         public AdminEditUserModel(IConfiguration configuration,
-                                  IWebHostEnvironment environment,
-                                  UserManager<Users> userManager)
+                                IWebHostEnvironment environment,
+                                UserManager<Users> userManager)
         {
             _configuration = configuration;
             _environment = environment;
@@ -108,9 +107,9 @@ namespace Document_Management_System.Pages.AdminPage
 
         public async Task<IActionResult> OnPostAsync(string id)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrEmpty(id))
             {
-                return Page();
+                return NotFound();
             }
 
             var user = await _userManager.FindByIdAsync(id);
@@ -119,14 +118,27 @@ namespace Document_Management_System.Pages.AdminPage
                 return NotFound($"Unable to load user with ID '{id}'.");
             }
 
-            // Update user properties
-            user.Email = Input.Email;
-            user.UserName = Input.UserName;
+            if (!string.IsNullOrEmpty(Input.Email))
+            {
+                user.Email = Input.Email;
+            }
+
+            if (!string.IsNullOrEmpty(Input.UserName))
+            {
+                user.UserName = Input.UserName;
+            }
+
             user.PhoneNumber = Input.PhoneNumber;
 
-            // Update password if provided
-            if (!string.IsNullOrEmpty(Input.Password))
+            // Update password only if both password and confirm password are provided and match
+            if (!string.IsNullOrEmpty(Input.Password) && !string.IsNullOrEmpty(Input.ConfirmPassword))
             {
+                if (Input.Password != Input.ConfirmPassword)
+                {
+                    ModelState.AddModelError(string.Empty, "The password and confirmation password do not match.");
+                    return Page();
+                }
+
                 var removePasswordResult = await _userManager.RemovePasswordAsync(user);
                 if (!removePasswordResult.Succeeded)
                 {
@@ -148,7 +160,7 @@ namespace Document_Management_System.Pages.AdminPage
                 }
             }
 
-            // Handle profile image upload
+            // Handle profile image upload only if a new image is provided
             if (ProfileImage != null && ProfileImage.Length > 0)
             {
                 using (var memoryStream = new MemoryStream())
@@ -158,20 +170,26 @@ namespace Document_Management_System.Pages.AdminPage
                 }
             }
 
-            // Update full name in the database
+            // Update full name in the database - we'll update regardless of whether it's null
             string connectionString = _configuration.GetConnectionString("Default");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = @"UPDATE dbo.AspNetUsers 
-                                SET FullName = @FullName
-                                WHERE Id = @Id";
+                        SET FullName = @FullName
+                        WHERE Id = @Id";
 
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@FullName", Input.FullName ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@Id", id);
 
                 connection.Open();
-                command.ExecuteNonQuery();
+                int rowsAffected = command.ExecuteNonQuery();
+
+                if (rowsAffected == 0)
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to update user name.");
+                    return Page();
+                }
             }
 
             var result = await _userManager.UpdateAsync(user);
