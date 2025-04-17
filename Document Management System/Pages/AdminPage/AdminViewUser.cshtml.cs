@@ -18,25 +18,23 @@ namespace Document_Management_System.Pages.AdminPage
         public UserDetailsModel UserDetails { get; set; }
         public string UserProfileImage { get; set; }
 
-        public IActionResult OnGet(string id)  // Changed from int to string
+        public IActionResult OnGet(string id)
         {
-            // Retrieve the connection string from appsettings.json
             string connectionString = _configuration.GetConnectionString("Default");
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = @"SELECT 
-                                u.UserName,
-                                u.Email,
-                                u.PhoneNumber,
-                                p.FullName,
-                                p.ProfileImage
-                                FROM dbo.AspNetUsers u
-                                LEFT JOIN dbo.AspNetUsers p ON u.Id = p.Id
-                                WHERE u.Id = @Id";
+                        u.UserName,
+                        u.Email,
+                        u.PhoneNumber,
+                        p.FullName,
+                        p.ProfileImage
+                        FROM dbo.AspNetUsers u
+                        LEFT JOIN dbo.AspNetUsers p ON u.Id = p.Id
+                        WHERE u.Id = @Id";
 
                 SqlCommand command = new SqlCommand(query, connection);
-                // Use SqlDbType.UniqueIdentifier for GUID parameters
                 command.Parameters.Add("@Id", System.Data.SqlDbType.NVarChar).Value = id;
 
                 connection.Open();
@@ -51,7 +49,16 @@ namespace Document_Management_System.Pages.AdminPage
                             PhoneNumber = reader["PhoneNumber"]?.ToString(),
                             FullName = reader["FullName"]?.ToString()
                         };
-                        UserProfileImage = reader["ProfileImage"]?.ToString();
+
+                        if (reader["ProfileImage"] != DBNull.Value)
+                        {
+                            byte[] imageData = (byte[])reader["ProfileImage"];
+                            UserProfileImage = $"data:image/png;base64,{Convert.ToBase64String(imageData)}";
+                        }
+                        else
+                        {
+                            UserProfileImage = null;
+                        }
                     }
                     else
                     {
