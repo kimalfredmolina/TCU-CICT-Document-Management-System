@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Document_Management_System.Data;
 using Document_Management_System.Models;
-using System.Reflection.Metadata;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -17,30 +16,34 @@ namespace Document_Management_System.Pages.AdminPage
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly AppDbContext _dbContext;
 
+        [BindProperty(SupportsGet = true)]
+        public string? SearchQuery { get; set; }
+
         public AdminFilesModel(IWebHostEnvironment hostEnvironment, AppDbContext dbContext)
         {
             _hostEnvironment = hostEnvironment;
             _dbContext = dbContext;
         }
 
-        // Specify the namespace explicitly to resolve ambiguity
-        public List<Document_Management_System.Data.Document> Documents { get; set; } = new();
+        public List<Document> Documents { get; set; } = new();
 
         public async Task OnGetAsync()
         {
-            // Fetch data from the Documents table
-            Documents = await _dbContext.Documents.ToListAsync();
+            // Fetch data from the Documents table with search functionality
+            var query = _dbContext.Documents.AsQueryable();
+
+            if (!string.IsNullOrEmpty(SearchQuery))
+            {
+                query = query.Where(d =>
+                    d.Filename.Contains(SearchQuery) ||
+                    (d.ContentType != null && d.ContentType.Contains(SearchQuery)) ||
+                    (d.FileType != null && d.FileType.Contains(SearchQuery)) ||
+                    (d.UploadedBy != null && d.UploadedBy.Contains(SearchQuery)));
+            }
+
+            Documents = await query.ToListAsync();
         }
 
-
-        // Method to handle GET requests
-        //public void OnGet()
-        //{
-        //    // Initialization logic (if needed)
-        //}
-
-        // Method to handle file uploads
-        [HttpPost]
         public async Task<IActionResult> OnPostUploadFileAsync(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -48,42 +51,110 @@ namespace Document_Management_System.Pages.AdminPage
                 return BadRequest("No file uploaded.");
             }
 
-            // Define the folder to save the file
-            string uploadsFolder = Path.Combine(_hostEnvironment.ContentRootPath, "uploads");
+            // Validate file type
+            var allowedExtensions = new[] { ".pdf", ".png", ".doc", ".docx" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                return BadRequest("Invalid file type. Only PDF, PNG, DOC, and DOCX files are allowed.");
+            }
+
+            string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "uploads");
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            // Generate a unique filename to avoid overwriting
-            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            string fileName = Guid.NewGuid().ToString() + fileExtension;
             string filePath = Path.Combine(uploadsFolder, fileName);
+            string relativePath = Path.Combine("uploads", fileName);
 
-            // Save the file
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            return new JsonResult(new { FileName = fileName, FilePath = filePath });
+            // Save to database
+            var document = new Document
+            {
+                Filename = Path.GetFileNameWithoutExtension(file.FileName),
+                FileType = fileExtension,
+                ContentType = file.ContentType,
+                Filesize = file.Length,
+                UploadedDate = DateTime.Now,
+                UploadedBy = User.Identity?.Name ?? "System"
+            };
+
+            await _dbContext.Documents.AddAsync(document);
+            await _dbContext.SaveChangesAsync();
+
+            return new JsonResult(new
+            {
+                Success = true,
+                FileName = document.Filename,
+                DocumentId = document.Id
+            });
         }
 
-        // Method to handle document edits
-        [HttpPost]
-        public IActionResult OnPostEditDocument(string id, string name, string categories, string contentType)
+        public async Task<IActionResult> OnPostEditDocument(int id, string name, string categories, string contentType, IFormFile file)
         {
-            // Logic to update the document in the database or storage
-            // For now, we'll just return a success response
-            return new JsonResult(new { Success = true, Message = "Document updated successfully." });
+            var document = await _dbContext.Documents.FindAsync(id);
+            if (document == null)
+            {
+                return NotFound("Document not found.");
+            }
+
+            // Update basic properties
+            document.Filename = name;
+            if (int.TryParse(categories, out var categoryId))
+            {
+                document.CategoryId = categoryId;
+            }
+            document.ContentType = contentType;
+
+            // Handle file update if provided
+            if (file != null && file.Length > 0)
+            {
+                // Validate new file type
+                var allowedExtensions = new[] { ".pdf", ".png", ".doc", ".docx" };
+                var fileExtension = Path.GetExtension(file.FileName).ToLower();
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    return BadRequest("Invalid file type. Only PDF, PNG, DOC, and DOCX files are allowed.");
+                }
+
+                // Update file properties
+                document.FileType = fileExtension;
+                document.ContentType = file.ContentType;
+                document.Filesize = file.Length;
+            }
+
+            _dbContext.Documents.Update(document);
+            await _dbContext.SaveChangesAsync();
+
+            return new JsonResult(new
+            {
+                Success = true,
+                Message = "Document updated successfully."
+            });
         }
 
-        // Method to handle document deletions
-        [HttpPost]
-        public IActionResult OnPostDeleteDocument(string id)
+        public async Task<IActionResult> OnPostDeleteDocument(int id)
         {
-            // Logic to delete the document from the database or storage
-            // For now, we'll just return a success response
-            return new JsonResult(new { Success = true, Message = "Document deleted successfully." });
+            var document = await _dbContext.Documents.FindAsync(id);
+            if (document == null)
+            {
+                return NotFound("Document not found.");
+            }
+
+            _dbContext.Documents.Remove(document);
+            await _dbContext.SaveChangesAsync();
+
+            return new JsonResult(new
+            {
+                Success = true,
+                Message = "Document deleted successfully."
+            });
         }
     }
 }

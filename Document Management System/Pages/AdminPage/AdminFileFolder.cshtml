@@ -1,0 +1,79 @@
+﻿@page
+@model Document_Management_System.Pages.AdminPage.AdminFileFolderModel
+@{
+    ViewData["Title"] = "Admin File Folder";
+    Layout = "_LayoutDashboard";
+}
+
+<div class="dashboard-content">
+    <h1>File Folder</h1>
+
+    <!-- container for tab -->
+    <div class="charts-section">
+        <div class="chart-card">
+            <div class="card-body">
+                <div class="stats-cards">
+
+                    <!-- tab for thesis -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="stat-card">
+                                <div class="stat-info">
+                                    <h3>Thesis</h3>
+                                    <div class="stat-value">100</div>
+                                    <a href="#" class="stat-link">View</a>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- tab for ALCU -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="stat-card">
+                                <div class="stat-info">
+                                    <h3>ALCU</h3>
+                                    <div class="stat-value">20</div>
+                                    <a href="#" class="stat-link">View</a>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- tab for Memo -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="stat-card">
+                                <div class="stat-info">
+                                    <h3>Memo</h3>
+                                    <div class="stat-value">5</div>
+                                    <a href="#" class="stat-link">Review</a>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- modal for Add folder -->
+                    <button id="refreshBtn" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-plus"></i> Add File Folder
+                    </button>
+
+                </div>
+                <div class="chart-actions">
+                    <button id="refreshBtn" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

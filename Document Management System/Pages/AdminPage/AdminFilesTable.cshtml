@@ -4,169 +4,40 @@
     ViewData["Title"] = "Admin Files";
     Layout = "_LayoutDashboard";
 }
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<!-- Font Awesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Bootstrap Table CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css">
+
 <style>
-    /* Custom styles */
-    .document-list-container {
-        margin: 20px auto;
-        max-width: 90%;
-    }
-
-    .document-list-title {
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .toolbar {
-        margin-bottom: 15px;
+    /* Your original styles plus enhancements */
+    .search-container {
+        margin-bottom: 1px;
         display: flex;
-        justify-content: flex-start;
+        gap: 10px;
+        max-width: 500px;
+        max-height: 45px;
     }
-
-        .toolbar .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: #fff;
-        }
-
-    .table-container {
-        overflow-x: auto;
-    }
-
-    .table th, .table td {
-        padding: 12px;
-        text-align: center;
-        vertical-align: middle;
-        border: 1px solid #dee2e6;
-    }
-
-    .table th {
-        background-color: #f8f9fa;
-    }
-
-    .btn {
-        font-size: 14px;
-    }
-
-    .pagination {
-        justify-content: flex-end;
-    }
-
-    .search input {
-        border: 1px solid #28a745;
-    }
-
-    .share-btn {
-        color: #28a745;
-    }
-
-    .edit-btn {
-        color: #007bff;
-    }
-
-    .delete-btn {
-        color: #dc3545;
-    }
-
-    .full-height {
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .table-container {
-        flex: 1;
-        overflow: auto;
-    }
-
-    #previewSection {
-        border: 1px solid #ccc;
-        padding: 10px;
-        height: 300px;
-        overflow-y: auto;
-    }
-
-    #uploadFile {
-        margin-bottom: 10px;
-    }
-
-    #previewContainer p {
-        text-align: center;
-        font-style: italic;
-        color: #666;
-    }
-
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-        width: 80%;
-        max-width: 600px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .modal-title {
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    .modal-body {
-        padding: 20px;
-    }
-
-    .modal-footer {
-        display: flex;
-        justify-content: flex-end;
-        padding: 15px;
-        border-top: 1px solid #ddd;
-    }
-
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
+    /* Keep your original table styling */
+    #documentTable {
         width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+        margin-top: 20px;
     }
-
-    /* Form Fields */
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+    /* Action buttons styling */
+    .action-btn {
+        margin: 0 5px;
+        cursor: pointer;
     }
-
-    /* File Input */
-    input[type="file"] {
-        margin-bottom: 10px;
+    /* Bootstrap Table overrides */
+    .fixed-table-toolbar .search-input {
+        display: none; /* Hide the Bootstrap Table search box */
     }
 
     /* Preview Section */
     #previewSection {
-        margin-top: 15px;
         border: 1px solid #ccc;
         padding: 10px;
         height: 300px;
@@ -180,53 +51,54 @@
         overflow-y: auto;
     }
 
-    /* Buttons */
-    .btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
+    /* Modal Styles */
+    .modal-header {
+        background-color: #f8f9fa;
     }
 
-    .btn-secondary {
-        background-color: #6c757d;
-        color: #fff;
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        color: #fff;
-    }
-
-    .btn:hover {
-        opacity: 0.9;
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
     }
 </style>
-<div class="container-fluid document-list-container">
-    <h2 class="document-list-title">Document List</h2>
-    <div class="toolbar">
-        <button id="remove" class="btn btn-danger" disabled>
-            <i class="fa fa-trash"></i> Delete
-        </button>
+
+<div class="container-fluid">
+    <h2>Document List</h2>
+
+    <!-- Search and Delete Toolbar -->
+    <div class="d-flex justify-content-between mb-3">
+        <div class="search-container">
+            <form method="get" class="d-flex">
+                <input type="text" name="SearchQuery" value="@Model.SearchQuery"
+                       placeholder="Search documents..." class="form-control me-2" />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
     </div>
-    <div class="table-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>File Name</th>
-                    <th>Category</th>
-                    <th>Content Type</th>
-                    <th>File Size</th>
-                    <th>File Type</th>
-                    <th>Uploaded By</th>
-                    <th>Uploaded Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var document in Model.Documents)
+
+    <!-- Enhanced table with Bootstrap Table -->
+    <table id="documentTable"
+           data-toggle="table"
+           data-pagination="true"
+           data-page-size="10"
+           data-search="false">
+        <thead>
+            <tr>
+                <th data-field="id" data-sortable="true">ID</th>
+                <th data-field="filename" data-sortable="true">File Name</th>
+                <th data-field="category" data-sortable="true">Category</th>
+                <th data-field="contentType" data-sortable="true">Content Type</th>
+                <th data-field="filesize" data-sortable="true">File Size</th>
+                <th data-field="fileType" data-sortable="true">File Type</th>
+                <th data-field="uploadedBy" data-sortable="true">Uploaded By</th>
+                <th data-field="uploadedDate" data-sortable="true">Uploaded Date</th>
+                <th data-field="actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Documents != null && Model.Documents.Any())
+            {
+                foreach (var document in Model.Documents)
                 {
                     <tr>
                         <td>@document.Id</td>
@@ -238,21 +110,22 @@
                         <td>@document.UploadedBy</td>
                         <td>@(document.UploadedDate.HasValue ? document.UploadedDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")</td>
                         <td>
-                            <button class="btn btn-primary btn-sm edit-btn" data-id="@document.Id">
-                                <i class="fa fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-danger btn-sm delete-btn" data-id="@document.Id">
-                                <i class="fa fa-trash"></i> Delete
-                            </button>
+                            <i class="fas fa-eye action-btn view-btn" data-userid="@document.Id"></i>
+                            <i class="fas fa-edit action-btn edit-btn" data-userid="@document.Id"></i>
+                            <i class="fas fa-trash action-btn delete-btn" data-userid="@document.Id"></i>
                         </td>
                     </tr>
                 }
-            </tbody>
-        </table>
-    </div>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9">No documents found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
-<!-- Modal Overlay -->
-<div class="modal-overlay" id="modalOverlay"></div>
 
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -260,9 +133,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">Edit Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-        <i class="fas fa-times"></i>
-    </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
@@ -285,7 +156,8 @@
                     <!-- Preview Section -->
                     <div id="previewSection" class="mt-3">
                         <h5>Preview:</h5>
-                        <div id="previewContainer" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
+                        <div id="previewContainer">
+                            <p class="text-muted">Preview will appear here after file selection</p>
                         </div>
                     </div>
                 </form>
@@ -300,251 +172,97 @@
 
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Open Modal Function
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            document.getElementById('modalOverlay').style.display = 'block';
-        }
+    $(function() {
+        // Initialize Bootstrap Table with sorting and pagination
+        $('#documentTable').bootstrapTable({
+            search: false, // Disable the built-in search
+            sortable: true,
+            pagination: true,
+            pageSize: 10
+        });
 
-        // Close Modal Function
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.getElementById('modalOverlay').style.display = 'none';
-        }
+        // Edit button handler
+        $(document).on('click', '.edit-btn', function() {
+            const documentId = $(this).data('id');
+            const row = $(this).closest('tr');
 
-        // Clear Modal Fields
-        function clearModalFields() {
-            document.getElementById('editName').value = '';
-            document.getElementById('editCategories').value = '';
-            document.getElementById('editContentType').value = '';
-            document.getElementById('uploadFile').value = ''; // Clear file input
-            document.getElementById('previewContainer').innerHTML = ''; // Clear preview
-        }
+            // Populate modal with document data
+            $('#editName').val(row.find('td:eq(1)').text());
+            $('#editCategories').val(row.find('td:eq(2)').text());
+            $('#editContentType').val(row.find('td:eq(3)').text());
 
-        // Event delegation for Edit and Delete buttons
-        const tableContainer = document.querySelector('.table-container');
-        tableContainer.addEventListener('click', function (e) {
-            const target = e.target;
+            // Show modal
+            $('#editModal').modal('show');
+        });
 
-            // Handle Edit Button Click
-            if (target.classList.contains('edit-btn') || target.closest('.edit-btn')) {
-                const button = target.classList.contains('edit-btn') ? target : target.closest('.edit-btn');
-
-                // Clear modal fields
-                clearModalFields();
-
-                // Extract data from the button's data attributes
-                const documentId = button.getAttribute('data-id');
-                const fileName = button.getAttribute('data-filename');
-                const categoryId = button.getAttribute('data-category-id');
-                const contentType = button.getAttribute('data-content-type');
-
-                console.log(`Editing document with ID: ${documentId}`);
-
-                // Populate the modal's form fields
-                document.getElementById('editName').value = fileName;
-                document.getElementById('editCategories').value = categoryId;
-                document.getElementById('editContentType').value = contentType;
-
-                // Open the modal
-                openModal('editModal');
-            }
-
-            // Handle Delete Button Click
-            if (target.classList.contains('delete-btn') || target.closest('.delete-btn')) {
-                const button = target.classList.contains('delete-btn') ? target : target.closest('.delete-btn');
-                const documentId = button.getAttribute('data-id');
-                if (confirm(`Are you sure you want to delete document with ID: ${documentId}?`)) {
-                    console.log(`Deleting document with ID: ${documentId}`);
-                    // Perform delete operation here
-                }
+        // Delete button handler
+        $(document).on('click', '.delete-btn', function() {
+            const documentId = $(this).data('id');
+            if (confirm(`Are you sure you want to delete document with ID: ${documentId}?`)) {
+                // Perform delete operation here
+                console.log(`Deleting document with ID: ${documentId}`);
             }
         });
 
-        // Save Changes Button in Edit Modal
-        document.getElementById('saveChangesBtn').addEventListener('click', function () {
-            const name = document.getElementById('editName').value;
-            const categories = document.getElementById('editCategories').value;
-            const contentType = document.getElementById('editContentType').value;
-            const fileInput = document.getElementById('uploadFile');
+        // File upload preview handler
+        $('#uploadFile').on('change', function() {
+            const file = this.files[0];
+            const previewContainer = $('#previewContainer');
+            previewContainer.empty();
 
-            // Validate form inputs
-            if (!name || !categories || !contentType) {
-                alert('Please fill out all fields.');
+            if (!file) return;
+
+            // Validate file type
+            const allowedTypes = ['application/pdf', 'image/png', 'application/msword',
+                                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Invalid file type. Only .doc, .docx, .pdf, and .png files are allowed.');
+                $(this).val('');
                 return;
             }
 
-            // Collect updated data
+            if (file.type === 'application/pdf') {
+                const pdfViewer = $('<iframe>').attr('src', URL.createObjectURL(file))
+                    .css({'width': '100%', 'height': '100%'});
+                previewContainer.append(pdfViewer);
+            } else if (file.type.startsWith('image/')) {
+                const imgPreview = $('<img>').attr('src', URL.createObjectURL(file))
+                    .css({'max-width': '100%', 'max-height': '100%'});
+                previewContainer.append(imgPreview);
+            } else {
+                previewContainer.append('<p>Word document preview is not available. Please download to view.</p>');
+            }
+        });
+
+        // Save changes handler
+        $('#saveChangesBtn').on('click', function() {
+            const name = $('#editName').val();
+            const categories = $('#editCategories').val();
+            const contentType = $('#editContentType').val();
+            const fileInput = $('#uploadFile')[0];
+
+            if (!name || !categories || !contentType) {
+                alert('Please fill out all required fields.');
+                return;
+            }
+
+            // Prepare data for saving
             const updatedData = {
-                id: document.querySelector('.edit-btn[data-id]').getAttribute('data-id'), // Get ID from the last clicked button
+                id: $('.edit-btn').data('id'),
                 name,
                 categories,
                 contentType,
-                file: fileInput.files[0] ? fileInput.files[0].name : null // Include file name if a new file was uploaded
+                file: fileInput.files[0] ? fileInput.files[0].name : null
             };
 
-            console.log('Saving changes...', updatedData);
+            console.log('Saving changes:', updatedData);
+            // Here you would typically make an AJAX call to save the changes
 
-            // Simulate saving changes (replace with actual API call)
-            // Example: fetch('/api/update-document', { method: 'POST', body: JSON.stringify(updatedData) });
-
-            // Close the modal
-            closeModal('editModal');
-        });
-
-        // File Upload Preview in Edit Modal
-        document.getElementById('uploadFile').addEventListener('change', function () {
-            const file = this.files[0];
-            if (!file) return;
-
-            // Validate file type
-            const allowedTypes = ['application/pdf', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Invalid file type. Only .doc, .docx, .pdf, and .png files are allowed.');
-                return;
-            }
-
-            // Clear previous preview
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = '';
-
-            // Display preview based on file type
-            if (file.type === 'application/pdf') {
-                const pdfViewer = document.createElement('iframe');
-                pdfViewer.src = URL.createObjectURL(file);
-                pdfViewer.style.width = '100%';
-                pdfViewer.style.height = '100%';
-                previewContainer.appendChild(pdfViewer);
-            } else if (file.type.startsWith('image/')) {
-                const imgPreview = document.createElement('img');
-                imgPreview.src = URL.createObjectURL(file);
-                imgPreview.style.maxWidth = '100%';
-                imgPreview.style.maxHeight = '100%';
-                previewContainer.appendChild(imgPreview);
-            } else if (file.type.startsWith('application/')) {
-                const wordPlaceholder = document.createElement('p');
-                wordPlaceholder.textContent = 'Word document preview is not available. Please download to view.';
-                previewContainer.appendChild(wordPlaceholder);
-            }
-        });
-    });
-</script>
-<script>
-        document.addEventListener('DOMContentLoaded', function () {
-        // Open Modal Function
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            document.getElementById('modalOverlay').style.display = 'block';
-        }
-
-        // Close Modal Function
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.getElementById('modalOverlay').style.display = 'none';
-        }
-
-        // Event delegation for Edit and Delete buttons
-        const tableContainer = document.querySelector('.table-container');
-        tableContainer.addEventListener('click', function (e) {
-            const target = e.target;
-
-            // Handle Edit Button Click
-            if (target.classList.contains('edit-btn') || target.closest('.edit-btn')) {
-                const button = target.classList.contains('edit-btn') ? target : target.closest('.edit-btn');
-                const documentId = button.getAttribute('data-id');
-                console.log(`Edit document with ID: ${documentId}`);
-                openModal('editModal');
-            }
-
-            // Handle Delete Button Click
-            if (target.classList.contains('delete-btn') || target.closest('.delete-btn')) {
-                const button = target.classList.contains('delete-btn') ? target : target.closest('.delete-btn');
-                const documentId = button.getAttribute('data-id');
-                if (confirm(`Are you sure you want to delete document with ID: ${documentId}?`)) {
-                    console.log(`Deleting document with ID: ${documentId}`);
-                    // Perform delete operation here
-                }
-            }
-        });
-
-        // Save Changes Button in Edit Modal
-        document.getElementById('saveChangesBtn').addEventListener('click', function () {
-            const name = document.getElementById('editName').value;
-            const categories = document.getElementById('editCategories').value;
-            const contentType = document.getElementById('editContentType').value;
-            const fileInput = document.getElementById('uploadFile');
-
-            // Validate form inputs
-            if (!name || !categories || !contentType || !fileInput.files[0]) {
-                alert('Please fill out all fields and upload a file.');
-                return;
-            }
-
-            // Simulate saving changes (replace with actual API call)
-            console.log('Saving changes...');
-            console.log({
-                name,
-                categories,
-                contentType,
-                file: fileInput.files[0].name
-            });
-
-            // Close the modal
-            closeModal('editModal');
-        });
-
-        // Close modal when "Cancel" button is clicked
-        document.querySelectorAll('.btn-secondary').forEach(button => {
-            button.addEventListener('click', function () {
-                const modalId = this.closest('.modal').id;
-                closeModal(modalId);
-            });
-        });
-
-        // Close modal when "X" button is clicked
-        document.querySelectorAll('.btn-close').forEach(button => {
-            button.addEventListener('click', function () {
-                const modalId = this.closest('.modal').id;
-                closeModal(modalId);
-            });
-        });
-
-        // File Upload Preview in Edit Modal
-        document.getElementById('uploadFile').addEventListener('change', function () {
-            const file = this.files[0];
-            if (!file) return;
-
-            // Validate file type
-            const allowedTypes = ['application/pdf', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Invalid file type. Only .doc, .docx, .pdf, and .png files are allowed.');
-                return;
-            }
-
-            // Clear previous preview
-            const previewContainer = document.getElementById('previewContainer');
-            previewContainer.innerHTML = '';
-
-            // Display preview based on file type
-            if (file.type === 'application/pdf') {
-                const pdfViewer = document.createElement('iframe');
-                pdfViewer.src = URL.createObjectURL(file);
-                pdfViewer.style.width = '100%';
-                pdfViewer.style.height = '100%';
-                previewContainer.appendChild(pdfViewer);
-            } else if (file.type.startsWith('image/')) {
-                const imgPreview = document.createElement('img');
-                imgPreview.src = URL.createObjectURL(file);
-                imgPreview.style.maxWidth = '100%';
-                imgPreview.style.maxHeight = '100%';
-                previewContainer.appendChild(imgPreview);
-            } else if (file.type.startsWith('application/')) {
-                const wordPlaceholder = document.createElement('p');
-                wordPlaceholder.textContent = 'Word document preview is not available. Please download to view.';
-                previewContainer.appendChild(wordPlaceholder);
-            }
+            $('#editModal').modal('hide');
         });
     });
 </script>
