@@ -56,12 +56,18 @@
                         </div>
                         <div class="dashboard-nav-dropdown-menu">
                             <a href="AdminUserTable" class="dashboard-nav-dropdown-item">Users Table</a>
-                            <a href="AdminAddUser" class="dashboard-nav-dropdown-item">Add New User</a>
+                            @if (User.IsInRole("Admin"))
+                             {
+                            <a asp-page="/AdminPage/AdminAddUser" class="dashboard-nav-dropdown-item">Add New User</a>
+                             }
                         </div>
                     </div>
 
                     <a href="AdminSetting" class="dashboard-nav-item"><i class="fas fa-cogs"></i> Settings</a>
-                    <a href="~/Index" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a asp-page="/Index" asp-page-handler="Logout" class="dashboard-nav-item">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+
                 </nav>
             </div>
 
@@ -85,6 +91,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/adminToggle.js"></script>
+
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>

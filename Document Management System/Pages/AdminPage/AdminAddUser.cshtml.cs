@@ -5,10 +5,12 @@ using Microsoft.Extensions.Logging;
 using Document_Management_System.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using System.IO;  
+using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Document_Management_System.Pages.AdminPage
 {
+    //[Authorize(Roles = "Admin")]
     public class AdminMnewModel : PageModel
     {
         private readonly UserManager<Users> _userManager;
