@@ -1,4 +1,425 @@
 ﻿@page
 @model Document_Management_System.Pages.AdminPage.AdminEditUserModel
 @{
+    ViewData["Title"] = "Admin Edit User";
+    Layout = "_LayoutDashboard";
+}
+
+<style>
+    /* Your existing CSS remains the same */
+    body {
+        background-color: #f5f7fa;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .add-user-form {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #2c3e50;
+    }
+
+    .form-header h2 {
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .form-content {
+        display: flex;
+        width: 100%;
+        gap: 40px;
+    }
+
+    /* Left column - Profile image section */
+    .profile-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 300px;
+        margin-top: 20px;
+    }
+
+    .profile-image-container {
+        width: 220px;
+        height: 220px;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #profileImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Browse button styling */
+    .browse-button {
+        display: flex;
+        width: 220px;
+        height: 36px;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        .browse-button label {
+            width: 80px;
+            background-color: transparent;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+    .file-name {
+        flex: 1;
+        background-color: #42b6e6;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    /* Right column - Form section */
+    .form-container {
+        flex: 1;
+    }
+
+    /* User details section */
+    .user-details {
+        background-color: #d3d3d3;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .details-header {
+        background-color: #3498db;
+        padding: 12px 15px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    /* Form fields */
+    .field-row {
+        display: flex;
+        border-top: 1px solid #bbb;
+        background-color: #b3b3b3;
+        align-items: center;
+        min-height: 50px;
+    }
+
+    .field-label {
+        width: 180px;
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        color: #333;
+        font-size: 14px;
+    }
+
+        .field-label i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+    .field-input {
+        flex: 1;
+        padding: 8px;
+        position: relative;
+    }
+
+        .field-input input,
+        .field-input select {
+            width: 100%;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            height: 36px;
+            font-size: 14px;
+        }
+
+        /* Dropdown styling */
+        .field-input select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+
+    /* Password toggle icon */
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #666;
+    }
+
+    /* Save button */
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .save-button {
+        background-color: #42b6e6;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 40px;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+        .save-button:hover {
+            background-color: #3aa5d2;
+        }
+
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .back-button {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 40px;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+        text-align: center;
+    }
+
+        .back-button:hover {
+            background-color: #5a6268;
+            /* Show validation messages */
+    .text-danger {
+        color: #dc3545;
+        font-size: 0.875em;
+    }
+
+    /* Placeholder text */
+    input::placeholder {
+        color: #999;
+    }
+
+    /* For the default profile image */
+    .default-profile {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 14px;
+    }
+</style>
+
+<div class="content-wrapper">
+    <div class="add-user-form">
+        <div class="form-header">
+            <h2>Edit User</h2> <!-- Changed from "Add User" to "Edit User" -->
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="UserId" />
+
+            <div class="form-content">
+                <!-- Left Column - Profile Image -->
+                <div class="profile-section">
+                    <div class="profile-image-container">
+                        @if (Model.UserProfileImage != null)
+                        {
+                            <img id="profileImage" src="@Model.UserProfileImage" alt="Profile Image" />
+                            <div id="defaultProfile" class="default-profile" style="display: none;">Profile Image</div>
+                        }
+                        else
+                        {
+                            <img id="profileImage" src="/placeholder.svg?height=220&width=220" alt="Profile Image" style="display: none;" />
+                            <div id="defaultProfile" class="default-profile">Profile Image</div>
+                        }
+                    </div>
+                    <div class="browse-button">
+                        <input type="file" asp-for="ProfileImage" id="profileImageInput" accept="image/*" style="display: none;" onchange="previewImage(event)" />
+                        <label for="profileImageInput" style="cursor: pointer; width: 100%; display: flex;">
+                            <span style="width: 80px; background-color: transparent; color: white; display: flex; align-items: center; justify-content: center;">Browse</span>
+                            <span id="fileNameDisplay" class="file-name">No file selected</span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                </div>
+
+                <!-- Right Column - Form -->
+                <div class="form-container">
+                    <div class="user-details">
+                        <h4 class="details-header">User Details:</h4>
+
+                        <!-- Full Name -->
+                        <div class="field-row">
+                            <div class="field-label">
+                                <i class="fas fa-user"></i>
+                                Full Name
+                            </div>
+                            <div class="field-input">
+                                <input asp-for="Input.FullName" placeholder="Enter Name" value="@Model.Input.FullName" />
+                                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="field-row">
+                            <div class="field-label">
+                                <i class="fas fa-envelope"></i>
+                                Email
+                            </div>
+                            <div class="field-input">
+                                <input asp-for="Input.Email" placeholder="Enter Email" value="@Model.Input.Email" />
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="field-row">
+                            <div class="field-label">
+                                <i class="fas fa-phone"></i>
+                                Contact Number
+                            </div>
+                            <div class="field-input">
+                                <input asp-for="Input.PhoneNumber" placeholder="Enter Contact Number" value="@Model.Input.PhoneNumber" />
+                                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Username -->
+                        <div class="field-row">
+                            <div class="field-label">
+                                <i class="fas fa-user"></i>
+                                Username
+                            </div>
+                            <div class="field-input">
+                                <input asp-for="Input.UserName" placeholder="Enter Username" value="@Model.Input.UserName" />
+                                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="field-row">
+                            <div class="field-label">
+                                <i class="fas fa-key"></i>
+                                New Password
+                            </div>
+                            <div class="field-input" style="position: relative;">
+                                <input asp-for="Input.Password" type="password" placeholder="Leave blank to keep current password" id="password" />
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('password', this)"></i>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Retype Password -->
+                        <div class="field-row">
+                            <div class="field-label">
+                                <i class="fas fa-key"></i>
+                                Confirm Password
+                            </div>
+                            <div class="field-input" style="position: relative;">
+                                <input asp-for="Input.ConfirmPassword" type="password" placeholder="Confirm new password" id="confirmPassword" />
+                                <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword', this)"></i>
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <button type="submit" class="save-button">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Image Preview
+        function previewImage(event) {
+            const input = event.target;
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                const profileImage = document.getElementById('profileImage');
+                profileImage.src = reader.result;
+                profileImage.style.display = 'block';
+                document.getElementById('defaultProfile').style.display = 'none';
+
+                // Update file name display
+                const fileName = input.files[0]?.name || 'No file selected';
+                document.getElementById('fileNameDisplay').textContent = fileName;
+            };
+
+            if (input.files && input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Initialize the profile image display on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileImage = document.getElementById('profileImage');
+            if (profileImage && profileImage.src && !profileImage.src.includes('placeholder.svg')) {
+                profileImage.style.display = 'block';
+                document.getElementById('defaultProfile').style.display = 'none';
+            }
+        });
+
+        // Toggle password visibility
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 }
