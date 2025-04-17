@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Document_Management_System.Pages.AdminPage
 {
-    public class AdminMallModel : PageModel
+    public class AdminUserTable : PageModel
     {
         private readonly UserManager<Users> _userManager;
 
-        public AdminMallModel(UserManager<Users> userManager)
+        public AdminUserTable(UserManager<Users> userManager)
         {
             _userManager = userManager;
         }

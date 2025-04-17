@@ -1,5 +1,5 @@
 ﻿@page
-@model Document_Management_System.Pages.AdminPage.AdminMallModel
+@model Document_Management_System.Pages.AdminPage.AdminUserTable
 @{
     ViewData["Title"] = "Admin User Table";
     Layout = "_LayoutDashboard";
@@ -13,7 +13,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css">
 
 <style>
-    /* Your original styles plus enhancements */
     .search-container {
         margin-bottom: 1px;
         display: flex;
@@ -21,28 +20,25 @@
         max-width: 500px;
         max-height: 45px;
     }
-    /* Keep your original table styling */
+
     #documentTable {
         width: 100%;
         margin-top: 20px;
     }
-    /* Action buttons styling */
+
     .action-btn {
         margin: 0 5px;
         cursor: pointer;
     }
-    /* Bootstrap Table overrides */
-    .fixed-table-toolbar .search-input {
-        display: none; /* Hide the Bootstrap Table search box */
-    }
 
-    
+    .fixed-table-toolbar .search-input {
+        display: none;
+    }
 </style>
 
 <div class="container-fluid">
     <h2>Users Table</h2>
 
-    <!-- Only your original search box remains -->
     <div class="search-container">
         <form method="get" class="d-flex">
             <input type="text" name="SearchQuery" value="@Model.SearchQuery"
@@ -51,13 +47,11 @@
         </form>
     </div>
 
-    <!-- Your original table with Bootstrap Table enhancements -->
     <table id="documentTable"
            data-toggle="table"
            data-pagination="true"
            data-page-size="10"
            data-search="false">
-        <!-- Disable Bootstrap Table's search -->
         <thead>
             <tr>
                 <th data-field="fullName" data-sortable="true">Name</th>
@@ -80,7 +74,9 @@
                         <td>@(user.LockoutEnd?.DateTime.ToString("MM/dd/yyyy") ?? "N/A")</td>
                         <td>@user.UserName</td>
                         <td>
-                            <i class="fas fa-eye action-btn view-btn" data-userid="@user.Id"></i>
+                            <a asp-page="/AdminPage/AdminViewUser" asp-route-id="@user.Id" class="action-btn view-btn">
+                                <i class="fas fa-eye"></i>
+                            </a>
                             <i class="fas fa-edit action-btn edit-btn" data-userid="@user.Id"></i>
                             <i class="fas fa-trash action-btn delete-btn" data-userid="@user.Id"></i>
                         </td>
@@ -97,11 +93,6 @@
     </table>
 </div>
 
-<!-- View User Modal -->
-<div class="modal fade" id="viewUserModal" tabindex="-1" aria-hidden="true">
-    <!-- Modal content remains the same -->
-</div>
-
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -109,24 +100,14 @@
 
 <script>
     $(function() {
-        // Initialize Bootstrap Table with only sorting and pagination
         $('#documentTable').bootstrapTable({
-            search: false, // Disable the built-in search
+            search: false,
             sortable: true,
             pagination: true,
             pageSize: 10
         });
 
-        // Action button handlers
-        $(document).on('click', '.view-btn', function() {
-            const userId = $(this).data('userid');
-            // Here you would typically fetch the user details
-            $('#viewUserId').val(userId);
-            $('#viewFullName').val($(this).closest('tr').find('td:eq(1)').text());
-            $('#viewEmail').val($(this).closest('tr').find('td:eq(2)').text());
-            $('#viewUserModal').modal('show');
-        });
-
         // Edit and Delete handlers remain the same
+        // View functionality is now handled by the anchor tag navigation
     });
 </script>
