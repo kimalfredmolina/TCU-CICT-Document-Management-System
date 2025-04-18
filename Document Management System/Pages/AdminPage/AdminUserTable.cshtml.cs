@@ -28,15 +28,37 @@ namespace Document_Management_System.Pages.AdminPage
 
             if (!string.IsNullOrEmpty(SearchQuery))
             {
-                // Filter users based on the search query
                 UsersList = users
                     .Where(u => u.Id.Contains(SearchQuery) || u.UserName.Contains(SearchQuery) || u.Email.Contains(SearchQuery))
                     .ToList();
             }
             else
             {
-                // Fetch all users if no search query is provided
                 UsersList = users.ToList();
+            }
+        }
+
+        public async Task<IActionResult> OnPostDeleteAsync(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return new JsonResult(new { success = false, message = "No user ID provided" });
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new JsonResult(new { success = false, message = "User not found" });
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return new JsonResult(new { success = true });
+            }
+            else
+            {
+                return new JsonResult(new { success = false, message = "Failed to delete user" });
             }
         }
     }
