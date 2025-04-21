@@ -6,18 +6,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Document_Management_System.Pages.AdminPage
-
 {
-    [Authorize(Roles = "Admin,Staff")] // Allow both Admin and Staff roles
-
+    [Authorize(Roles = "Admin,Staff")]
     public class AdminDashboardModel : PageModel
     {
         private readonly UserManager<Users> _userManager;
         private readonly ILogger<AdminDashboardModel> _logger;
 
-        public string UserRole { get; private set;   }
+        public string UserRole { get; private set; }
+        public int ActiveUsersCount { get; private set; }
 
         public AdminDashboardModel(UserManager<Users> userManager, ILogger<AdminDashboardModel> logger)
         {
@@ -50,11 +51,14 @@ namespace Document_Management_System.Pages.AdminPage
                 _logger.LogWarning($"User {user.UserName} has NO ROLES!");
                 UserRole = "No role assigned";
             }
+
+            ActiveUsersCount = _userManager.Users.Count();
         }
+
         public async Task<IActionResult> OnPostLogoutAsync()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToPage("/Index"); // Or wherever your login page is
+            return RedirectToPage("/Index");
         }
     }
 }

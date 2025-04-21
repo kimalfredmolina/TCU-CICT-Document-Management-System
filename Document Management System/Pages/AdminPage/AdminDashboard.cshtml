@@ -1,7 +1,7 @@
 ﻿@page
 @model Document_Management_System.Pages.AdminPage.AdminDashboardModel
 @{
-    ViewData["Title"] = "Admin dashboard";
+    ViewData["Title"] = "Admin Dashboard";
     Layout = "_LayoutDashboard";
 }
 
@@ -32,8 +32,8 @@
                 <div class="stat-card">
                     <div class="stat-info">
                         <h3>Active Users</h3>
-                        <div class="stat-value">20</div>
-                        <a href="#" class="stat-link">Manage</a>
+                        <div class="stat-value">@Model.ActiveUsersCount</div>
+                        <a asp-page="/AdminPage/AdminUserTable" class="stat-link">Manage</a>
                     </div>
                     <div class="stat-icon">
                         <i class="fas fa-users"></i>
