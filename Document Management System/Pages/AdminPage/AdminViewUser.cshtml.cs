@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -17,28 +19,29 @@ namespace Document_Management_System.Pages.AdminPage
 
         public UserDetailsModel UserDetails { get; set; }
         public string UserProfileImage { get; set; }
+        public List<string> UserRoles { get; set; } = new List<string>();
 
         public IActionResult OnGet(string id)
         {
             string connectionString = _configuration.GetConnectionString("Default");
 
+            // First get user details
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = @"SELECT 
+                string userQuery = @"SELECT 
                         u.UserName,
                         u.Email,
                         u.PhoneNumber,
-                        p.FullName,
-                        p.ProfileImage
+                        u.FullName,
+                        u.ProfileImage
                         FROM dbo.AspNetUsers u
-                        LEFT JOIN dbo.AspNetUsers p ON u.Id = p.Id
                         WHERE u.Id = @Id";
 
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.Add("@Id", System.Data.SqlDbType.NVarChar).Value = id;
+                SqlCommand userCommand = new SqlCommand(userQuery, connection);
+                userCommand.Parameters.Add("@Id", System.Data.SqlDbType.NVarChar).Value = id;
 
                 connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (SqlDataReader reader = userCommand.ExecuteReader())
                 {
                     if (reader.Read())
                     {
@@ -63,6 +66,27 @@ namespace Document_Management_System.Pages.AdminPage
                     else
                     {
                         return RedirectToPage("/AdminPage/AdminUserTable");
+                    }
+                }
+            }
+
+            // Then get user roles
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string rolesQuery = @"SELECT r.Name 
+                                    FROM dbo.AspNetUserRoles ur
+                                    JOIN dbo.AspNetRoles r ON ur.RoleId = r.Id
+                                    WHERE ur.UserId = @UserId";
+
+                SqlCommand rolesCommand = new SqlCommand(rolesQuery, connection);
+                rolesCommand.Parameters.Add("@UserId", System.Data.SqlDbType.NVarChar).Value = id;
+
+                connection.Open();
+                using (SqlDataReader reader = rolesCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        UserRoles.Add(reader["Name"].ToString());
                     }
                 }
             }

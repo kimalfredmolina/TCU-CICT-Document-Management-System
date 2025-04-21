@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -15,13 +17,16 @@ namespace Document_Management_System.Pages.AdminPage
     public class AdminMnewModel : PageModel
     {
         private readonly UserManager<Users> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<AdminMnewModel> _logger;
 
         public AdminMnewModel(
             UserManager<Users> userManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<AdminMnewModel> logger)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _logger = logger;
         }
 
@@ -30,6 +35,8 @@ namespace Document_Management_System.Pages.AdminPage
 
         [BindProperty]
         public IFormFile ProfileImage { get; set; }
+
+        public List<SelectListItem> RoleList { get; set; } = new List<SelectListItem>();
 
         public class InputModel
         {
@@ -58,35 +65,48 @@ namespace Document_Management_System.Pages.AdminPage
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "Role is required")]
+            [Display(Name = "Role")]
+            public string SelectedRole { get; set; }
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
+            // Populate roles dropdown
+            var roles = _roleManager.Roles.ToList();
+            RoleList = roles.Select(r => new SelectListItem
+            {
+                Value = r.Name,
+                Text = r.Name
+            }).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Model state is invalid. Errors: {Errors}",
-                    string.Join(", ", ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)));
+                // Repopulate roles dropdown if returning to page
+                await OnGetAsync();
                 return Page();
             }
 
+            // Password complexity check
             if (!Input.Password.Any(char.IsDigit))
             {
                 ModelState.AddModelError("Input.Password", "Password must contain at least one digit (0-9).");
+                await OnGetAsync();
                 return Page();
             }
 
+            // Handle profile image
             byte[] profileImageBytes = null;
             if (ProfileImage != null)
             {
                 if (ProfileImage.Length > 2 * 1024 * 1024)
                 {
                     ModelState.AddModelError("ProfileImage", "The image must be less than 2MB.");
+                    await OnGetAsync();
                     return Page();
                 }
 
@@ -97,6 +117,7 @@ namespace Document_Management_System.Pages.AdminPage
                 }
             }
 
+            // Create user
             var user = new Users
             {
                 UserName = Input.Email,
@@ -111,6 +132,29 @@ namespace Document_Management_System.Pages.AdminPage
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password for {Email}.", Input.Email);
+
+                // Add selected role to user
+                if (!string.IsNullOrEmpty(Input.SelectedRole))
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, Input.SelectedRole);
+                    if (!roleResult.Succeeded)
+                    {
+                        _logger.LogError("Failed to add role {Role} to user {Email}. Errors: {Errors}",
+                            Input.SelectedRole, Input.Email, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+
+                        // Optionally handle role assignment failure (e.g., show error or delete user)
+                        foreach (var error in roleResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, $"Role assignment failed: {error.Description}");
+                        }
+
+                        // Delete user if role assignment failed (optional)
+                        await _userManager.DeleteAsync(user);
+                        await OnGetAsync();
+                        return Page();
+                    }
+                }
+
                 return RedirectToPage("/AdminPage/AdminUserTable");
             }
 
@@ -121,6 +165,7 @@ namespace Document_Management_System.Pages.AdminPage
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
+            await OnGetAsync();
             return Page();
         }
     }

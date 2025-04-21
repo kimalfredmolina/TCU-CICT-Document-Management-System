@@ -11,13 +11,15 @@ namespace Document_Management_System.Pages.AdminPage
     public class AdminUserTable : PageModel
     {
         private readonly UserManager<Users> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminUserTable(UserManager<Users> userManager)
+        public AdminUserTable(UserManager<Users> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        public List<Users> UsersList { get; set; } = new List<Users>();
+        public List<UserWithRole> UsersList { get; set; } = new List<UserWithRole>();
 
         [BindProperty(SupportsGet = true)]
         public string SearchQuery { get; set; }
@@ -28,13 +30,22 @@ namespace Document_Management_System.Pages.AdminPage
 
             if (!string.IsNullOrEmpty(SearchQuery))
             {
-                UsersList = users
-                    .Where(u => u.Id.Contains(SearchQuery) || u.UserName.Contains(SearchQuery) || u.Email.Contains(SearchQuery))
-                    .ToList();
+                users = users
+                    .Where(u => u.Id.Contains(SearchQuery) ||
+                               u.UserName.Contains(SearchQuery) ||
+                               u.Email.Contains(SearchQuery));
             }
-            else
+
+            UsersList = new List<UserWithRole>();
+
+            foreach (var user in users.ToList())
             {
-                UsersList = users.ToList();
+                var roles = await _userManager.GetRolesAsync(user);
+                UsersList.Add(new UserWithRole
+                {
+                    User = user,
+                    Role = roles.FirstOrDefault() ?? "No Role"
+                });
             }
         }
 
@@ -61,5 +72,11 @@ namespace Document_Management_System.Pages.AdminPage
                 return new JsonResult(new { success = false, message = "Failed to delete user" });
             }
         }
+    }
+
+    public class UserWithRole
+    {
+        public Users User { get; set; }
+        public string Role { get; set; }
     }
 }

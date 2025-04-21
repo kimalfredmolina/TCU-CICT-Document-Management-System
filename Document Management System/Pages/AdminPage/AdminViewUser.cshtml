@@ -235,6 +235,24 @@
                             @Model.UserDetails.UserName
                         </div>
                     </div>
+
+                    <!-- Role -->
+                    <div class="field-row">
+                        <div class="field-label">
+                            <i class="fas fa-user-tag"></i>
+                            Role
+                        </div>
+                        <div class="field-value">
+                            @if (Model.UserRoles.Any())
+                            {
+                                @string.Join(", ", Model.UserRoles)
+                            }
+                            else
+                            {
+                                @:No roles assigned
+                            }
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-footer">
