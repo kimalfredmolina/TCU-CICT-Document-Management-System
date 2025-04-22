@@ -4,12 +4,109 @@
     ViewData["Title"] = "Admin Dashboard";
     Layout = "_LayoutDashboard";
 }
+<style> 
+    .user-info-card {
+           background: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%);
+           border-radius: 10px;
+           padding: 20px;
+           color: white;
+           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+           margin-bottom: 30px;
+           overflow: hidden;
+           position: relative;
+     }
+
+     .user-info-card::before {
+           content: '' ;
+           position: absolute;
+           top: -50px;
+           right: -50px;
+           width: 150px;
+           height: 150px;
+           background: rgba(255, 255, 255, 0.1);
+           border-radius: 50%;
+      }
+
+      .user-info-header {
+           display: flex;
+           align-items: center;
+           margin-bottom: 15px;
+      }
+
+      .user-avatar {
+           width: 50px;
+           height: 50px;
+           background: rgba(255, 255, 255, 0.2);
+           border-radius: 50%;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           margin-right: 15px;
+           font-size: 20px;
+      }
+
+       .user-meta h3 {
+           margin: 0;
+           font-weight: 600;
+           font-size: 1.2rem;
+       }
+       .username {
+           font-weight: 700;
+       }
+       .user-badge {
+           display: inline-block;
+           background: rgba(255, 255, 255, 0.2);
+           padding: 3px 10px;
+           border-radius: 20px;
+           font-size: 0.8rem;
+           margin-top: 5px;
+           font-weight: 500;
+       }
+       .user-info-footer {
+           border-top: 1px solid rgba(255, 255, 255, 0.2);
+           padding-top: 15px;
+       }
+       .user-stats {
+           display: flex;
+           gap: 20px;
+       }
+       .stat-item {
+           display: flex;
+           align-items: center;
+           gap: 8px;
+           font-size: 0.9rem;
+           opacity: 0.9;
+       }
+       .stat-item i {
+           font-size: 0.8rem;
+       }
+</style>
 
 <div class="dashboard-content">
-    <h1>Documents</h1>
-    <h1>Welcome to the Admin Dashboard</h1>
-    <p>User: @User.Identity.Name</p>
-    <p>Your role: @Model.UserRole</p>
+
+    <div class="user-info-card">
+        <div class="user-info-header">
+            <div class="user-avatar">
+                <i class="fas fa-user-shield"></i> <!-- Admin icon -->
+            </div>
+            <div class="user-meta">
+                <h3>Welcome back, <span class="username">@User.Identity.Name</span></h3>
+                <div class="user-badge">@Model.UserRole</div>
+            </div>
+        </div>
+        <div class="user-info-footer">
+            <div class="user-stats">
+                <div class="stat-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>@DateTime.Now.ToString("dddd, MMMM dd")</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <span>@DateTime.Now.ToString("h:mm tt")</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="stats-cards">
         <div class="card">
