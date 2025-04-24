@@ -8,16 +8,16 @@ namespace Document_Management_System.Pages.AdminPage
     public class AdminFilesAddModel : PageModel
     {
         [BindProperty]
-        public string FileName { get; set; }
+        public string? FileName { get; set; }
 
         [BindProperty]
-        public string Categories { get; set; }
+        public string? Categories { get; set; }
 
         [BindProperty]
-        public string ContentType { get; set; }
+        public string? ContentType { get; set; }
 
         [BindProperty]
-        public IFormFile FormFile { get; set; }
+        public IFormFile? FormFile { get; set; }
 
         public void OnGet()
         {
