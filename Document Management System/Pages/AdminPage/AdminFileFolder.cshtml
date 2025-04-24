@@ -261,330 +261,112 @@
                     @if (string.IsNullOrEmpty(Model.CurrentCategory))
                     {
                         <!-- Root Level Categories -->
-                        <tr class="folder-item folder-dropdown" data-path="Thesis">
-                            <td class="file-name">
-                                <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                <i class="fas fa-folder folder-icon file-icon"></i> Thesis
-                            </td>
-                            <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                            <td>File folder</td>
-                            <td>@Model.GetFileCount("Thesis") items</td>
-                            <td class="file-actions">
-                                <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <!-- Thesis Subfolders -->
-                        <tr class="subfolder-container" data-parent="Thesis">
-                            <td colspan="5" class="p-0">
-                                <table class="file-list w-100">
-                                    <tr class="subfolder-row folder-dropdown" data-path="Thesis/Area 1">
-                                        <td class="file-name">
-                                            <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                            <i class="fas fa-folder folder-icon file-icon"></i> Area 1
-                                        </td>
-                                        <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                        <td>File folder</td>
-                                        <td>-</td>
-                                        <td class="file-actions">
-                                            <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 1')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <!-- Area 1 Subfolders -->
-                                    <tr class="subfolder-container" data-parent="Thesis/Area 1">
-                                        <td colspan="5" class="p-0">
-                                            <table class="file-list w-100">
-                                                <tr class="subfolder-row subfolder-row folder-dropdown" data-path="Thesis/Area 1/BSCS">
-                                                    <td class="file-name">
-                                                        <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                                        <i class="fas fa-folder folder-icon file-icon"></i> BSCS
-                                                    </td>
-                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                    <td>File folder</td>
-                                                    <td>-</td>
-                                                    <td class="file-actions">
-                                                        <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 1/BSCS')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <!-- BSCS Year Subfolders -->
-                                                <tr class="subfolder-container" data-parent="Thesis/Area 1/BSCS">
+                        @foreach (var category in Model.FolderHierarchy.Keys)
+                        {
+                            <tr class="folder-item folder-dropdown" data-path="@category">
+                                <td class="file-name">
+                                    <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
+                                    <i class="fas fa-folder folder-icon file-icon"></i> @category
+                                </td>
+                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
+                                <td>File folder</td>
+                                <td>@Model.GetFileCount(category) items</td>
+                                <td class="file-actions">
+                                    <button class="action-btn" title="Delete" onclick="deleteFolder('@category')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Category Subfolders -->
+                            <tr class="subfolder-container" data-parent="@category">
+                                <td colspan="5" class="p-0">
+                                    <table class="file-list w-100">
+                                        @foreach (var areaFolder in Model.FolderHierarchy[category])
+                                        {
+                                            <tr class="subfolder-row folder-dropdown" data-path="@areaFolder.Path">
+                                                <td class="file-name">
+                                                    <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
+                                                    <i class="fas fa-folder folder-icon file-icon"></i> @areaFolder.Name
+                                                </td>
+                                                <td>@areaFolder.ModifiedDate.ToString("MM/dd/yyyy h:mm tt")</td>
+                                                <td>File folder</td>
+                                                <td>@areaFolder.ItemCount items</td>
+                                                <td class="file-actions">
+                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('@areaFolder.Path')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <!-- Area Subfolders (Courses) -->
+                                            @if (areaFolder.SubFolders != null && areaFolder.SubFolders.Any())
+                                            {
+                                                <tr class="subfolder-container" data-parent="@areaFolder.Path">
                                                     <td colspan="5" class="p-0">
                                                         <table class="file-list w-100">
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 1/BSCS/2025">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2025
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 1/BSCS/2025')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 1/BSCS/2026">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2026
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 1/BSCS/2026')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
+                                                            @foreach (var courseFolder in areaFolder.SubFolders)
+                                                            {
+                                                                <tr class="subfolder-row subfolder-row folder-dropdown" data-path="@courseFolder.Path">
+                                                                    <td class="file-name">
+                                                                        <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
+                                                                        <i class="fas fa-folder folder-icon file-icon"></i> @courseFolder.Name
+                                                                    </td>
+                                                                    <td>@courseFolder.ModifiedDate.ToString("MM/dd/yyyy h:mm tt")</td>
+                                                                    <td>File folder</td>
+                                                                    <td>@courseFolder.ItemCount items</td>
+                                                                    <td class="file-actions">
+                                                                        <button class="action-btn" title="Delete" onclick="deleteFolder('@courseFolder.Path')">
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                <!-- Course Subfolders (Years) -->
+                                                                @if (courseFolder.SubFolders != null && courseFolder.SubFolders.Any())
+                                                                {
+                                                                    <tr class="subfolder-container" data-parent="@courseFolder.Path">
+                                                                        <td colspan="5" class="p-0">
+                                                                            <table class="file-list w-100">
+                                                                                @foreach (var yearFolder in courseFolder.SubFolders)
+                                                                                {
+                                                                                    <tr class="subfolder-row subfolder-row subfolder-row" data-path="@yearFolder.Path">
+                                                                                        <td class="file-name">
+                                                                                            <span class="file-spacer"></span>
+                                                                                            <i class="fas fa-folder folder-icon file-icon"></i> @yearFolder.Name
+                                                                                        </td>
+                                                                                        <td>@yearFolder.ModifiedDate.ToString("MM/dd/yyyy h:mm tt")</td>
+                                                                                        <td>File folder</td>
+                                                                                        <td>@yearFolder.ItemCount items</td>
+                                                                                        <td class="file-actions">
+                                                                                            <button class="action-btn" title="Delete" onclick="deleteFolder('@yearFolder.Path')">
+                                                                                                <i class="fas fa-trash"></i>
+                                                                                            </button>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                }
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
                                                         </table>
                                                     </td>
                                                 </tr>
+                                            }
+                                        }
 
-                                                <!-- For the BSIS folder under Area 1, add folder-dropdown class and update the HTML structure -->
-                                                <tr class="subfolder-row subfolder-row folder-dropdown" data-path="Thesis/Area 1/BSIS">
-                                                    <td class="file-name">
-                                                        <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                                        <i class="fas fa-folder folder-icon file-icon"></i> BSIS
-                                                    </td>
-                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                    <td>File folder</td>
-                                                    <td>-</td>
-                                                    <td class="file-actions">
-                                                        <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 1/BSIS')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <!-- BSIS Year Subfolders -->
-                                                <tr class="subfolder-container" data-parent="Thesis/Area 1/BSIS">
-                                                    <td colspan="5" class="p-0">
-                                                        <table class="file-list w-100">
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 1/BSIS/2025">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2025
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 1/BSIS/2025')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 1/BSIS/2026">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2026
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 1/BSIS/2026')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- For the BSCS folder under Area 2, add folder-dropdown class and update the HTML structure -->
-                                                <tr class="subfolder-row subfolder-row folder-dropdown" data-path="Thesis/Area 2/BSCS">
-                                                    <td class="file-name">
-                                                        <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                                        <i class="fas fa-folder folder-icon file-icon"></i> BSCS
-                                                    </td>
-                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                    <td>File folder</td>
-                                                    <td>-</td>
-                                                    <td class="file-actions">
-                                                        <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSCS')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <!-- BSCS Year Subfolders -->
-                                                <tr class="subfolder-container" data-parent="Thesis/Area 2/BSCS">
-                                                    <td colspan="5" class="p-0">
-                                                        <table class="file-list w-100">
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 2/BSCS/2025">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2025
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSCS/2025')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 2/BSCS/2026">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2026
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSCS/2026')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- For the BSIS folder under Area 2, add folder-dropdown class and update the HTML structure -->
-                                                <tr class="subfolder-row subfolder-row folder-dropdown" data-path="Thesis/Area 2/BSIS">
-                                                    <td class="file-name">
-                                                        <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                                        <i class="fas fa-folder folder-icon file-icon"></i> BSIS
-                                                    </td>
-                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                    <td>File folder</td>
-                                                    <td>-</td>
-                                                    <td class="file-actions">
-                                                        <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSIS')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <!-- BSIS Year Subfolders -->
-                                                <tr class="subfolder-container" data-parent="Thesis/Area 2/BSIS">
-                                                    <td colspan="5" class="p-0">
-                                                        <table class="file-list w-100">
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 2/BSIS/2025">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2025
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSIS/2025')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="Thesis/Area 2/BSIS/2026">
-                                                                <td class="file-name">
-                                                                    <span class="file-spacer"></span>
-                                                                    <i class="fas fa-folder folder-icon file-icon"></i> 2026
-                                                                </td>
-                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                <td>File folder</td>
-                                                                <td>-</td>
-                                                                <td class="file-actions">
-                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSIS/2026')">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-
-                                    <tr class="subfolder-row folder-dropdown" data-path="Thesis/Area 2">
-                                        <td class="file-name">
-                                            <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                            <i class="fas fa-folder folder-icon file-icon"></i> Area 2
-                                        </td>
-                                        <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                        <td>File folder</td>
-                                        <td>-</td>
-                                        <td class="file-actions">
-                                            <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <!-- Area 2 Subfolders -->
-                                    <tr class="subfolder-container" data-parent="Thesis/Area 2">
-                                        <td colspan="5" class="p-0">
-                                            <table class="file-list w-100">
-                                                <tr class="subfolder-row subfolder-row" data-path="Thesis/Area 2/BSCS">
-                                                    <td class="file-name">
-                                                        <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                                        <i class="fas fa-folder folder-icon file-icon"></i> BSCS
-                                                    </td>
-                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                    <td>File folder</td>
-                                                    <td>-</td>
-                                                    <td class="file-actions">
-                                                        <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSCS')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr class="subfolder-row subfolder-row" data-path="Thesis/Area 2/BSIS">
-                                                    <td class="file-name">
-                                                        <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
-                                                        <i class="fas fa-folder folder-icon file-icon"></i> BSIS
-                                                    </td>
-                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                    <td>File folder</td>
-                                                    <td>-</td>
-                                                    <td class="file-actions">
-                                                        <button class="action-btn" title="Delete" onclick="deleteFolder('Thesis/Area 2/BSIS')">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-
-                        <tr class="folder-item" data-path="ALCU">
-                            <td class="file-name">
-                                <span class="toggle-icon"><i class="fas fa-chevron-right"></i></span>
-                                <i class="fas fa-folder folder-icon file-icon"></i> ALCU
-                            </td>
-                            <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                            <td>File folder</td>
-                            <td>@Model.GetFileCount("ALCU") items</td>
-                            <td class="file-actions">
-                                <button class="action-btn" title="Delete" onclick="deleteFolder('ALCU')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <tr class="folder-item" data-path="Memo">
-                            <td class="file-name">
-                                <span class="toggle-icon"><i class="fas fa-chevron-right"></i></span>
-                                <i class="fas fa-folder folder-icon file-icon"></i> Memo
-                            </td>
-                            <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                            <td>File folder</td>
-                            <td>@Model.GetFileCount("Memo") items</td>
-                            <td class="file-actions">
-                                <button class="action-btn" title="Delete" onclick="deleteFolder('Memo')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                                        <!-- Add Area button at the category level -->
+                                        <tr class="add-area-row">
+                                            <td class="file-name add-folder-btn" onclick="showAddAreaModal('@category')">
+                                                <i class="fas fa-folder-plus file-icon"></i> Add Area
+                                            </td>
+                                            <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
+                                            <td>Action</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        }
 
                         <tr class="add-category-row">
                             <td class="file-name add-folder-btn" data-toggle="modal" data-target="#addCategoryModal">
@@ -595,6 +377,7 @@
                             <td></td>
                             <td></td>
                         </tr>
+
                     }
                     else
                     {
@@ -616,6 +399,8 @@
                                 </td>
                             </tr>
                         }
+
+
 
                         @foreach (var file in Model.CurrentFiles)
                         {
@@ -641,31 +426,103 @@
                 </tbody>
             </table>
         </div>
+        <!-- Modal for adding a new category folder -->
+        <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="addCategoryForm" method="post" asp-page-handler="AddCategory">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="categoryName">Category Name</label>
+                                <input type="text" class="form-control" id="categoryName" name="categoryName" required
+                                       minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
+                                       title="Category name can only contain letters, numbers, spaces, hyphens, and underscores">
+                                <div class="invalid-feedback" id="categoryNameFeedback"></div>
+                                <small class="form-text text-muted">
+                                    Category name must be 2-50 characters and contain only letters, numbers, spaces, hyphens, and underscores.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="createCategoryBtn">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="categorySpinner"></span>
+                                Create Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for adding a new Area folder -->
+        <div class="modal fade" id="addAreaModal" tabindex="-1" role="dialog" aria-labelledby="addAreaModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addAreaModalLabel">Add New Area</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="addAreaForm" method="post" asp-page-handler="AddArea">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="areaName">Area Name</label>
+                                <input type="text" class="form-control" id="areaName" name="areaName" required
+                                       minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
+                                       title="Area name can only contain letters, numbers, spaces, hyphens, and underscores">
+                                <small class="form-text text-muted">
+                                    Area name must be 2-50 characters and contain only letters, numbers, spaces, hyphens, and underscores.
+                                </small>
+                            </div>
+                            <input type="hidden" name="categoryId" id="categoryIdForArea">
+                            <input type="hidden" name="categoryName" id="categoryNameForArea">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="createAreaBtn">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="areaSpinner"></span>
+                                Create Area
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- Modal for adding a new category folder -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form method="post" asp-page-handler="AddCategory">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="categoryName">Category Name</label>
-                        <input type="text" class="form-control" id="categoryName" name="categoryName" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create Category</button>
-                </div>
-            </form>
+<!-- Toast notifications container -->
+<div class="position-fixed bottom-0 right-0 p-3" style="z-index: 5; right: 0; bottom: 0;">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+        <div class="toast-header bg-success text-white">
+            <strong class="mr-auto">Success</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body" id="successToastBody">
+            Category created successfully!
+        </div>
+    </div>
+
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
+        <div class="toast-header bg-danger text-white">
+            <strong class="mr-auto">Error</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body" id="errorToastBody">
+            An error occurred.
         </div>
     </div>
 </div>
@@ -726,44 +583,105 @@
     </div>
 </div>
 
+<!-- Add this to your AdminFileFolder.cshtml file, just before the -->
+<!-- Modal for adding a new category folder -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addCategoryForm" method="post" asp-page-handler="AddCategory">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="categoryName">Category Name</label>
+                        <input type="text" class="form-control" id="categoryName" name="categoryName" required
+                               minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
+                               title="Category name can only contain letters, numbers, spaces, hyphens, and underscores">
+                        <div class="invalid-feedback" id="categoryNameFeedback"></div>
+                        <small class="form-text text-muted">
+                            Category name must be 2-50 characters and contain only letters, numbers, spaces, hyphens, and underscores.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="createCategoryBtn">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="categorySpinner"></span>
+                        Create Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-                $(document).ready(function() {
+                // Pass TempData messages to JavaScript
+        var tempDataSuccessMessage = '@Html.Raw(Json.Serialize(TempData["SuccessMessage"]?.ToString()))';
+        var tempDataErrorMessage = '@Html.Raw(Json.Serialize(TempData["ErrorMessage"]?.ToString()))';
+
+        $(document).ready(function() {
             // Refresh button handler
             $('#refreshBtn').click(function() {
                 window.location.reload();
             });
 
-            // Modified folder click handler for both navigation and dropdown
-            $('.file-name').on('click', function(e) {
+            // Initialize: Hide all subfolder containers initially
+            $('.subfolder-container').hide();
+
+            // Use event delegation for all dynamic elements
+            $(document).on('click', '.file-name', function(e) {
                 const folderRow = $(this).closest('.folder-item, .subfolder-row');
 
-                // Check if this is a folder with dropdowns
-                if (folderRow.hasClass('folder-dropdown')) {
-                    // If it's a dropdown folder, toggle the dropdown instead of navigating
+                // Special handling for Add Category row
+                if ($(this).closest('.add-category-row').length) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // Toggle the icon
-                    const toggleIcon = $(this).find('.toggle-icon');
-                    toggleIcon.find('.caret-icon').toggleClass('open');
-
-                    // Get the folder path and toggle subfolder visibility
-                    const folderPath = folderRow.data('path');
-                    const subfolderContainer = $(`tr.subfolder-container[data-parent="${folderPath}"]`);
-                    subfolderContainer.toggle();
-                } else {
-                    // For regular folders without dropdowns, navigate to them
-                    // Skip if clicking on toggle icon (which has its own handler)
-                    if ($(e.target).closest('.toggle-icon').length === 0) {
-                        const folderPath = folderRow.data('path');
-                        navigateToFolder(folderPath);
+                    // Try to use Bootstrap's modal if available
+                    try {
+                        $('#addCategoryModal').modal('show');
+                    } catch (error) {
+                        // Fallback to manual display if Bootstrap modal is not available
+                        $('#addCategoryModal').addClass('show').css({
+                            'display': 'block',
+                            'background-color': 'rgba(0,0,0,0.5)'
+                        });
+                        $('body').addClass('modal-open');
                     }
+                    return;
+                }
+
+                // Regular folder handling
+                if (folderRow.hasClass('folder-dropdown')) {
+                    // Only if not clicking on the toggle icon itself
+                    if ($(e.target).closest('.toggle-icon').length === 0) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Toggle the icon
+                        const toggleIcon = folderRow.find('.toggle-icon .caret-icon');
+                        toggleIcon.toggleClass('open');
+
+                        // Toggle subfolder visibility
+                        const folderPath = folderRow.data('path');
+                        const subfolderContainer = $(`tr.subfolder-container[data-parent="${folderPath}"]`);
+                        subfolderContainer.toggle();
+                    }
+                } else if (!$(e.target).closest('.toggle-icon').length) {
+                    // Navigate to folder if not clicking on the toggle icon
+                    const folderPath = folderRow.data('path');
+                    navigateToFolder(folderPath);
                 }
             });
 
-            // Toggle icon click handler (keep this separate to handle icon clicks specifically)
-            $('.toggle-icon').on('click', function(e) {
+            // Toggle icon click handler
+            $(document).on('click', '.toggle-icon', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -779,8 +697,108 @@
                 subfolderContainer.toggle();
             });
 
-            // Initialize: Hide all subfolder containers initially
-            $('.subfolder-container').hide();
+            // Modal close handlers
+            $(document).on('click', '#addCategoryModal .close, #addCategoryModal button[data-dismiss="modal"]', function() {
+                try {
+                    $('#addCategoryModal').modal('hide');
+                } catch (error) {
+                    // Fallback
+                    $('#addCategoryModal').removeClass('show').css('display', 'none');
+                    $('body').removeClass('modal-open');
+                }
+            });
+
+            // Category form submission
+            $('#addCategoryForm').on('submit', function() {
+                // Show loading spinner
+                $('#categorySpinner').removeClass('d-none');
+                $('#createCategoryBtn').attr('disabled', true);
+
+                // Let the form submit normally
+                return true;
+            });
+
+            // Clear the modals when closed
+            $('#addFolderModal').on('hidden.bs.modal', function() {
+                $(this).find('form').trigger('reset');
+            });
+
+            $('#addCategoryModal').on('hidden.bs.modal', function() {
+                $('#categoryName').removeClass('is-invalid');
+                $('#categoryNameFeedback').text('');
+                $('#addCategoryForm')[0].reset();
+            });
+
+            // Show toast notifications if TempData contains messages
+            if (tempDataSuccessMessage && tempDataSuccessMessage !== 'null') {
+                $('#successToastBody').text(tempDataSuccessMessage);
+                try {
+                    $('#successToast').toast('show');
+                } catch (error) {
+                    // Fallback
+                    $('#successToast').addClass('show').css('display', 'block');
+                    setTimeout(function() {
+                        $('#successToast').removeClass('show').css('display', 'none');
+                    }, 5000);
+                }
+            }
+
+            if (tempDataErrorMessage && tempDataErrorMessage !== 'null') {
+                $('#errorToastBody').text(tempDataErrorMessage);
+                try {
+                    $('#errorToast').toast('show');
+                } catch (error) {
+                    // Fallback
+                    $('#errorToast').addClass('show').css('display', 'block');
+                    setTimeout(function() {
+                        $('#errorToast').removeClass('show').css('display', 'none');
+                    }, 5000);
+                }
+            }
+        });
+
+                // Function to show the Add Area modal
+        function showAddAreaModal(categoryName) {
+            // Set the category name in the hidden field
+            $('#categoryNameForArea').val(categoryName);
+
+            try {
+                $('#addAreaModal').modal('show');
+            } catch (error) {
+                // Fallback to manual display if Bootstrap modal is not available
+                $('#addAreaModal').addClass('show').css({
+                    'display': 'block',
+                    'background-color': 'rgba(0,0,0,0.5)'
+                });
+                $('body').addClass('modal-open');
+            }
+        }
+
+                // Area form submission
+        $('#addAreaForm').on('submit', function() {
+            // Show loading spinner
+            $('#areaSpinner').removeClass('d-none');
+            $('#createAreaBtn').attr('disabled', true);
+
+            // Let the form submit normally
+            return true;
+        });
+
+        // Modal close handlers for Area modal
+        $(document).on('click', '#addAreaModal .close, #addAreaModal button[data-dismiss="modal"]', function() {
+            try {
+                $('#addAreaModal').modal('hide');
+            } catch (error) {
+                // Fallback
+                $('#addAreaModal').removeClass('show').css('display', 'none');
+                $('body').removeClass('modal-open');
+            }
+        });
+
+        // Clear the Area modal when closed
+        $('#addAreaModal').on('hidden.bs.modal', function() {
+            $('#areaName').removeClass('is-invalid');
+            $('#addAreaForm')[0].reset();
         });
 
         // Function to delete a file
@@ -823,10 +841,20 @@
             }
         }
 
-        // Function to navigate to a folder
+        // Fix for navigateToFolder function
         function navigateToFolder(folderPath) {
-            const category = folderPath.split('/')[0];
-            window.location.href = `/AdminPage/AdminFileFolder?category=${category}&folderPath=${folderPath}`;
+            if (!folderPath) {
+                console.error('Folder path is undefined');
+                return;
+            }
+
+            const pathParts = folderPath.split('/');
+            if (pathParts.length > 0) {
+                const category = pathParts[0];
+                window.location.href = `/AdminPage/AdminFileFolder?category=${encodeURIComponent(category)}&folderPath=${encodeURIComponent(folderPath)}`;
+            } else {
+                console.error('Invalid folder path format');
+            }
         }
     </script>
 }
