@@ -482,6 +482,144 @@
             return RedirectToPage();
         }
 
+        // Handler for adding a new course
+        public async Task<IActionResult> OnPostAddCourse(string courseName, string areaPath, string categoryName)
+        {
+            if (!string.IsNullOrWhiteSpace(courseName) && !string.IsNullOrWhiteSpace(areaPath) && !string.IsNullOrWhiteSpace(categoryName))
+            {
+                try
+                {
+                    // Get area name from the path
+                    string areaName = areaPath.Split('/').Last();
+
+                    // Find the area
+                    var area = await _context.Areas
+                        .Include(a => a.Category)
+                        .FirstOrDefaultAsync(a => a.Name == areaName && a.Category.Name == categoryName);
+
+                    if (area == null)
+                    {
+                        TempData["ErrorMessage"] = "Area not found";
+                        return RedirectToPage();
+                    }
+
+                    // Check if course already exists in this area
+                    if (await _context.Courses.AnyAsync(c => c.AreaId == area.AreaId && c.Name == courseName))
+                    {
+                        TempData["ErrorMessage"] = "Course already exists in this area";
+                        return RedirectToPage(new { category = categoryName });
+                    }
+
+                    // Add the course to the database
+                    var course = new Course
+                    {
+                        Name = courseName,
+                        AreaId = area.AreaId
+                    };
+                    _context.Courses.Add(course);
+                    await _context.SaveChangesAsync();
+
+                    // Add default year folders (2025, 2026)
+                    var yearFolders = new List<YearFolder>
+            {
+                new YearFolder { Year = 2025, Course = course, CreatedAt = DateTime.Now },
+                new YearFolder { Year = 2026, Course = course, CreatedAt = DateTime.Now }
+            };
+                    _context.YearFolders.AddRange(yearFolders);
+                    await _context.SaveChangesAsync();
+
+                    // Create directories in the file system
+                    string coursePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", areaPath, courseName);
+                    if (!Directory.Exists(coursePath))
+                    {
+                        Directory.CreateDirectory(coursePath);
+                        // Create year folders
+                        Directory.CreateDirectory(Path.Combine(coursePath, "2025"));
+                        Directory.CreateDirectory(Path.Combine(coursePath, "2026"));
+                    }
+
+                    TempData["SuccessMessage"] = "Course created successfully";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Error creating course: {ex.Message}";
+                }
+
+                return RedirectToPage(new { category = categoryName });
+            }
+
+            TempData["ErrorMessage"] = "Course name cannot be empty";
+            return RedirectToPage();
+        }
+
+        // Handler for adding a new year
+        public async Task<IActionResult> OnPostAddYear(int year, string coursePath, string categoryName, string areaPath)
+        {
+            if (year >= 2000 && year <= 2100 &&
+                !string.IsNullOrWhiteSpace(coursePath) &&
+                !string.IsNullOrWhiteSpace(categoryName) &&
+                !string.IsNullOrWhiteSpace(areaPath))
+            {
+                try
+                {
+                    // Extract course and area names from the paths
+                    string courseName = coursePath.Split('/').Last();
+                    string areaName = areaPath.Split('/').Last();
+
+                    // Find the course in the database
+                    var course = await _context.Courses
+                        .Include(c => c.Area)
+                            .ThenInclude(a => a.Category)
+                        .FirstOrDefaultAsync(c =>
+                            c.Name == courseName &&
+                            c.Area.Name == areaName &&
+                            c.Area.Category.Name == categoryName);
+
+                    if (course == null)
+                    {
+                        TempData["ErrorMessage"] = "Course not found";
+                        return RedirectToPage();
+                    }
+
+                    // Check if the year folder already exists
+                    if (await _context.YearFolders.AnyAsync(y => y.CourseId == course.CourseId && y.Year == year))
+                    {
+                        TempData["ErrorMessage"] = "Year already exists in this course";
+                        return RedirectToPage(new { category = categoryName });
+                    }
+
+                    // Create the year folder in the database
+                    var yearFolder = new YearFolder
+                    {
+                        Year = year,
+                        CourseId = course.CourseId,
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.YearFolders.Add(yearFolder);
+                    await _context.SaveChangesAsync();
+
+                    // Create the corresponding directory in the file system
+                    string yearPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", coursePath, year.ToString());
+                    if (!Directory.Exists(yearPath))
+                    {
+                        Directory.CreateDirectory(yearPath);
+                    }
+
+                    TempData["SuccessMessage"] = "Year created successfully";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Error creating year: {ex.Message}";
+                }
+
+                return RedirectToPage(new { category = categoryName, folderPath = areaPath });
+            }
+
+            TempData["ErrorMessage"] = "Year is invalid";
+            return RedirectToPage();
+        }
+
+
         // Handler for adding a new folder
         public IActionResult OnPostAddFolder(string folderName, string category, string currentPath)
             {

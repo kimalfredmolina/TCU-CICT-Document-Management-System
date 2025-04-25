@@ -342,11 +342,31 @@
                                                                                         </td>
                                                                                     </tr>
                                                                                 }
+                                                                                <!-- Add Year button at the course level -->
+                                                                                <tr class="add-year-row">
+                                                                                    <td class="file-name add-folder-btn" onclick="showAddYearModal('@courseFolder.Path', '@category', '@areaFolder.Path')">
+                                                                                        <i class="fas fa-folder-plus file-icon"></i> Add Year
+                                                                                    </td>
+                                                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
+                                                                                    <td>Action</td>
+                                                                                    <td></td>
+                                                                                    <td></td>
+                                                                                </tr>
                                                                             </table>
                                                                         </td>
                                                                     </tr>
                                                                 }
                                                             }
+                                                            <!-- Add Course button at the area level -->
+                                                            <tr class="add-course-row">
+                                                                <td class="file-name add-folder-btn" onclick="showAddCourseModal('@areaFolder.Path', '@category')">
+                                                                    <i class="fas fa-folder-plus file-icon"></i> Add Course
+                                                                </td>
+                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
+                                                                <td>Action</td>
+                                                                <td></td>
+                                                                <td></td>
+                                                            </tr>
                                                         </table>
                                                     </td>
                                                 </tr>
@@ -356,7 +376,7 @@
                                         <!-- Add Area button at the category level -->
                                         <tr class="add-area-row">
                                             <td class="file-name add-folder-btn" onclick="showAddAreaModal('@category')">
-                                                <i class="fas fa-folder-plus file-icon"></i> Add Area
+                                                <i class="fas fa-folder-plus file-ico   n"></i> Add Area
                                             </td>
                                             <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
                                             <td>Action</td>
@@ -490,6 +510,80 @@
                             <button type="submit" class="btn btn-primary" id="createAreaBtn">
                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="areaSpinner"></span>
                                 Create Area
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for adding a new Course folder -->
+        <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCourseModalLabel">Add New Course</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="addCourseForm" method="post" asp-page-handler="AddCourse">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="courseName">Course Name</label>
+                                <input type="text" class="form-control" id="courseName" name="courseName" required
+                                       minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
+                                       title="Course name can only contain letters, numbers, spaces, hyphens, and underscores">
+                                <small class="form-text text-muted">
+                                    Course name must be 2-50 characters and contain only letters, numbers, spaces, hyphens, and underscores.
+                                </small>
+                            </div>
+                            <input type="hidden" name="areaId" id="areaIdForCourse">
+                            <input type="hidden" name="areaPath" id="areaPathForCourse">
+                            <input type="hidden" name="categoryName" id="categoryNameForCourse">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="createCourseBtn">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="courseSpinner"></span>
+                                Create Course
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for adding a new Year folder -->
+        <div class="modal fade" id="addYearModal" tabindex="-1" role="dialog" aria-labelledby="addYearModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addYearModalLabel">Add New Year</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="addYearForm" method="post" asp-page-handler="AddYear">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="yearName">Year</label>
+                                <input type="number" class="form-control" id="yearName" name="year" required
+                                       min="2000" max="2100" step="1"
+                                       title="Please enter a valid year between 2000 and 2100">
+                                <small class="form-text text-muted">
+                                    Please enter a valid year between 2000 and 2100.
+                                </small>
+                            </div>
+                            <input type="hidden" name="coursePath" id="coursePathForYear">
+                            <input type="hidden" name="categoryName" id="categoryNameForYear">
+                            <input type="hidden" name="areaPath" id="areaPathForYear">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="createYearBtn">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="yearSpinner"></span>
+                                Create Year
                             </button>
                         </div>
                     </form>
@@ -757,6 +851,50 @@
             }
         });
 
+                // Function to show the Add Course modal
+        function showAddCourseModal(areaPath, categoryName) {
+            // Set the values in the hidden fields
+            $('#areaPathForCourse').val(areaPath);
+            $('#categoryNameForCourse').val(categoryName);
+
+            try {
+                $('#addCourseModal').modal('show');
+            } catch (error) {
+                // Fallback to manual display if Bootstrap modal is not available
+                $('#addCourseModal').addClass('show').css({
+                    'display': 'block',
+                    'background-color': 'rgba(0,0,0,0.5)'
+                });
+                $('body').addClass('modal-open');
+            }
+        }
+                // Course form submission
+        $('#addCourseForm').on('submit', function() {
+            // Show loading spinner
+            $('#courseSpinner').removeClass('d-none');
+            $('#createCourseBtn').attr('disabled', true);
+
+            // Let the form submit normally
+            return true;
+        });
+
+                // Modal close handlers for Course modal
+        $(document).on('click', '#addCourseModal .close, #addCourseModal button[data-dismiss="modal"]', function() {
+            try {
+                $('#addCourseModal').modal('hide');
+            } catch (error) {
+                // Fallback
+                $('#addCourseModal').removeClass('show').css('display', 'none');
+                $('body').removeClass('modal-open');
+            }
+        });
+
+        // Clear the Course modal when closed
+        $('#addCourseModal').on('hidden.bs.modal', function() {
+            $('#courseName').removeClass('is-invalid');
+            $('#addCourseForm')[0].reset();
+        });
+
                 // Function to show the Add Area modal
         function showAddAreaModal(categoryName) {
             // Set the category name in the hidden field
@@ -799,6 +937,52 @@
         $('#addAreaModal').on('hidden.bs.modal', function() {
             $('#areaName').removeClass('is-invalid');
             $('#addAreaForm')[0].reset();
+        });
+
+                // Function to show the Add Year modal
+        function showAddYearModal(coursePath, categoryName, areaPath) {
+            // Set the values in the hidden fields
+            $('#coursePathForYear').val(coursePath);
+            $('#categoryNameForYear').val(categoryName);
+            $('#areaPathForYear').val(areaPath);
+
+            try {
+                $('#addYearModal').modal('show');
+            } catch (error) {
+                // Fallback to manual display if Bootstrap modal is not available
+                $('#addYearModal').addClass('show').css({
+                    'display': 'block',
+                    'background-color': 'rgba(0,0,0,0.5)'
+                });
+                $('body').addClass('modal-open');
+            }
+        }
+
+        // Year form submission
+        $('#addYearForm').on('submit', function() {
+            // Show loading spinner
+            $('#yearSpinner').removeClass('d-none');
+            $('#createYearBtn').attr('disabled', true);
+
+            // Let the form submit normally
+            return true;
+        });
+
+        // Modal close handlers for Year modal
+        $(document).on('click', '#addYearModal .close, #addYearModal button[data-dismiss="modal"]', function() {
+            try {
+                $('#addYearModal').modal('hide');
+            } catch (error) {
+                // Fallback
+                $('#addYearModal').removeClass('show').css('display', 'none');
+                $('body').removeClass('modal-open');
+            }
+        });
+
+        // Clear the Year modal when closed
+        $('#addYearModal').on('hidden.bs.modal', function() {
+            $('#yearName').removeClass('is-invalid');
+            $('#addYearForm')[0].reset();
         });
 
         // Function to delete a file
