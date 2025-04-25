@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
+using Document_Management_System.Data;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -16,14 +18,20 @@ namespace Document_Management_System.Pages.AdminPage
     {
         private readonly UserManager<Users> _userManager;
         private readonly ILogger<AdminDashboardModel> _logger;
+        private readonly AppDbContext _context; // Add this for database access
 
         public string UserRole { get; private set; }
         public int ActiveUsersCount { get; private set; }
+        public int CategoriesCount { get; private set; } // Add this property
 
-        public AdminDashboardModel(UserManager<Users> userManager, ILogger<AdminDashboardModel> logger)
+        public AdminDashboardModel(
+            UserManager<Users> userManager,
+            ILogger<AdminDashboardModel> logger,
+            AppDbContext context) // Add this parameter
         {
             _userManager = userManager;
             _logger = logger;
+            _context = context;
         }
 
         public async Task OnGetAsync()
@@ -53,6 +61,9 @@ namespace Document_Management_System.Pages.AdminPage
             }
 
             ActiveUsersCount = _userManager.Users.Count();
+
+            // Count categories from the database
+            CategoriesCount = await _context.Categories.CountAsync();
         }
 
         public async Task<IActionResult> OnPostLogoutAsync()
