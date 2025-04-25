@@ -28,6 +28,7 @@ namespace Document_Management_System.Data
         public DateTime? UploadedDate { get; set; } // Nullable
         public string ContentType { get; set; } // NOT NULL
         public byte[]? FileData { get; set; } //NULLABLE
+        public string FolderPath { get; set; } // property to track which folder this document belongs to
 
     }
 

@@ -1,7 +1,7 @@
 ﻿@page
 @model Document_Management_System.Pages.AdminPage.AdminFilesModel
 @{
-    ViewData["Title"] = "Admin Files";
+    ViewData["Title"] = "File Library";
     Layout = "_LayoutDashboard";
 }
 
@@ -9,260 +9,269 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <!-- Font Awesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<!-- Bootstrap Table CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css">
 
 <style>
-    /* Your original styles plus enhancements */
-    .search-container {
-        margin-bottom: 1px;
-        display: flex;
-        gap: 10px;
-        max-width: 500px;
-        max-height: 45px;
-    }
-    /* Keep your original table styling */
-    #documentTable {
+    /* File Table Styles */
+    .file-table {
         width: 100%;
-        margin-top: 20px;
+        border-collapse: collapse;
     }
-    /* Action buttons styling */
+
+        .file-table th,
+        .file-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .file-table th {
+            background-color: #f8f9fa;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .file-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .file-icon {
+        width: 24px;
+        text-align: center;
+        margin-right: 8px;
+    }
+
+    .file-actions {
+        text-align: right;
+    }
+
     .action-btn {
-        margin: 0 5px;
+        padding: 3px 6px;
+        margin: 0 2px;
+        background: none;
+        border: none;
+        color: #6c757d;
         cursor: pointer;
     }
-    /* Bootstrap Table overrides */
-    .fixed-table-toolbar .search-input {
-        display: none; /* Hide the Bootstrap Table search box */
-    }
 
-    /* Preview Section */
-    #previewSection {
-        border: 1px solid #ccc;
-        padding: 10px;
-        height: 300px;
-        overflow-y: auto;
-    }
+        .action-btn:hover {
+            color: #0d6efd;
+        }
 
-    #previewContainer {
-        border: 1px solid #ccc;
-        padding: 10px;
-        height: 100%;
-        overflow-y: auto;
-    }
-
-    /* Modal Styles */
-    .modal-header {
+    /* Upload Section */
+    .upload-section {
+        padding: 20px;
         background-color: #f8f9fa;
+        border-radius: 4px;
+        margin-bottom: 20px;
     }
 
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
+    /* Breadcrumb */
+    .folder-breadcrumb {
+        padding: 10px 0;
+        margin-bottom: 20px;
     }
 </style>
 
 <div class="container-fluid">
-    <h2>Document List</h2>
+    <div class="folder-breadcrumb">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/AdminPage/AdminFileFolder">File Explorer</a></li>
+                @if (!string.IsNullOrEmpty(Model.Category))
+                {
+                    <li class="breadcrumb-item">
+                        <a href="/AdminPage/AdminFileFolder?category=@Model.Category">@Model.Category</a>
+                    </li>
+                }
 
-    <!-- Search and Delete Toolbar -->
-    <div class="d-flex justify-content-between mb-3">
-        <div class="search-container">
+                @if (!string.IsNullOrEmpty(Model.FolderPath))
+                {
+                    string currentPath = string.Empty;
+                    string[] pathParts = Model.FolderPath.Split('/');
+
+                    for (int i = 0; i < pathParts.Length; i++)
+                    {
+                        if (i == 0 && pathParts[i] == Model.Category)
+                        {
+                            continue;
+                        }
+
+                        currentPath += (currentPath.Length > 0 ? "/" : "") + pathParts[i];
+                        string fullPath = (i == 0 ? pathParts[i] : Model.Category + "/" + currentPath);
+
+                        <li class="breadcrumb-item @(i == pathParts.Length - 1 ? "active" : "")">
+                            @if (i == pathParts.Length - 1)
+                            {
+                                @pathParts[i]
+                            }
+                            else
+                            {
+                                <a href="/AdminPage/AdminFileFolder?category=@Model.Category&folderPath=@fullPath">@pathParts[i]</a>
+                            }
+                        </li>
+                    }
+                }
+            </ol>
+        </nav>
+    </div>
+
+    <h1>Files in @(string.IsNullOrEmpty(Model.FolderPath) ? "Root" : Model.FolderPath.Split('/').Last())</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
             <form method="get" class="d-flex">
-                <input type="text" name="SearchQuery" value="@Model.SearchQuery"
-                       placeholder="Search Documents..." class="form-control me-2" />
+                <input type="hidden" name="FolderPath" value="@Model.FolderPath" />
+                <input type="hidden" name="Category" value="@Model.Category" />
+                <input type="text" name="SearchQuery" value="@Model.SearchQuery" class="form-control me-2" placeholder="Search files..." />
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
     </div>
 
-    <!-- Enhanced table with Bootstrap Table -->
-    <table id="documentTable"
-           data-toggle="table"
-           data-pagination="true"
-           data-page-size="10"
-           data-search="false">
-        <thead>
-            <tr>
-                <th data-field="id" data-sortable="true">ID</th>
-                <th data-field="filename" data-sortable="true">File Name</th>
-                <th data-field="category" data-sortable="true">Category</th>
-                <th data-field="contentType" data-sortable="true">Content Type</th>
-                <th data-field="filesize" data-sortable="true">File Size</th>
-                <th data-field="fileType" data-sortable="true">File Type</th>
-                <th data-field="uploadedBy" data-sortable="true">Uploaded By</th>
-                <th data-field="uploadedDate" data-sortable="true">Uploaded Date</th>
-                <th data-field="actions">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Documents != null && Model.Documents.Any())
-            {
-                foreach (var document in Model.Documents)
+    <div class="upload-section">
+        <h4>Upload New File</h4>
+        <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile">
+            <input type="hidden" name="FolderPath" value="@Model.FolderPath" />
+            <input type="hidden" name="Category" value="@Model.Category" />
+            <div class="mb-3">
+                <input type="file" name="file" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-success">Upload</button>
+        </form>
+    </div>
+
+    @if (!Model.Documents.Any())
+    {
+        <div class="alert alert-info">
+            No files found in this folder. Upload a file to get started.
+        </div>
+    }
+    else
+    {
+        <table class="file-table">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Filename</th>
+                    <th style="width: 15%;">Size</th>
+                    <th style="width: 15%;">Type</th>
+                    <th style="width: 15%;">Uploaded</th>
+                    <th style="width: 15%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var document in Model.Documents)
                 {
                     <tr>
-                        <td>@document.Id</td>
-                        <td>@document.Filename</td>
-                        <td>@(document.CategoryId.HasValue ? document.CategoryId.Value.ToString() : "N/A")</td>
-                        <td>@(document.ContentType ?? "N/A")</td>
-                        <td>@(document.Filesize.HasValue ? document.Filesize.Value.ToString() : "N/A")</td>
-                        <td>@document.FileType</td>
-                        <td>@document.UploadedBy</td>
-                        <td>@(document.UploadedDate.HasValue ? document.UploadedDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "N/A")</td>
                         <td>
-                            <i class="fas fa-eye action-btn view-btn" data-userid="@document.Id"></i>
-                            <i class="fas fa-edit action-btn edit-btn" data-userid="@document.Id"></i>
-                            <i class="fas fa-trash action-btn delete-btn" data-userid="@document.Id"></i>
+                            <span class="file-icon">
+                                @{
+                                    string iconClass = document.FileType.ToLower() switch
+                                    {
+                                        ".pdf" => "fas fa-file-pdf",
+                                        ".doc" => "fas fa-file-word",
+                                        ".docx" => "fas fa-file-word",
+                                        ".xls" => "fas fa-file-excel",
+                                        ".xlsx" => "fas fa-file-excel",
+                                        ".ppt" => "fas fa-file-powerpoint",
+                                        ".pptx" => "fas fa-file-powerpoint",
+                                        ".jpg" => "fas fa-file-image",
+                                        ".jpeg" => "fas fa-file-image",
+                                        ".png" => "fas fa-file-image",
+                                        ".gif" => "fas fa-file-image",
+                                        ".txt" => "fas fa-file-alt",
+                                        _ => "fas fa-file"
+                                    };
+                                }
+                                <i class="@iconClass"></i>
+                            </span>
+                            @document.Filename
+                        </td>
+                        <td>@(document.Filesize.HasValue ? FormatFileSize(document.Filesize.Value) : "N/A")</td>
+                        <td>@document.FileType</td>
+                        <td>@(document.UploadedDate.HasValue ? document.UploadedDate.Value.ToString("MM/dd/yyyy") : "N/A")</td>
+                        <td class="file-actions">
+                            <a asp-page-handler="DownloadFile" asp-route-id="@document.Id" class="action-btn" title="Download">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <button type="button" class="action-btn" title="Delete"
+                                    onclick="confirmDelete(@document.Id, '@document.Filename')">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="9">No documents found.</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    }
 
-<!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Document</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm">
-                    <div class="mb-3">
-                        <label for="editName" class="form-label">File Name</label>
-                        <input type="text" class="form-control" id="editName" placeholder="Enter document name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editCategories" class="form-label">Categories</label>
-                        <input type="text" class="form-control" id="editCategories" placeholder="Enter categories">
-                    </div>
-                    <div class="mb-3">
-                        <label for="editContentType" class="form-label">Content Type</label>
-                        <input type="text" class="form-control" id="editContentType" placeholder="Enter content type">
-                    </div>
-                    <div class="mb-3">
-                        <label for="uploadFile" class="form-label">Upload Document/PNG / PDF / DOC Files</label>
-                        <input type="file" class="form-control" id="uploadFile" accept=".doc,.docx,.pdf,.png">
-                    </div>
-                    <!-- Preview Section -->
-                    <div id="previewSection" class="mt-3">
-                        <h5>Preview:</h5>
-                        <div id="previewContainer">
-                            <p class="text-muted">Preview will appear here after file selection</p>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <strong id="deleteFileName"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" asp-page-handler="DeleteFile">
+                        <input type="hidden" id="deleteFileId" name="id" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Display any messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success mt-3">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3">
+            @TempData["ErrorMessage"]
+        </div>
+    }
 </div>
 
-<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.js"></script>
-
 <script>
-    $(function() {
-        // Initialize Bootstrap Table with sorting and pagination
-        $('#documentTable').bootstrapTable({
-            search: false, // Disable the built-in search
-            sortable: true,
-            pagination: true,
-            pageSize: 10
+    function confirmDelete(id, filename) {
+        document.getElementById('deleteFileId').value = id;
+        document.getElementById('deleteFileName').textContent = filename;
+        var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+
+    // Auto-hide alerts after 5 seconds
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function() {
+            $(this).remove();
         });
-
-        // Edit button handler
-        $(document).on('click', '.edit-btn', function() {
-            const documentId = $(this).data('id');
-            const row = $(this).closest('tr');
-
-            // Populate modal with document data
-            $('#editName').val(row.find('td:eq(1)').text());
-            $('#editCategories').val(row.find('td:eq(2)').text());
-            $('#editContentType').val(row.find('td:eq(3)').text());
-
-            // Show modal
-            $('#editModal').modal('show');
-        });
-
-        // Delete button handler
-        $(document).on('click', '.delete-btn', function() {
-            const documentId = $(this).data('id');
-            if (confirm(`Are you sure you want to delete document with ID: ${documentId}?`)) {
-                // Perform delete operation here
-                console.log(`Deleting document with ID: ${documentId}`);
-            }
-        });
-
-        // File upload preview handler
-        $('#uploadFile').on('change', function() {
-            const file = this.files[0];
-            const previewContainer = $('#previewContainer');
-            previewContainer.empty();
-
-            if (!file) return;
-
-            // Validate file type
-            const allowedTypes = ['application/pdf', 'image/png', 'application/msword',
-                                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Invalid file type. Only .doc, .docx, .pdf, and .png files are allowed.');
-                $(this).val('');
-                return;
-            }
-
-            if (file.type === 'application/pdf') {
-                const pdfViewer = $('<iframe>').attr('src', URL.createObjectURL(file))
-                    .css({'width': '100%', 'height': '100%'});
-                previewContainer.append(pdfViewer);
-            } else if (file.type.startsWith('image/')) {
-                const imgPreview = $('<img>').attr('src', URL.createObjectURL(file))
-                    .css({'max-width': '100%', 'max-height': '100%'});
-                previewContainer.append(imgPreview);
-            } else {
-                previewContainer.append('<p>Word document preview is not available. Please download to view.</p>');
-            }
-        });
-
-        // Save changes handler
-        $('#saveChangesBtn').on('click', function() {
-            const name = $('#editName').val();
-            const categories = $('#editCategories').val();
-            const contentType = $('#editContentType').val();
-            const fileInput = $('#uploadFile')[0];
-
-            if (!name || !categories || !contentType) {
-                alert('Please fill out all required fields.');
-                return;
-            }
-
-            // Prepare data for saving
-            const updatedData = {
-                id: $('.edit-btn').data('id'),
-                name,
-                categories,
-                contentType,
-                file: fileInput.files[0] ? fileInput.files[0].name : null
-            };
-
-            console.log('Saving changes:', updatedData);
-            // Here you would typically make an AJAX call to save the changes
-
-            $('#editModal').modal('hide');
-        });
-    });
+    }, 5000);
 </script>
+
+@functions {
+    public string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        int order = 0;
+        double len = bytes;
+
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+
+        return $"{len:0.##} {sizes[order]}";
+    }
+}

@@ -303,8 +303,6 @@
                                                 </td>
                                             </tr>
                                             <!-- Area Subfolders (Courses) -->
-                                            @if (areaFolder.SubFolders != null && areaFolder.SubFolders.Any())
-                                            {
                                                 <tr class="subfolder-container" data-parent="@areaFolder.Path">
                                                     <td colspan="5" class="p-0">
                                                         <table class="file-list w-100">
@@ -333,10 +331,13 @@
                                                                                 @foreach (var yearFolder in courseFolder.SubFolders)
                                                                                 {
                                                                                     <tr class="subfolder-row subfolder-row subfolder-row" data-path="@yearFolder.Path">
-                                                                                        <td class="file-name">
-                                                                                            <span class="file-spacer"></span>
-                                                                                            <i class="fas fa-folder folder-icon file-icon"></i> @yearFolder.Name
-                                                                                        </td>
+                                                                                    <td class="file-name">
+                                                                                        <span class="file-spacer"></span>
+                                                                                        <i class="fas fa-folder folder-icon file-icon"></i> @yearFolder.Name
+                                                                                        <a href="/AdminPage/AdminFilesTable?folderPath=@yearFolder.Path" class="btn btn-sm btn-link ms-2">
+                                                                                            <i class="fas fa-eye"></i> View Files
+                                                                                        </a>
+                                                                                    </td>
                                                                                         <td>@yearFolder.ModifiedDate.ToString("MM/dd/yyyy h:mm tt")</td>
                                                                                         <td>File folder</td>
                                                                                         <td>@yearFolder.ItemCount items</td>
@@ -375,7 +376,6 @@
                                                         </table>
                                                     </td>
                                                 </tr>
-                                            }
                                         }
 
                                         <!-- Add Area button at the category level -->
