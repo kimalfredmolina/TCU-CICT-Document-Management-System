@@ -4,7 +4,10 @@
     ViewData["Title"] = "File Explorer";
     Layout = "_LayoutDashboard";
 }
-
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
     /* File Explorer Styles */
     .file-explorer {
@@ -237,13 +240,15 @@
         </div>
 
         <div class="explorer-toolbar">
-            <button type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#addFolderModal">
+
+            <button type="button" class="btn btn-sm btn-outline-success" id="externalAddFolderBtn" data-toggle="modal" data-target="#addFolderModal">
                 <i class="fas fa-folder-plus"></i> New Folder
             </button>
 
-            <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#uploadFileModal">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="externalUploadBtn" data-toggle="modal" data-target="#uploadFileModal">
                 <i class="fas fa-upload"></i> Upload File
             </button>
+
         </div>
 
         <div class="explorer-content">
@@ -344,7 +349,7 @@
                                                                                 }
                                                                                 <!-- Add Year button at the course level -->
                                                                                 <tr class="add-year-row">
-                                                                                    <td class="file-name add-folder-btn" onclick="showAddYearModal('@courseFolder.Path', '@category', '@areaFolder.Path')">
+                                                                                    <td class="file-name add-folder-btn" id="externalAddYearBtn" onclick="showAddYearModal('@courseFolder.Path', '@category', '@areaFolder.Path')">
                                                                                         <i class="fas fa-folder-plus file-icon"></i> Add Year
                                                                                     </td>
                                                                                     <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
@@ -359,7 +364,7 @@
                                                             }
                                                             <!-- Add Course button at the area level -->
                                                             <tr class="add-course-row">
-                                                                <td class="file-name add-folder-btn" onclick="showAddCourseModal('@areaFolder.Path', '@category')">
+                                                                <td class="file-name add-folder-btn" id="externalAddCourseBtn" onclick="showAddCourseModal('@areaFolder.Path', '@category')">
                                                                     <i class="fas fa-folder-plus file-icon"></i> Add Course
                                                                 </td>
                                                                 <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
@@ -375,7 +380,7 @@
 
                                         <!-- Add Area button at the category level -->
                                         <tr class="add-area-row">
-                                            <td class="file-name add-folder-btn" onclick="showAddAreaModal('@category')">
+                                            <td class="file-name add-folder-btn" id="externalAddAreaBtn" onclick="showAddAreaModal('@category')">
                                                 <i class="fas fa-folder-plus file-ico   n"></i> Add Area
                                             </td>
                                             <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
@@ -389,7 +394,7 @@
                         }
 
                         <tr class="add-category-row">
-                            <td class="file-name add-folder-btn" data-toggle="modal" data-target="#addCategoryModal">
+                            <td class="file-name add-folder-btn" id="externalAddCategoriesBtn" data-toggle="modal" data-target="#addCategoryModal">
                                 <i class="fas fa-folder-plus file-icon"></i> Add Category
                             </td>
                             <td></td>
@@ -446,19 +451,17 @@
                 </tbody>
             </table>
         </div>
-        <!-- Modal for adding a new category folder -->
-        <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <!-- categories Modal -->
+        <div class="modal fade" id="addCategoriesModaL" tabindex="-1" aria-labelledby="addCategoriesModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <h5 class="modal-title" id="addCategoriesModalLabel">Add New Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="addCategoryForm" method="post" asp-page-handler="AddCategory">
-                        <div class="modal-body">
-                            <div class="form-group">
+                    <div class="modal-body">
+                        <form id="addCategoryForm" method="post" asp-page-handler="AddCategory">
+                            <div class="mb-3">
                                 <label for="categoryName">Category Name</label>
                                 <input type="text" class="form-control" id="categoryName" name="categoryName" required
                                        minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
@@ -468,32 +471,28 @@
                                     Category name must be 2-50 characters and contain only letters, numbers, spaces, hyphens, and underscores.
                                 </small>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary" id="createCategoryBtn">
                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="categorySpinner"></span>
                                 Create Category
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Modal for adding a new Area folder -->
-        <div class="modal fade" id="addAreaModal" tabindex="-1" role="dialog" aria-labelledby="addAreaModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <!-- Add Area Modal -->
+        <div class="modal fade" id="addAreaModaL" tabindex="-1" aria-labelledby="addAreaModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addAreaModalLabel">Add New Area</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="addAreaForm" method="post" asp-page-handler="AddArea">
-                        <div class="modal-body">
-                            <div class="form-group">
+                    <div class="modal-body">
+                        <form id="addAreaForm" method="post" asp-page-handler="AddArea">
+                            <div class="mb-3">
                                 <label for="areaName">Area Name</label>
                                 <input type="text" class="form-control" id="areaName" name="areaName" required
                                        minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
@@ -504,32 +503,28 @@
                             </div>
                             <input type="hidden" name="categoryId" id="categoryIdForArea">
                             <input type="hidden" name="categoryName" id="categoryNameForArea">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary" id="createAreaBtn">
                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="areaSpinner"></span>
                                 Create Area
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Modal for adding a new Course folder -->
-        <div class="modal fade" id="addCourseModal" tabindex="-1" role="dialog" aria-labelledby="addCourseModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <!-- Add Course Modal -->
+        <div class="modal fade" id="addCourseModaL" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addCourseModalLabel">Add New Course</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="addCourseForm" method="post" asp-page-handler="AddCourse">
-                        <div class="modal-body">
-                            <div class="form-group">
+                    <div class="modal-body">
+                        <form id="addCourseForm" method="post" asp-page-handler="AddCourse">
+                            <div class="mb-3">
                                 <label for="courseName">Course Name</label>
                                 <input type="text" class="form-control" id="courseName" name="courseName" required
                                        minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
@@ -541,32 +536,28 @@
                             <input type="hidden" name="areaId" id="areaIdForCourse">
                             <input type="hidden" name="areaPath" id="areaPathForCourse">
                             <input type="hidden" name="categoryName" id="categoryNameForCourse">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary" id="createCourseBtn">
                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="courseSpinner"></span>
                                 Create Course
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Modal for adding a new Year folder -->
-        <div class="modal fade" id="addYearModal" tabindex="-1" role="dialog" aria-labelledby="addYearModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <!-- Add Year Modal -->
+        <div class="modal fade" id="addYearModaL" tabindex="-1" aria-labelledby="addYearModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addYearModalLabel">Add New Year</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="addYearForm" method="post" asp-page-handler="AddYear">
-                        <div class="modal-body">
-                            <div class="form-group">
+                    <div class="modal-body">
+                        <form id="addYearForm" method="post" asp-page-handler="AddYear">
+                            <div class="mb-3">
                                 <label for="yearName">Year</label>
                                 <input type="number" class="form-control" id="yearName" name="year" required
                                        min="2000" max="2100" step="1"
@@ -578,146 +569,97 @@
                             <input type="hidden" name="coursePath" id="coursePathForYear">
                             <input type="hidden" name="categoryName" id="categoryNameForYear">
                             <input type="hidden" name="areaPath" id="areaPathForYear">
-                        </div>
-                        <div class="modal-footer">
+
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" id="createYearBtn">
                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="yearSpinner"></span>
                                 Create Year
                             </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- Toast notifications container -->
-<div class="position-fixed bottom-0 right-0 p-3" style="z-index: 5; right: 0; bottom: 0;">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
-        <div class="toast-header bg-success text-white">
-            <strong class="mr-auto">Success</strong>
-            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="toast-body" id="successToastBody">
-            Category created successfully!
-        </div>
-    </div>
-
-    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">
-        <div class="toast-header bg-danger text-white">
-            <strong class="mr-auto">Error</strong>
-            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="toast-body" id="errorToastBody">
-            An error occurred.
-        </div>
-    </div>
-</div>
-
-<!-- Modal for adding a new folder -->
-<div class="modal fade" id="addFolderModal" tabindex="-1" role="dialog" aria-labelledby="addFolderModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addFolderModalLabel">Add New Folder</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form method="post" asp-page-handler="AddFolder">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="folderName">Folder Name</label>
-                        <input type="text" class="form-control" id="folderName" name="folderName" required>
-                        <input type="hidden" name="category" value="@Model.CurrentCategory">
-                        <input type="hidden" name="currentPath" value="@Model.CurrentPath">
+                        </form>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create Folder</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for uploading file -->
-<div class="modal fade" id="uploadFileModal" tabindex="-1" role="dialog" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
             </div>
-            <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="fileUpload">Select File</label>
-                        <input type="file" class="form-control-file" id="fileUpload" name="file" required>
-                        <input type="hidden" name="category" value="@Model.CurrentCategory">
-                        <input type="hidden" name="currentPath" value="@Model.CurrentPath">
+        </div>
+        <!-- Add New Folder Modal -->
+        <div class="modal fade" id="addFolderModaL" tabindex="-1" aria-labelledby="addFolderModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addFolderModalLabel">Add New Folder</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" asp-page-handler="AddFolder">
+                            <div class="mb-3">
+                                <div class="form-group">
+                                    <label for="folderName">Folder Name</label>
+                                    <input type="text" class="form-control" id="folderName" name="folderName" required>
+                                    <input type="hidden" name="category" value="@Model.CurrentCategory">
+                                    <input type="hidden" name="currentPath" value="@Model.CurrentPath">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Create Folder</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Add this to your AdminFileFolder.cshtml file, just before the -->
-<!-- Modal for adding a new category folder -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
             </div>
-            <form id="addCategoryForm" method="post" asp-page-handler="AddCategory">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="categoryName">Category Name</label>
-                        <input type="text" class="form-control" id="categoryName" name="categoryName" required
-                               minlength="2" maxlength="50" pattern="[a-zA-Z0-9\s\-_]+"
-                               title="Category name can only contain letters, numbers, spaces, hyphens, and underscores">
-                        <div class="invalid-feedback" id="categoryNameFeedback"></div>
-                        <small class="form-text text-muted">
-                            Category name must be 2-50 characters and contain only letters, numbers, spaces, hyphens, and underscores.
-                        </small>
+        </div>
+        <!-- Add Uploading Modal -->
+        <div class="modal fade" id="UploadModaL" tabindex="-1" aria-labelledby="UploadModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data" asp-page-handler="UploadFile">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="fileUpload">Select File</label>
+                                    <input type="file" class="form-control-file" id="fileUpload" name="file" required>
+                                    <input type="hidden" name="category" value="@Model.CurrentCategory">
+                                    <input type="hidden" name="currentPath" value="@Model.CurrentPath">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="createCategoryBtn">
-                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="categorySpinner"></span>
-                        Create Category
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
-
 @section Scripts {
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
                 // Pass TempData messages to JavaScript
         var tempDataSuccessMessage = '@Html.Raw(Json.Serialize(TempData["SuccessMessage"]?.ToString()))';
         var tempDataErrorMessage = '@Html.Raw(Json.Serialize(TempData["ErrorMessage"]?.ToString()))';
+                    // Handle external share button click
+                $('#externalAddCategoriesBtn').on('click', function() {
+                    $('#addCategoriesModaL').modal('show');
+                });
+                $('#externalAddAreaBtn').on('click', function() {
+                    $('#addAreaModaL').modal('show');
+                });
+                $('#externalAddCourseBtn').on('click', function() {
+                    $('#addCourseModaL').modal('show');
+                });
+                $('#externalAddYearBtn').on('click', function() {
+                    $('#addYearModaL').modal('show');
+                });
+                $('#externalAddFolderBtn').on('click', function() {
+                    $('#addFolderModaL').modal('show');
+                });
+                $('#externalUploadBtn').on('click', function() {
+                    $('#UploadModaL').modal('show');
+                });
 
         $(document).ready(function() {
             // Refresh button handler
@@ -789,17 +731,6 @@
                 // Toggle subfolder visibility
                 const subfolderContainer = $(`tr.subfolder-container[data-parent="${folderPath}"]`);
                 subfolderContainer.toggle();
-            });
-
-            // Modal close handlers
-            $(document).on('click', '#addCategoryModal .close, #addCategoryModal button[data-dismiss="modal"]', function() {
-                try {
-                    $('#addCategoryModal').modal('hide');
-                } catch (error) {
-                    // Fallback
-                    $('#addCategoryModal').removeClass('show').css('display', 'none');
-                    $('body').removeClass('modal-open');
-                }
             });
 
             // Category form submission
