@@ -215,6 +215,7 @@
 
 <div class="dashboard-content">
     <h1>File Explorer</h1>
+    @Html.AntiForgeryToken()
     <div class="file-explorer">
         <div class="explorer-header">
             <nav aria-label="breadcrumb">
@@ -349,8 +350,8 @@
                                                                                     </tr>
                                                                                 }
                                                                                 <!-- Add Year button at the course level -->
-                                                                                <tr class="add-year-row">
-                                                                                    <td class="file-name add-folder-btn" id="externalAddYearBtn" onclick="showAddYearModal('@courseFolder.Path', '@category', '@areaFolder.Path')">
+                                                                                <tr class="add-year-row" data-course-path="@courseFolder.Path" data-category="@category" data-area-path="@areaFolder.Path">
+                                                                                    <td class="file-name add-folder-btn">
                                                                                         <i class="fas fa-folder-plus file-icon"></i> Add Year
                                                                                     </td>
                                                                                     <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
@@ -364,8 +365,8 @@
                                                                 }
                                                             }
                                                             <!-- Add Course button at the area level -->
-                                                            <tr class="add-course-row">
-                                                                <td class="file-name add-folder-btn" id="externalAddCourseBtn" onclick="showAddCourseModal('@areaFolder.Path', '@category')">
+                                                            <tr class="add-course-row" data-area-path="@areaFolder.Path" data-category="@category">
+                                                                <td class="file-name add-folder-btn">
                                                                     <i class="fas fa-folder-plus file-icon"></i> Add Course
                                                                 </td>
                                                                 <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
@@ -379,9 +380,9 @@
                                         }
 
                                         <!-- Add Area button at the category level -->
-                                        <tr class="add-area-row">
-                                            <td class="file-name add-folder-btn" id="externalAddAreaBtn" onclick="showAddAreaModal('@category')">
-                                                <i class="fas fa-folder-plus file-ico   n"></i> Add Area
+                                        <tr class="add-area-row" data-category="@category">
+                                            <td class="file-name add-folder-btn">
+                                                <i class="fas fa-folder-plus file-icon"></i> Add Area
                                             </td>
                                             <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
                                             <td>Action</td>
@@ -452,7 +453,7 @@
             </table>
         </div>
         <!-- categories Modal -->
-        <div class="modal fade" id="addCategoriesModaL" tabindex="-1" aria-labelledby="addCategoriesModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addCategoriesModal" tabindex="-1" aria-labelledby="addCategoriesModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -483,7 +484,7 @@
             </div>
         </div>
         <!-- Add Area Modal -->
-        <div class="modal fade" id="addAreaModaL" tabindex="-1" aria-labelledby="addAreaModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addAreaModal" tabindex="-1" aria-labelledby="addAreaModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -515,7 +516,7 @@
             </div>
         </div>
         <!-- Add Course Modal -->
-        <div class="modal fade" id="addCourseModaL" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addCourseModal" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -548,7 +549,7 @@
             </div>
         </div>
         <!-- Add Year Modal -->
-        <div class="modal fade" id="addYearModaL" tabindex="-1" aria-labelledby="addYearModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addYearModal" tabindex="-1" aria-labelledby="addYearModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -581,7 +582,7 @@
             </div>
         </div>
         <!-- Add New Folder Modal -->
-        <div class="modal fade" id="addFolderModaL" tabindex="-1" aria-labelledby="addFolderModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addFolderModal" tabindex="-1" aria-labelledby="addFolderModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -608,7 +609,7 @@
             </div>
         </div>
         <!-- Add Uploading Modal -->
-        <div class="modal fade" id="UploadModaL" tabindex="-1" aria-labelledby="UploadModalLabel" aria-hidden="true">
+        <div class="modal fade" id="UploadModal" tabindex="-1" aria-labelledby="UploadModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -637,339 +638,283 @@
 @section Scripts {
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+            <script>
                 // Pass TempData messages to JavaScript
-        var tempDataSuccessMessage = '@Html.Raw(Json.Serialize(TempData["SuccessMessage"]?.ToString()))';
-        var tempDataErrorMessage = '@Html.Raw(Json.Serialize(TempData["ErrorMessage"]?.ToString()))';
-                    // Handle external share button click
-                $('#externalAddCategoriesBtn').on('click', function() {
-                    $('#addCategoriesModaL').modal('show');
-                });
-                $('#externalAddAreaBtn').on('click', function() {
-                    $('#addAreaModaL').modal('show');
-                });
-                $('#externalAddCourseBtn').on('click', function() {
-                    $('#addCourseModaL').modal('show');
-                });
-                $('#externalAddYearBtn').on('click', function() {
-                    $('#addYearModaL').modal('show');
-                });
-                $('#externalAddFolderBtn').on('click', function() {
-                    $('#addFolderModaL').modal('show');
-                });
-                $('#externalUploadBtn').on('click', function() {
-                    $('#UploadModaL').modal('show');
+                var tempDataSuccessMessage = '@Html.Raw(Json.Serialize(TempData["SuccessMessage"]?.ToString()))';
+                var tempDataErrorMessage = '@Html.Raw(Json.Serialize(TempData["ErrorMessage"]?.ToString()))';
+
+                $(document).ready(function() {
+                    // Initialize Bootstrap 5 modals
+                    var modals = {};
+                    $('.modal').each(function() {
+                        var modalId = $(this).attr('id');
+                        try {
+                            modals[modalId] = new bootstrap.Modal(document.getElementById(modalId));
+                        } catch (error) {
+                            console.error(`Error initializing modal ${modalId}:`, error);
+                        }
+                    });
+
+                    // Refresh button handler
+                    $('#refreshBtn').click(function() {
+                        window.location.reload();
+                    });
+
+                    // Initialize: Hide all subfolder containers initially
+                    $('.subfolder-container').hide();
+
+                    // Use event delegation for all dynamic elements
+                    $(document).on('click', '.folder-dropdown', function(e) {
+                        // Only if not clicking on a button or link
+                        if (!$(e.target).closest('button').length &&
+                            !$(e.target).closest('a').length &&
+                            !$(e.target).closest('.add-folder-btn').length) {
+
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            // Toggle the icon
+                            $(this).find('.caret-icon').toggleClass('open');
+
+                            // Toggle subfolder visibility
+                            const folderPath = $(this).data('path');
+                            if (folderPath) {
+                                const subfolderContainer = $(`tr.subfolder-container[data-parent="${folderPath}"]`);
+                                subfolderContainer.toggle();
+                            }
+                        }
+                    });
+
+                    // Handle Add Area button clicks
+                    $(document).on('click', '.add-area-row .add-folder-btn, .add-area-row .fa-folder-plus', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const row = $(this).closest('.add-area-row');
+                        const categoryName = row.closest('table').closest('td').closest('tr').attr('data-parent');
+                        showAddAreaModal(categoryName);
+                    });
+
+                    // Handle Add Course button clicks
+                    $(document).on('click', '.add-course-row .add-folder-btn, .add-course-row .fa-folder-plus', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const row = $(this).closest('.add-course-row');
+                        const areaPath = row.attr('data-area-path');
+                        const categoryName = row.attr('data-category');
+                        showAddCourseModal(areaPath, categoryName);
+                    });
+
+                    // Handle Add Year button clicks
+                    $(document).on('click', '.add-year-row .add-folder-btn, .add-year-row .fa-folder-plus', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const row = $(this).closest('.add-year-row');
+                        const coursePath = row.attr('data-course-path');
+                        const categoryName = row.attr('data-category');
+                        const areaPath = row.attr('data-area-path');
+                        showAddYearModal(coursePath, categoryName, areaPath);
+                    });
+
+                    // Handle external button clicks
+                    $('#externalAddCategoriesBtn').on('click', function() {
+                        if (modals['addCategoriesModal']) {
+                            modals['addCategoriesModal'].show();
+                        }
+                    });
+
+                    $('#externalAddFolderBtn').on('click', function() {
+                        if (modals['addFolderModal']) {
+                            modals['addFolderModal'].show();
+                        }
+                    });
+
+                    $('#externalUploadBtn').on('click', function() {
+                        if (modals['UploadModal']) {
+                            modals['UploadModal'].show();
+                        }
+                    });
+
+                    // Form submissions
+                    $('#addCategoryForm, #addAreaForm, #addCourseForm, #addYearForm').on('submit', function() {
+                        const formId = $(this).attr('id');
+                        const spinnerType = formId.replace('add', '').replace('Form', '').toLowerCase();
+
+                        $(`#${spinnerType}Spinner`).removeClass('d-none');
+                        $(`#create${spinnerType.charAt(0).toUpperCase() + spinnerType.slice(1)}Btn`).attr('disabled', true);
+
+                        return true;
+                    });
+
+                    // Show toast notifications if TempData contains messages
+                    if (tempDataSuccessMessage && tempDataSuccessMessage !== 'null') {
+                        $('#successToastBody').text(tempDataSuccessMessage);
+                        try {
+                            $('#successToast').toast('show');
+                        } catch (error) {
+                            // Fallback
+                            $('#successToast').addClass('show').css('display', 'block');
+                            setTimeout(function() {
+                                $('#successToast').removeClass('show').css('display', 'none');
+                            }, 5000);
+                        }
+                    }
+
+                    if (tempDataErrorMessage && tempDataErrorMessage !== 'null') {
+                        $('#errorToastBody').text(tempDataErrorMessage);
+                        try {
+                            $('#errorToast').toast('show');
+                        } catch (error) {
+                            // Fallback
+                            $('#errorToast').addClass('show').css('display', 'block');
+                            setTimeout(function() {
+                                $('#errorToast').removeClass('show').css('display', 'none');
+                            }, 5000);
+                        }
+                    }
                 });
 
-        $(document).ready(function() {
-            // Refresh button handler
-            $('#refreshBtn').click(function() {
-                window.location.reload();
-            });
+                // Function to show the Add Area modal
+                function showAddAreaModal(category) {
+                    if (!category) {
+                        console.error('Category name is undefined');
+                        return;
+                    }
 
-            // Initialize: Hide all subfolder containers initially
-            $('.subfolder-container').hide();
+                    $('#categoryNameForArea').val(category);
 
-            // Use event delegation for all dynamic elements
-            $(document).on('click', '.file-name', function(e) {
-                const folderRow = $(this).closest('.folder-item, .subfolder-row');
-
-                // Special handling for Add Category row
-                if ($(this).closest('.add-category-row').length) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    // Try to use Bootstrap's modal if available
                     try {
-                        $('#addCategoryModal').modal('show');
+                        var modal = new bootstrap.Modal(document.getElementById('addAreaModal'));
+                        modal.show();
                     } catch (error) {
-                        // Fallback to manual display if Bootstrap modal is not available
-                        $('#addCategoryModal').addClass('show').css({
+                        // Fallback
+                        $('#addAreaModal').addClass('show').css({
                             'display': 'block',
                             'background-color': 'rgba(0,0,0,0.5)'
                         });
                         $('body').addClass('modal-open');
                     }
-                    return;
                 }
-
-                // Regular folder handling
-                if (folderRow.hasClass('folder-dropdown')) {
-                    // Only if not clicking on the toggle icon itself
-                    if ($(e.target).closest('.toggle-icon').length === 0) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        // Toggle the icon
-                        const toggleIcon = folderRow.find('.toggle-icon .caret-icon');
-                        toggleIcon.toggleClass('open');
-
-                        // Toggle subfolder visibility
-                        const folderPath = folderRow.data('path');
-                        const subfolderContainer = $(`tr.subfolder-container[data-parent="${folderPath}"]`);
-                        subfolderContainer.toggle();
-                    }
-                } else if (!$(e.target).closest('.toggle-icon').length) {
-                    // Navigate to folder if not clicking on the toggle icon
-                    const folderPath = folderRow.data('path');
-                    navigateToFolder(folderPath);
-                }
-            });
-
-            // Toggle icon click handler
-            $(document).on('click', '.toggle-icon', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                // Toggle the icon
-                $(this).find('.caret-icon').toggleClass('open');
-
-                // Get the folder path
-                const folderRow = $(this).closest('.folder-dropdown');
-                const folderPath = folderRow.data('path');
-
-                // Toggle subfolder visibility
-                const subfolderContainer = $(`tr.subfolder-container[data-parent="${folderPath}"]`);
-                subfolderContainer.toggle();
-            });
-
-            // Category form submission
-            $('#addCategoryForm').on('submit', function() {
-                // Show loading spinner
-                $('#categorySpinner').removeClass('d-none');
-                $('#createCategoryBtn').attr('disabled', true);
-
-                // Let the form submit normally
-                return true;
-            });
-
-            // Clear the modals when closed
-            $('#addFolderModal').on('hidden.bs.modal', function() {
-                $(this).find('form').trigger('reset');
-            });
-
-            $('#addCategoryModal').on('hidden.bs.modal', function() {
-                $('#categoryName').removeClass('is-invalid');
-                $('#categoryNameFeedback').text('');
-                $('#addCategoryForm')[0].reset();
-            });
-
-            // Show toast notifications if TempData contains messages
-            if (tempDataSuccessMessage && tempDataSuccessMessage !== 'null') {
-                $('#successToastBody').text(tempDataSuccessMessage);
-                try {
-                    $('#successToast').toast('show');
-                } catch (error) {
-                    // Fallback
-                    $('#successToast').addClass('show').css('display', 'block');
-                    setTimeout(function() {
-                        $('#successToast').removeClass('show').css('display', 'none');
-                    }, 5000);
-                }
-            }
-
-            if (tempDataErrorMessage && tempDataErrorMessage !== 'null') {
-                $('#errorToastBody').text(tempDataErrorMessage);
-                try {
-                    $('#errorToast').toast('show');
-                } catch (error) {
-                    // Fallback
-                    $('#errorToast').addClass('show').css('display', 'block');
-                    setTimeout(function() {
-                        $('#errorToast').removeClass('show').css('display', 'none');
-                    }, 5000);
-                }
-            }
-        });
 
                 // Function to show the Add Course modal
-        function showAddCourseModal(areaPath, categoryName) {
-            // Set the values in the hidden fields
-            $('#areaPathForCourse').val(areaPath);
-            $('#categoryNameForCourse').val(categoryName);
+                function showAddCourseModal(areaPath, categoryName) {
+                    if (!areaPath || !categoryName) {
+                        console.error('Area path or category name is undefined');
+                        return;
+                    }
 
-            try {
-                $('#addCourseModal').modal('show');
-            } catch (error) {
-                // Fallback to manual display if Bootstrap modal is not available
-                $('#addCourseModal').addClass('show').css({
-                    'display': 'block',
-                    'background-color': 'rgba(0,0,0,0.5)'
-                });
-                $('body').addClass('modal-open');
-            }
-        }
-                // Course form submission
-        $('#addCourseForm').on('submit', function() {
-            // Show loading spinner
-            $('#courseSpinner').removeClass('d-none');
-            $('#createCourseBtn').attr('disabled', true);
+                    $('#areaPathForCourse').val(areaPath);
+                    $('#categoryNameForCourse').val(categoryName);
 
-            // Let the form submit normally
-            return true;
-        });
-
-                // Modal close handlers for Course modal
-        $(document).on('click', '#addCourseModal .close, #addCourseModal button[data-dismiss="modal"]', function() {
-            try {
-                $('#addCourseModal').modal('hide');
-            } catch (error) {
-                // Fallback
-                $('#addCourseModal').removeClass('show').css('display', 'none');
-                $('body').removeClass('modal-open');
-            }
-        });
-
-        // Clear the Course modal when closed
-        $('#addCourseModal').on('hidden.bs.modal', function() {
-            $('#courseName').removeClass('is-invalid');
-            $('#addCourseForm')[0].reset();
-        });
-
-                // Function to show the Add Area modal
-        function showAddAreaModal(categoryName) {
-            // Set the category name in the hidden field
-            $('#categoryNameForArea').val(categoryName);
-
-            try {
-                $('#addAreaModal').modal('show');
-            } catch (error) {
-                // Fallback to manual display if Bootstrap modal is not available
-                $('#addAreaModal').addClass('show').css({
-                    'display': 'block',
-                    'background-color': 'rgba(0,0,0,0.5)'
-                });
-                $('body').addClass('modal-open');
-            }
-        }
-
-                // Area form submission
-        $('#addAreaForm').on('submit', function() {
-            // Show loading spinner
-            $('#areaSpinner').removeClass('d-none');
-            $('#createAreaBtn').attr('disabled', true);
-
-            // Let the form submit normally
-            return true;
-        });
-
-        // Modal close handlers for Area modal
-        $(document).on('click', '#addAreaModal .close, #addAreaModal button[data-dismiss="modal"]', function() {
-            try {
-                $('#addAreaModal').modal('hide');
-            } catch (error) {
-                // Fallback
-                $('#addAreaModal').removeClass('show').css('display', 'none');
-                $('body').removeClass('modal-open');
-            }
-        });
-
-        // Clear the Area modal when closed
-        $('#addAreaModal').on('hidden.bs.modal', function() {
-            $('#areaName').removeClass('is-invalid');
-            $('#addAreaForm')[0].reset();
-        });
+                    try {
+                        var modal = new bootstrap.Modal(document.getElementById('addCourseModal'));
+                        modal.show();
+                    } catch (error) {
+                        // Fallback
+                        $('#addCourseModal').addClass('show').css({
+                            'display': 'block',
+                            'background-color': 'rgba(0,0,0,0.5)'
+                        });
+                        $('body').addClass('modal-open');
+                    }
+                }
 
                 // Function to show the Add Year modal
-        function showAddYearModal(coursePath, categoryName, areaPath) {
-            // Set the values in the hidden fields
-            $('#coursePathForYear').val(coursePath);
-            $('#categoryNameForYear').val(categoryName);
-            $('#areaPathForYear').val(areaPath);
-
-            try {
-                $('#addYearModal').modal('show');
-            } catch (error) {
-                // Fallback to manual display if Bootstrap modal is not available
-                $('#addYearModal').addClass('show').css({
-                    'display': 'block',
-                    'background-color': 'rgba(0,0,0,0.5)'
-                });
-                $('body').addClass('modal-open');
-            }
-        }
-
-        // Year form submission
-        $('#addYearForm').on('submit', function() {
-            // Show loading spinner
-            $('#yearSpinner').removeClass('d-none');
-            $('#createYearBtn').attr('disabled', true);
-
-            // Let the form submit normally
-            return true;
-        });
-
-        // Modal close handlers for Year modal
-        $(document).on('click', '#addYearModal .close, #addYearModal button[data-dismiss="modal"]', function() {
-            try {
-                $('#addYearModal').modal('hide');
-            } catch (error) {
-                // Fallback
-                $('#addYearModal').removeClass('show').css('display', 'none');
-                $('body').removeClass('modal-open');
-            }
-        });
-
-        // Clear the Year modal when closed
-        $('#addYearModal').on('hidden.bs.modal', function() {
-            $('#yearName').removeClass('is-invalid');
-            $('#addYearForm')[0].reset();
-        });
-
-        // Function to delete a file
-        function deleteFile(fileId) {
-            if (confirm('Are you sure you want to delete this file?')) {
-                fetch('/AdminPage/AdminFileFolder?handler=DeleteFile', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                    },
-                    body: `fileId=${fileId}`
-                }).then(response => {
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        alert('Error deleting file');
+                function showAddYearModal(coursePath, categoryName, areaPath) {
+                    if (!coursePath || !categoryName || !areaPath) {
+                        console.error('Course path, category name, or area path is undefined');
+                        return;
                     }
-                });
-            }
-        }
 
-        // Function to delete a folder
-        function deleteFolder(folderPath) {
-            if (confirm('Are you sure you want to delete this folder and all its contents?')) {
-                fetch('/AdminPage/AdminFileFolder?handler=DeleteFolder', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                    },
-                    body: `folderPath=${encodeURIComponent(folderPath)}`
-                }).then(response => {
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        alert('Error deleting folder');
+                    $('#coursePathForYear').val(coursePath);
+                    $('#categoryNameForYear').val(categoryName);
+                    $('#areaPathForYear').val(areaPath);
+
+                    try {
+                        var modal = new bootstrap.Modal(document.getElementById('addYearModal'));
+                        modal.show();
+                    } catch (error) {
+                        // Fallback
+                        $('#addYearModal').addClass('show').css({
+                            'display': 'block',
+                            'background-color': 'rgba(0,0,0,0.5)'
+                        });
+                        $('body').addClass('modal-open');
                     }
-                });
-            }
-        }
+                }
 
-        // Fix for navigateToFolder function
-        function navigateToFolder(folderPath) {
-            if (!folderPath) {
-                console.error('Folder path is undefined');
-                return;
-            }
+                // Function to delete a folder
+                function deleteFolder(folderPath) {
+                    if (!folderPath) {
+                        console.error('Folder path is undefined');
+                        return;
+                    }
 
-            const pathParts = folderPath.split('/');
-            if (pathParts.length > 0) {
-                const category = pathParts[0];
-                window.location.href = `/AdminPage/AdminFileFolder?category=${encodeURIComponent(category)}&folderPath=${encodeURIComponent(folderPath)}`;
-            } else {
-                console.error('Invalid folder path format');
-            }
-        }
-    </script>
+                    if (confirm('Are you sure you want to delete this folder and all its contents?')) {
+                        fetch('/AdminPage/AdminFileFolder?handler=DeleteFolder', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: `folderPath=${encodeURIComponent(folderPath)}`
+                        }).then(response => {
+                            if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                alert('Error deleting folder. Make sure it is empty or try again later.');
+                            }
+                        }).catch(error => {
+                            console.error('Error deleting folder:', error);
+                            alert('Error deleting folder. Please try again later.');
+                        });
+                    }
+                }
+
+                // Function to delete a file
+                function deleteFile(fileId) {
+                    if (!fileId) {
+                        console.error('File ID is undefined');
+                        return;
+                    }
+
+                    if (confirm('Are you sure you want to delete this file?')) {
+                        fetch('/AdminPage/AdminFileFolder?handler=DeleteFile', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: `fileId=${encodeURIComponent(fileId)}`
+                        }).then(response => {
+                            if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                alert('Error deleting file');
+                            }
+                        }).catch(error => {
+                            console.error('Error deleting file:', error);
+                            alert('Error deleting file. Please try again later.');
+                        });
+                    }
+                }
+
+                // Fix for navigateToFolder function
+                function navigateToFolder(folderPath) {
+                    if (!folderPath) {
+                        console.error('Folder path is undefined');
+                        return;
+                    }
+
+                    const pathParts = folderPath.split('/');
+                    if (pathParts.length > 0) {
+                        const category = pathParts[0];
+                        window.location.href = `/AdminPage/AdminFileFolder?category=${encodeURIComponent(category)}&folderPath=${encodeURIComponent(folderPath)}`;
+                    } else {
+                        console.error('Invalid folder path format');
+                    }
+                }
+            </script>
 }
