@@ -1,0 +1,123 @@
+﻿@page
+@model Document_Management_System.Pages.AdminPage.AdminSharedModel
+@{
+    ViewData["Title"] = "Admin Assign Folder Access";
+    Layout = "_LayoutDashboard";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Assign Folder Access</h2>
+            <p class="text-muted">Assign folder permissions to users</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Folder Assignment</h6>
+        </div>
+        <div class="card-body">
+            <form id="assignFolderForm" method="post">
+                <div class="form-group row">
+                    <label for="categorySelect" class="col-sm-2 col-form-label">Select Folder</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="categorySelect" asp-for="Input.CategoryId" required>
+                            <option value="">-- Select a folder --</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.CategoryId">@category.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Input.CategoryId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div id="userSelectionSection" style="display: none;">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Assign Users</label>
+                        <div class="col-sm-10">
+                            <div id="userSelectContainer">
+                                <!-- User selects will be added here dynamically -->
+                            </div>
+                            <button type="button" id="addUserBtn" class="btn btn-secondary mt-2" disabled>
+                                <i class="fas fa-plus"></i> Add User
+                            </button>
+                            <small class="form-text text-muted">Maximum 3 users can be assigned</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-10 offset-sm-2">
+                            <button type="submit" class="btn btn-primary">Save Assignments</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Show user selection when category is selected
+            $('#categorySelect').change(function() {
+                if ($(this).val()) {
+                    $('#userSelectionSection').show();
+                    $('#addUserBtn').prop('disabled', false);
+                } else {
+                    $('#userSelectionSection').hide();
+                    $('#addUserBtn').prop('disabled', true);
+                }
+            });
+
+            // Add user select dropdown
+            $('#addUserBtn').click(function() {
+                if ($('.user-select').length < 3) {
+                    const selectId = 'userSelect_' + Date.now();
+                    const selectHtml = `
+                        <div class="input-group mb-2 user-select-group">
+                            <select class="form-control user-select" id="${selectId}" name="Input.UserIds" required>
+                                <option value="">-- Select a user --</option>
+        @foreach (var user in Model.Users)
+        {
+                                        <option value="@user.Id">@user.UserName (@user.Email)</option>
+        }
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-danger remove-user-btn" type="button">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    $('#userSelectContainer').append(selectHtml);
+
+                    // Disable add button if we've reached max users
+                    if ($('.user-select').length >= 3) {
+                        $('#addUserBtn').prop('disabled', true);
+                    }
+                }
+            });
+
+            // Remove user select dropdown
+            $(document).on('click', '.remove-user-btn', function() {
+                $(this).closest('.user-select-group').remove();
+                $('#addUserBtn').prop('disabled', false);
+            });
+        });
+    </script>
+}
