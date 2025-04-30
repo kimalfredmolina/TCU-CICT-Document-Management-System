@@ -18,11 +18,13 @@ namespace Document_Management_System.Pages.AdminPage
     {
         private readonly UserManager<Users> _userManager;
         private readonly ILogger<AdminDashboardModel> _logger;
-        private readonly AppDbContext _context; // Add this for database access
+        private readonly AppDbContext _context;
 
         public string UserRole { get; private set; }
         public int ActiveUsersCount { get; private set; }
-        public int CategoriesCount { get; private set; } // Add this property
+        public int CategoriesCount { get; private set; } 
+        public Dictionary<string, int> FolderAssignmentsCount { get; private set; }
+
 
         public AdminDashboardModel(
             UserManager<Users> userManager,
@@ -64,6 +66,13 @@ namespace Document_Management_System.Pages.AdminPage
 
             // Count categories from the database
             CategoriesCount = await _context.Categories.CountAsync();
+
+            // ? Count assignments per folder
+            FolderAssignmentsCount = await _context.FolderAccess
+                .Include(f => f.Category)
+                .GroupBy(f => f.Category.Name)
+                .Select(g => new { FolderName = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.FolderName, x => x.Count);
         }
 
         public async Task<IActionResult> OnPostLogoutAsync()

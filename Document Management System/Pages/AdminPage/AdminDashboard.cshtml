@@ -214,45 +214,34 @@
 
         <div class="chart-card">
             <div class="card-header">
-                <i class="fas fa-tasks"></i> Priority Tasks (Due This Week)
+                <i class="fas fa-folder-open"></i> User Assign Folders
             </div>
             <div class="card-body">
                 <div class="priority-tasks">
-                    <div class="task-item">
-                        <div class="task-number">1.</div>
-                        <div class="task-content">
-                            <div class="task-title">Thesis Review - Ch.4</div>
-                            <div class="task-meta">
-                                <div>Due: Tomorrow</div>
-                                <div>Assigned: Dr. Smith</div>
-                            </div>
-                            <div class="task-progress">
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 70%;"></div>
+                    @if (Model.FolderAssignmentsCount != null && Model.FolderAssignmentsCount.Any())
+                    {
+                        var count = 1;
+                        foreach (var folder in Model.FolderAssignmentsCount)
+                        {
+                            <div class="task-item">
+                                <div class="task-number">@count.</div>
+                                <div class="task-content">
+                                    <div class="task-title">@folder.Key</div>
+                                    <div class="task-meta">
+                                        <div>Assign User in this Folder: @folder.Value</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="task-item">
-                        <div class="task-number">2.</div>
-                        <div class="task-content">
-                            <div class="task-title">ALCU Compliance Report</div>
-                            <div class="task-meta">
-                                <div>Due: Fri</div>
-                                <div>Assigned: You</div>
-                            </div>
-                            <div class="task-progress">
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 45%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="add-task">
-                        <button class="btn btn-outline-primary btn-block">
-                            <i class="fas fa-plus"></i> New Task
-                        </button>
-                    </div>
+                            count++;
+                        }
+                    }
+                    else
+                    {
+                        <div>No new assignments found.</div>
+                    }
+                </div>
+                <div class="view-all">
+                    <a asp-page="/AdminPage/AdminAssignFolder" class="btn btn-outline-secondary btn-block">Assign New User</a>
                 </div>
             </div>
         </div>
