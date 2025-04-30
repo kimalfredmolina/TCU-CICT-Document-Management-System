@@ -10,10 +10,11 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 using Document_Management_System.Data;
+using System.Collections.Generic;
 
 namespace Document_Management_System.Pages.AdminPage
 {
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = "Admin")]
     public class AdminDashboardModel : PageModel
     {
         private readonly UserManager<Users> _userManager;
@@ -22,14 +23,15 @@ namespace Document_Management_System.Pages.AdminPage
 
         public string UserRole { get; private set; }
         public int ActiveUsersCount { get; private set; }
-        public int CategoriesCount { get; private set; } 
+        public int CategoriesCount { get; private set; }
+        public int AreasCount { get; private set; }
         public Dictionary<string, int> FolderAssignmentsCount { get; private set; }
-
+        public Dictionary<string, int> AreasByCategoryCount { get; private set; } // New property for areas by category
 
         public AdminDashboardModel(
             UserManager<Users> userManager,
             ILogger<AdminDashboardModel> logger,
-            AppDbContext context) // Add this parameter
+            AppDbContext context)
         {
             _userManager = userManager;
             _logger = logger;
@@ -67,12 +69,22 @@ namespace Document_Management_System.Pages.AdminPage
             // Count categories from the database
             CategoriesCount = await _context.Categories.CountAsync();
 
-            // ? Count assignments per folder
+            // Count areas from the database
+            AreasCount = await _context.Areas.CountAsync();
+
+            // Count assignments per folder
             FolderAssignmentsCount = await _context.FolderAccess
                 .Include(f => f.Category)
                 .GroupBy(f => f.Category.Name)
                 .Select(g => new { FolderName = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.FolderName, x => x.Count);
+
+            // New query to count areas by category
+            AreasByCategoryCount = await _context.Areas
+                .Include(a => a.Category)
+                .GroupBy(a => a.Category.Name)
+                .Select(g => new { CategoryName = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.CategoryName, x => x.Count);
         }
 
         public async Task<IActionResult> OnPostLogoutAsync()
