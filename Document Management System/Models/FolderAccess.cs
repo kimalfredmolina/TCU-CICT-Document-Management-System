@@ -8,8 +8,7 @@ public class FolderAccess
     public DateTime AssignedDate { get; set; } = DateTime.UtcNow;
     public string AssignedByUserId { get; set; }
 
-    // Navigation properties
     public Category Category { get; set; }
-    public Users User { get; set; }  // Correct reference to Users
-    public Users AssignedByUser { get; set; }  // Correct reference to Users
+    public Users User { get; set; }              // The user who gets access
+    public Users AssignedByUser { get; set; }    // The user who assigned the access
 }

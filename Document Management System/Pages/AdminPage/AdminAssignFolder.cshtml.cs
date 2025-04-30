@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 using Document_Management_System.Data;
 using Microsoft.AspNetCore.Identity;
 using Document_Management_System.Models;
+using System;
 
 namespace Document_Management_System.Pages.AdminPage
 {
     public class AdminSharedModel : PageModel
     {
         private readonly AppDbContext _context;
-        private readonly UserManager<Users> _userManager; 
+        private readonly UserManager<Users> _userManager;
 
         public AdminSharedModel(AppDbContext context, UserManager<Users> userManager)
         {
@@ -23,7 +24,9 @@ namespace Document_Management_System.Pages.AdminPage
         }
 
         public List<Category> Categories { get; set; }
-        public List<Users> Users { get; set; } 
+        public List<Users> Users { get; set; }
+        public List<FolderAccess> FolderAccessList { get; set; } 
+
         [BindProperty]
         public FolderAssignmentInput Input { get; set; }
 
@@ -40,7 +43,12 @@ namespace Document_Management_System.Pages.AdminPage
         public async Task OnGetAsync()
         {
             Categories = await _context.Categories.ToListAsync();
-            Users = await _userManager.Users.ToListAsync(); 
+            Users = await _userManager.Users.ToListAsync();
+            FolderAccessList = await _context.FolderAccess
+                .Include(f => f.Category)
+                .Include(f => f.User)
+                .Include(f => f.AssignedByUser)
+                .ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -48,7 +56,11 @@ namespace Document_Management_System.Pages.AdminPage
             if (!ModelState.IsValid)
             {
                 Categories = await _context.Categories.ToListAsync();
-                Users = await _userManager.Users.ToListAsync(); 
+                Users = await _userManager.Users.ToListAsync();
+                FolderAccessList = await _context.FolderAccess
+                    .Include(f => f.Category)
+                    .Include(f => f.User)
+                    .ToListAsync();
                 return Page();
             }
 
@@ -58,7 +70,6 @@ namespace Document_Management_System.Pages.AdminPage
             {
                 foreach (var userId in Input.UserIds)
                 {
-                    // Check if assignment already exists
                     var existingAssignment = await _context.FolderAccess
                         .FirstOrDefaultAsync(fa => fa.CategoryId == Input.CategoryId && fa.UserId == userId);
 
@@ -78,10 +89,9 @@ namespace Document_Management_System.Pages.AdminPage
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Folder access has been successfully assigned.";
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 TempData["ErrorMessage"] = "An error occurred while saving. Please try again.";
-                // Log the exception details here
             }
 
             return RedirectToPage();
