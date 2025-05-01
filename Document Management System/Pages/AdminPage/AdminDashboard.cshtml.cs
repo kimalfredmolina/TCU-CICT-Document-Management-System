@@ -25,8 +25,9 @@ namespace Document_Management_System.Pages.AdminPage
         public int ActiveUsersCount { get; private set; }
         public int CategoriesCount { get; private set; }
         public int AreasCount { get; private set; }
+        public int TotalDocumentsCount { get; private set; } // New property for document count
         public Dictionary<string, int> FolderAssignmentsCount { get; private set; }
-        public Dictionary<string, int> AreasByCategoryCount { get; private set; } // New property for areas by category
+        public Dictionary<string, int> AreasByCategoryCount { get; private set; }
 
         public AdminDashboardModel(
             UserManager<Users> userManager,
@@ -65,21 +66,18 @@ namespace Document_Management_System.Pages.AdminPage
             }
 
             ActiveUsersCount = _userManager.Users.Count();
-
-            // Count categories from the database
             CategoriesCount = await _context.Categories.CountAsync();
-
-            // Count areas from the database
             AreasCount = await _context.Areas.CountAsync();
 
-            // Count assignments per folder
+            // Count all documents in the Documents table
+            TotalDocumentsCount = await _context.Documents.CountAsync();
+
             FolderAssignmentsCount = await _context.FolderAccess
                 .Include(f => f.Category)
                 .GroupBy(f => f.Category.Name)
                 .Select(g => new { FolderName = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.FolderName, x => x.Count);
 
-            // New query to count areas by category
             AreasByCategoryCount = await _context.Areas
                 .Include(a => a.Category)
                 .GroupBy(a => a.Category.Name)
