@@ -69,6 +69,38 @@
         padding: 10px 0;
         margin-bottom: 20px;
     }
+    /* File Preview Styles */
+    .file-name-link {
+        cursor: pointer;
+        color: #0d6efd;
+        text-decoration: none;
+    }
+
+        .file-name-link:hover {
+            text-decoration: underline;
+        }
+
+    #textPreview pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: monospace;
+    }
+
+    .preview-icon {
+        margin-right: 5px;
+    }
+
+    .modal-lg {
+        max-width: 800px;
+    }
+
+    .action-btn .fa-eye {
+        color: #17a2b8;
+    }
+
+    .action-btn:hover .fa-eye {
+        color: #138496;
+    }
 </style>
 
 <div class="container-fluid">
@@ -189,6 +221,10 @@
                         <td>@document.FileType</td>
                         <td>@(document.UploadedDate.HasValue ? document.UploadedDate.Value.ToString("MM/dd/yyyy") : "N/A")</td>
                         <td class="file-actions">
+                            <button type="button" class="action-btn" title="Preview"
+                                    onclick="previewFile(@document.Id, '@document.Filename', '@document.FileType')">
+                                <i class="fas fa-eye"></i>
+                            </button>
                             <a asp-page-handler="DownloadFile" asp-route-id="@document.Id" class="action-btn" title="Download">
                                 <i class="fas fa-download"></i>
                             </a>
@@ -239,6 +275,60 @@
             @TempData["ErrorMessage"]
         </div>
     }
+
+    <!-- File Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="previewModalLabel">File Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="previewLoading" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Loading preview...</p>
+                    </div>
+                    <!-- Text preview -->
+                    <div id="textPreview" class="d-none">
+                        <pre class="bg-light p-3 rounded" style="max-height: 400px; overflow-y: auto;"></pre>
+                    </div>
+                    <!-- Image preview -->
+                    <div id="imagePreview" class="d-none text-center">
+                        <img src="/placeholder.svg" alt="Image Preview" class="img-fluid" style="max-height: 400px;">
+                    </div>
+                    <!-- PDF preview -->
+                    <div id="pdfPreview" class="d-none">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="/placeholder.svg" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <!-- Office document preview -->
+                    <div id="officePreview" class="d-none">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="/placeholder.svg" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <!-- Other file types -->
+                    <div id="otherPreview" class="d-none text-center">
+                        <div class="p-5">
+                            <i class="fas fa-file fa-4x mb-3"></i>
+                            <p>Preview not available for this file type.</p>
+                            <p>Please download the file to view its contents.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="previewDownloadBtn" href="#" class="btn btn-primary">
+                        <i class="fas fa-download me-1"></i> Download
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -257,6 +347,79 @@
             $(this).remove();
         });
     }, 5000);
+
+        // File Preview functionality
+        // File Preview functionality
+    function previewFile(id, filename, fileType) {
+        // Reset all preview containers
+        $('#textPreview').addClass('d-none');
+        $('#imagePreview').addClass('d-none');
+        $('#pdfPreview').addClass('d-none');
+        $('#officePreview').addClass('d-none');
+        $('#otherPreview').addClass('d-none');
+
+        // Show loading indicator
+        $('#previewLoading').removeClass('d-none');
+
+        // Set modal title
+        $('#previewModalLabel').text('Preview: ' + filename);
+
+        // Set download button link
+        $('#previewDownloadBtn').attr('href', `/AdminPage/AdminFilesTable?handler=DownloadFile&id=${id}`);
+
+        // Show the modal
+        var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+        previewModal.show();
+
+        // Fetch file preview data
+        fetch(`/AdminPage/AdminFilesTable?handler=PreviewFile&id=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Hide loading indicator
+                $('#previewLoading').addClass('d-none');
+
+                if (data.success) {
+                    switch (data.type) {
+                        case 'text':
+                            $('#textPreview pre').text(data.content);
+                            $('#textPreview').removeClass('d-none');
+                            break;
+                        case 'image':
+                            $('#imagePreview img').attr('src', `data:${data.contentType};base64,${data.content}`);
+                            $('#imagePreview').removeClass('d-none');
+                            break;
+                        case 'pdf':
+                            $('#pdfPreview iframe').attr('src', `/AdminPage/AdminFilesTable?handler=DownloadFile&id=${data.id}#toolbar=0`);
+                            $('#pdfPreview').removeClass('d-none');
+                            break;
+                        case 'office':
+                            // Use Google Docs Viewer for Office documents
+                            const downloadUrl = window.location.origin +
+                                `/AdminPage/AdminFilesTable?handler=DownloadFile&id=${data.id}`;
+                            const encodedUrl = encodeURIComponent(downloadUrl);
+                            const viewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
+                            $('#officePreview iframe').attr('src', viewerUrl);
+                            $('#officePreview').removeClass('d-none');
+                            break;
+                        default:
+                            $('#otherPreview').removeClass('d-none');
+                            break;
+                    }
+                } else {
+                    $('#otherPreview').removeClass('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching file preview:', error);
+                $('#previewLoading').addClass('d-none');
+                $('#otherPreview').removeClass('d-none');
+            });
+    }
 </script>
 
 @functions {

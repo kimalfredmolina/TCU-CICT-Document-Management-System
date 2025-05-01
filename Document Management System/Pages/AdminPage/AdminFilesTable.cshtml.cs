@@ -40,6 +40,10 @@ namespace Document_Management_System.Pages.AdminPage
 
         public async Task OnGetAsync()
         {
+            // Start with an empty list
+            Documents = new List<Document>();
+
+            // Create a query to filter documents
             IQueryable<Document> query = _context.Documents;
 
             // Filter by folder path if provided
@@ -66,11 +70,11 @@ namespace Document_Management_System.Pages.AdminPage
                                         d.ContentType.Contains(SearchQuery));
             }
 
-            // Load the documents
+            // Load the documents - execute the query only once
             Documents = await query.ToListAsync();
 
-            // If no documents found in the specified folder, check if there are files in the filesystem
-            if (!Documents.Any() && !string.IsNullOrEmpty(FolderPath))
+            // If no documents found in the specified folder and no search is active, check if there are files in the filesystem
+            if (!Documents.Any() && !string.IsNullOrEmpty(FolderPath) && string.IsNullOrEmpty(SearchQuery))
             {
                 await ImportFilesFromFolder();
             }
@@ -244,6 +248,64 @@ namespace Document_Management_System.Pages.AdminPage
             memory.Position = 0;
 
             return File(memory, document.ContentType, document.Filename);
+        }
+
+        public async Task<IActionResult> OnGetPreviewFileAsync(int id)
+        {
+            var document = await _context.Documents.FindAsync(id);
+            if (document == null)
+            {
+                return NotFound();
+            }
+
+            string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage",
+                document.FolderPath.Replace("/", Path.DirectorySeparatorChar.ToString()),
+                document.Filename);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            // For text files, return the content
+            if (document.ContentType.StartsWith("text/"))
+            {
+                string content = await System.IO.File.ReadAllTextAsync(filePath);
+                return new JsonResult(new { success = true, content, type = "text" });
+            }
+            // For images, return the file as base64
+            else if (document.ContentType.StartsWith("image/"))
+            {
+                byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+                string base64 = Convert.ToBase64String(fileBytes);
+                return new JsonResult(new { success = true, content = base64, type = "image", contentType = document.ContentType });
+            }
+            // For PDFs, return the file path for embedding
+            else if (document.ContentType == "application/pdf")
+            {
+                return new JsonResult(new { success = true, type = "pdf", filename = document.Filename, id = document.Id });
+            }
+            // For Office documents, use Google Docs Viewer or Office Online
+            else if (document.ContentType.Contains("officedocument") ||
+                     document.ContentType == "application/msword" ||
+                     document.ContentType == "application/vnd.ms-excel" ||
+                     document.ContentType == "application/vnd.ms-powerpoint")
+            {
+                // We'll use the document ID to generate a URL for the document viewer
+                return new JsonResult(new
+                {
+                    success = true,
+                    type = "office",
+                    filename = document.Filename,
+                    id = document.Id,
+                    fileType = document.FileType
+                });
+            }
+            // For other file types, return file info
+            else
+            {
+                return new JsonResult(new { success = true, type = "other", filename = document.Filename });
+            }
         }
     }
 }

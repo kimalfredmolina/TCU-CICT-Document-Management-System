@@ -211,6 +211,32 @@
         .caret-icon.open {
             transform: rotate(90deg);
         }
+
+    .delete-spinner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .delete-spinner-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .delete-spinner-text {
+        margin-left: 10px;
+        font-weight: bold;
+    }
 </style>
 
 <div class="dashboard-content">
@@ -324,45 +350,42 @@
                                                                     </td>
                                                                 </tr>
                                                                 <!-- Course Subfolders (Years) -->
-                                                                @if (courseFolder.SubFolders != null && courseFolder.SubFolders.Any())
-                                                                {
-                                                                    <tr class="subfolder-container" data-parent="@courseFolder.Path">
-                                                                        <td colspan="5" class="p-0">
-                                                                            <table class="file-list w-100">
-                                                                                @foreach (var yearFolder in courseFolder.SubFolders)
-                                                                                {
-                                                                                    <tr class="subfolder-row subfolder-row subfolder-row" data-path="@yearFolder.Path">
-                                                                                    <td class="file-name">
-                                                                                        <span class="file-spacer"></span>
-                                                                                        <i class="fas fa-folder folder-icon file-icon"></i> @yearFolder.Name
-                                                                                        <a href="/AdminPage/AdminFilesTable?folderPath=@yearFolder.Path" class="btn btn-sm btn-link ms-2">
-                                                                                            <i class="fas fa-eye"></i> View Files
-                                                                                        </a>
-                                                                                    </td>
-                                                                                        <td>@yearFolder.ModifiedDate.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                                        <td>File folder</td>
-                                                                                        <td>@yearFolder.ItemCount items</td>
-                                                                                        <td class="file-actions">
-                                                                                            <button class="action-btn" title="Delete" onclick="deleteFolder('@yearFolder.Path')">
-                                                                                                <i class="fas fa-trash"></i>
-                                                                                            </button>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                }
-                                                                                <!-- Add Year button at the course level -->
-                                                                                <tr class="add-year-row" data-course-path="@courseFolder.Path" data-category="@category" data-area-path="@areaFolder.Path">
-                                                                                    <td class="file-name add-folder-btn">
-                                                                                        <i class="fas fa-folder-plus file-icon"></i> Add Year
-                                                                                    </td>
-                                                                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
-                                                                                    <td>Action</td>
-                                                                                    <td></td>
-                                                                                    <td></td>
-                                                                                </tr>
-                                                                            </table>
-                                                                        </td>
-                                                                    </tr>
-                                                                }
+                                                            <tr class="subfolder-container" data-parent="@courseFolder.Path">
+                                                                <td colspan="5" class="p-0">
+                                                                    <table class="file-list w-100">
+                                                                        @foreach (var yearFolder in courseFolder.SubFolders)
+                                                                        {
+                                                                            <tr class="subfolder-row subfolder-row subfolder-row" data-path="@yearFolder.Path">
+                                                                                <td class="file-name">
+                                                                                    <span class="file-spacer"></span>
+                                                                                    <i class="fas fa-folder folder-icon file-icon"></i> @yearFolder.Name
+                                                                                </td>
+                                                                                <td>@yearFolder.ModifiedDate.ToString("MM/dd/yyyy h:mm tt")</td>
+                                                                                <td>File folder</td>
+                                                                                <td>@yearFolder.ItemCount items</td>
+                                                                                <td class="file-actions">
+                                                                                    <a href="/AdminPage/AdminFilesTable?folderPath=@yearFolder.Path&category=@yearFolder.Category" class="action-btn" title="View Files">
+                                                                                        <i class="fas fa-file-alt"></i>
+                                                                                    </a>
+                                                                                    <button class="action-btn" title="Delete" onclick="deleteFolder('@yearFolder.Path')">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                    </button>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                        <!-- Add Year button at the course level -->
+                                                                        <tr class="add-year-row" data-course-path="@courseFolder.Path" data-category="@category" data-area-path="@areaFolder.Path">
+                                                                            <td class="file-name add-folder-btn">
+                                                                                <i class="fas fa-folder-plus file-icon"></i> Add Year
+                                                                            </td>
+                                                                            <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
+                                                                            <td>Action</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
                                                             }
                                                             <!-- Add Course button at the area level -->
                                                             <tr class="add-course-row" data-area-path="@areaFolder.Path" data-category="@category">
@@ -916,5 +939,40 @@
                         console.error('Invalid folder path format');
                     }
                 }
+                                // Add this to the document.ready function in the Scripts section
+                // Show toast notifications if TempData contains messages
+                if (tempDataSuccessMessage && tempDataSuccessMessage !== 'null') {
+                    showToast(tempDataSuccessMessage, 'success');
+                }
+
+                if (tempDataErrorMessage && tempDataErrorMessage !== 'null') {
+                    showToast(tempDataErrorMessage, 'error');
+                }
+
+                // Function to show toast notifications
+                function showToast(message, type) {
+                    const toast = document.createElement('div');
+                    toast.className = `toast show position-fixed bottom-0 end-0 m-3 ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white`;
+                    toast.style.zIndex = '9999';
+                    toast.innerHTML = `
+                        <div class="toast-header">
+                            <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+
+                    // Auto-hide after 5 seconds
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        setTimeout(() => {
+                            document.body.removeChild(toast);
+                        }, 300);
+                    }, 5000);
+                }
+
             </script>
 }

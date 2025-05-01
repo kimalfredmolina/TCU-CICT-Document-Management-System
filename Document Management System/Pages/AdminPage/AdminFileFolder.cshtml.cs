@@ -395,7 +395,7 @@
                     // Check if category already exists
                     if (await _context.Categories.AnyAsync(c => c.Name == categoryName))
                     {
-                        TempData["ErrorMessage"] = "Category already exists";
+                        TempData["ErrorMessage"] = $"Category '{categoryName}' already exists";
                         return RedirectToPage();
                     }
 
@@ -409,8 +409,6 @@
                     if (!Directory.Exists(categoryPath))
                     {
                         Directory.CreateDirectory(categoryPath);
-                        // Create standard subfolders
-                        EnsureCategoryExists(categoryName);
                     }
 
                     TempData["SuccessMessage"] = "Category created successfully";
@@ -448,7 +446,7 @@
                     // Check if area already exists in this category
                     if (await _context.Areas.AnyAsync(a => a.CategoryId == category.CategoryId && a.Name == areaName))
                     {
-                        TempData["ErrorMessage"] = "Area already exists in this category";
+                        TempData["ErrorMessage"] = $"Area '{areaName}' already exists in this category";
                         return RedirectToPage(new { category = categoryName });
                     }
 
@@ -506,7 +504,7 @@
                     // Check if course already exists in this area
                     if (await _context.Courses.AnyAsync(c => c.AreaId == area.AreaId && c.Name == courseName))
                     {
-                        TempData["ErrorMessage"] = "Course already exists in this area";
+                        TempData["ErrorMessage"] = $"Course '{courseName}' already exists in this area";
                         return RedirectToPage(new { category = categoryName });
                     }
 
@@ -519,23 +517,12 @@
                     _context.Courses.Add(course);
                     await _context.SaveChangesAsync();
 
-                    // Add default year folders (2025, 2026)
-                    var yearFolders = new List<YearFolder>
-            {
-                new YearFolder { Year = 2025, Course = course, CreatedAt = DateTime.Now },
-                new YearFolder { Year = 2026, Course = course, CreatedAt = DateTime.Now }
-            };
-                    _context.YearFolders.AddRange(yearFolders);
-                    await _context.SaveChangesAsync();
-
-                    // Create directories in the file system
+                    // Create directory in the file system
                     string coursePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", areaPath, courseName);
                     if (!Directory.Exists(coursePath))
                     {
                         Directory.CreateDirectory(coursePath);
-                        // Create year folders
-                        Directory.CreateDirectory(Path.Combine(coursePath, "2025"));
-                        Directory.CreateDirectory(Path.Combine(coursePath, "2026"));
+                        // Removed the automatic creation of year folders
                     }
 
                     TempData["SuccessMessage"] = "Course created successfully";
@@ -584,7 +571,7 @@
                     // Check if the year folder already exists
                     if (await _context.YearFolders.AnyAsync(y => y.CourseId == course.CourseId && y.Year == year))
                     {
-                        TempData["ErrorMessage"] = "Year already exists in this course";
+                        TempData["ErrorMessage"] = $"Year '{year}' already exists in this course";
                         return RedirectToPage(new { category = categoryName });
                     }
 
@@ -715,50 +702,121 @@
                 return new JsonResult(new { success = false });
             }
 
-            // Handler for deleting a folder
-            public IActionResult OnPostDeleteFolder(string folderPath)
-            {
-                if (string.IsNullOrEmpty(folderPath))
-                    return new JsonResult(new { success = false });
+        // Handler for deleting a folder
+        public async Task<IActionResult> OnPostDeleteFolder(string folderPath)
+        {
+            if (string.IsNullOrEmpty(folderPath))
+                return new JsonResult(new { success = false, message = "Folder path is undefined" });
 
+            try
+            {
+                // Parse the folder path to determine what type of folder it is
+                string[] pathParts = folderPath.Split('/');
+
+                if (pathParts.Length == 1)
+                {
+                    // This is a category
+                    var category = await _context.Categories
+                        .Include(c => c.Areas)
+                            .ThenInclude(a => a.Courses)
+                                .ThenInclude(c => c.YearFolders)
+                        .FirstOrDefaultAsync(c => c.Name == pathParts[0]);
+
+                    if (category != null)
+                    {
+                        // Delete all related entities in the database
+                        foreach (var area in category.Areas)
+                        {
+                            foreach (var course in area.Courses)
+                            {
+                                _context.YearFolders.RemoveRange(course.YearFolders);
+                            }
+                            _context.Courses.RemoveRange(area.Courses);
+                        }
+                        _context.Areas.RemoveRange(category.Areas);
+                        _context.Categories.Remove(category);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else if (pathParts.Length == 2)
+                {
+                    // This is an area
+                    var area = await _context.Areas
+                        .Include(a => a.Courses)
+                            .ThenInclude(c => c.YearFolders)
+                        .FirstOrDefaultAsync(a => a.Name == pathParts[1] && a.Category.Name == pathParts[0]);
+
+                    if (area != null)
+                    {
+                        // Delete all related entities in the database
+                        foreach (var course in area.Courses)
+                        {
+                            _context.YearFolders.RemoveRange(course.YearFolders);
+                        }
+                        _context.Courses.RemoveRange(area.Courses);
+                        _context.Areas.Remove(area);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else if (pathParts.Length == 3)
+                {
+                    // This is a course
+                    var course = await _context.Courses
+                        .Include(c => c.YearFolders)
+                        .FirstOrDefaultAsync(c => c.Name == pathParts[2] &&
+                                                 c.Area.Name == pathParts[1] &&
+                                                 c.Area.Category.Name == pathParts[0]);
+
+                    if (course != null)
+                    {
+                        // Delete all related entities in the database
+                        _context.YearFolders.RemoveRange(course.YearFolders);
+                        _context.Courses.Remove(course);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else if (pathParts.Length == 4)
+                {
+                    // This is a year folder
+                    var yearFolder = await _context.YearFolders
+                        .FirstOrDefaultAsync(y => y.Year.ToString() == pathParts[3] &&
+                                                 y.Course.Name == pathParts[2] &&
+                                                 y.Course.Area.Name == pathParts[1] &&
+                                                 y.Course.Area.Category.Name == pathParts[0]);
+
+                    if (yearFolder != null)
+                    {
+                        // Delete the year folder entity from the database
+                        _context.YearFolders.Remove(yearFolder);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                // Now handle the file system deletion
                 string directoryPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", folderPath.Replace("/", Path.DirectorySeparatorChar.ToString()));
 
                 if (Directory.Exists(directoryPath))
                 {
-                    try
+                    // Delete the directory and all its contents
+                    Directory.Delete(directoryPath, true);
+
+                    // If this was a category, recreate the empty directory
+                    if (pathParts.Length == 1)
                     {
-                        // Only allow deletion of subfolders, not main categories
-                        if (folderPath.Contains("/"))
-                        {
-                            Directory.Delete(directoryPath, true);
-                            return new JsonResult(new { success = true });
-                        }
-                        else
-                        {
-                            // For main categories, just clear the contents
-                            DirectoryInfo directory = new DirectoryInfo(directoryPath);
-                            foreach (var file in directory.GetFiles())
-                            {
-                                file.Delete();
-                            }
-                            foreach (var dir in directory.GetDirectories())
-                            {
-                                dir.Delete(true);
-                            }
-                            // Recreate standard folders
-                            EnsureCategoryExists(folderPath);
-                            return new JsonResult(new { success = true });
-                        }
+                        Directory.CreateDirectory(directoryPath);
                     }
-                    catch (Exception)
-                    {
-                        return new JsonResult(new { success = false, message = "Could not delete folder. Make sure all files are closed." });
-                    }
+
+                    return new JsonResult(new { success = true });
                 }
 
-                return new JsonResult(new { success = false });
+                return new JsonResult(new { success = false, message = "Directory not found" });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = $"Error deleting folder: {ex.Message}" });
             }
         }
+    }
 
         public class BreadcrumbItem
         {

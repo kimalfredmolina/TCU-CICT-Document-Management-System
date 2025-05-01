@@ -30,6 +30,7 @@ namespace Document_Management_System.Data
         public byte[]? FileData { get; set; } //NULLABLE
         public string FolderPath { get; set; } // property to track which folder this document belongs to
 
+
     }
 
 
