@@ -10,28 +10,50 @@ namespace Document_Management_System.Data
         {
         }
 
-        // Add the missing DbSet for Documents  
         public DbSet<Document> Documents { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Area> Areas { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<YearFolder> YearFolders { get; set; }
+
+        // For adding an assign user to a folder maximum of 3 users
+        public DbSet<FolderAccess> FolderAccess { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<FolderAccess>(entity =>
+            {
+                entity.HasOne(f => f.Category)
+                      .WithMany()
+                      .HasForeignKey(f => f.CategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(f => f.User)
+                      .WithMany()
+                      .HasForeignKey(f => f.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(f => f.AssignedByUser)
+                      .WithMany()
+                      .HasForeignKey(f => f.AssignedByUserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+        }
     }
+
     public class Document
     {
-        public int Id { get; set; } // Primary Key
-        public string Filename { get; set; } // NOT NULL
-        public long? Filesize { get; set; } // instead of int? nullable
-        public string FileType { get; set; } // NOT NULL
-        public int? CategoryId { get; set; } // Nullable
-        public string UploadedBy { get; set; } // NOT NULL
-        public DateTime? UploadedDate { get; set; } // Nullable
-        public string ContentType { get; set; } // NOT NULL
-        public byte[]? FileData { get; set; } //NULLABLE
-        public string FolderPath { get; set; } // property to track which folder this document belongs to
-
-
+        public int Id { get; set; }
+        public string Filename { get; set; }
+        public long? Filesize { get; set; }
+        public string FileType { get; set; }
+        public int? CategoryId { get; set; }
+        public string UploadedBy { get; set; }
+        public DateTime? UploadedDate { get; set; }
+        public string ContentType { get; set; }
+        public byte[]? FileData { get; set; }
+        public string FolderPath { get; set; }
     }
-
-
 }
