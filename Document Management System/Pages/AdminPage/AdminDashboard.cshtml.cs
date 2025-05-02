@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace Document_Management_System.Pages.AdminPage
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Staff")]
     public class AdminDashboardModel : PageModel
     {
         private readonly UserManager<Users> _userManager;

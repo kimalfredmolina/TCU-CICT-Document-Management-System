@@ -11,7 +11,7 @@ namespace Document_Management_System.Data
         }
 
         public DbSet<Document> Documents { get; set; }
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<Category> Categories { get; set; } 
         public DbSet<Area> Areas { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<YearFolder> YearFolders { get; set; }

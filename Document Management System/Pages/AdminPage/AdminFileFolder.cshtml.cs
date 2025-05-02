@@ -10,19 +10,21 @@
     using Document_Management_System.Models;
     using Document_Management_System.Data;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Identity;
+    using System.Security.Claims;
 
-    namespace Document_Management_System.Pages.AdminPage
+namespace Document_Management_System.Pages.AdminPage
     {
         public class AdminFileFolderModel : PageModel
         {
             private readonly IWebHostEnvironment _webHostEnvironment;
             private readonly AppDbContext _context;
 
-            public AdminFileFolderModel(IWebHostEnvironment webHostEnvironment, AppDbContext context)
+        public AdminFileFolderModel(IWebHostEnvironment webHostEnvironment, AppDbContext context)
             {
                 _webHostEnvironment = webHostEnvironment;
                 _context = context;
-            }
+        }
 
             [BindProperty(SupportsGet = true)]
             public string CurrentCategory { get; set; }
@@ -38,6 +40,9 @@
 
             // Dictionary to store hierarchy of folders
             public Dictionary<string, List<FolderModel>> FolderHierarchy { get; set; } = new Dictionary<string, List<FolderModel>>();
+            // List to store accessible categories for the current user
+            public List<int> AccessibleCategoryIds { get; set; } = new List<int>();
+            public bool IsAdmin { get; set; } = false;
 
         public async Task OnGetAsync()
         {
@@ -48,6 +53,9 @@
                 Directory.CreateDirectory(fileStoragePath);
             }
 
+            // Get accessible categories for the current user
+            await LoadAccessibleCategoriesAsync();
+
             // Ensure categories exist in the database
             await EnsureCategoriesExistAsync();
 
@@ -56,6 +64,19 @@
 
             if (!string.IsNullOrEmpty(CurrentCategory))
             {
+                // Check if user has access to this category
+                var categoryId = await _context.Categories
+                    .Where(c => c.Name == CurrentCategory)
+                    .Select(c => c.CategoryId)
+                    .FirstOrDefaultAsync();
+
+                if (categoryId > 0 && !AccessibleCategoryIds.Contains(categoryId) && !IsAdmin)
+                {
+                    TempData["ErrorMessage"] = "You do not have access to this category";
+                    CurrentCategory = null;
+                    return;
+                }
+
                 // Navigate to the selected folder
                 string currentFolderPath = Path.Combine(fileStoragePath, CurrentPath);
 
@@ -67,6 +88,39 @@
 
                 // Load files in current directory
                 LoadFiles(currentFolderPath);
+            }
+        }
+
+        private async Task LoadAccessibleCategoriesAsync()
+        {
+            // Clear the list
+            AccessibleCategoryIds.Clear();
+
+            // Check if user is admin
+            IsAdmin = User.IsInRole("Admin");
+
+            if (IsAdmin)
+            {
+                // Admin has access to all categories
+                var allCategoryIds = await _context.Categories
+                    .Select(c => c.CategoryId)
+                    .ToListAsync();
+                AccessibleCategoryIds.AddRange(allCategoryIds);
+                return;
+            }
+
+            // Get the current user ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // If not admin and we have a user ID, get categories from FolderAccess table
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var accessibleCategories = await _context.FolderAccess
+                    .Where(fa => fa.UserId == userId)
+                    .Select(fa => fa.CategoryId)
+                    .ToListAsync();
+
+                AccessibleCategoryIds.AddRange(accessibleCategories);
             }
         }
 
@@ -221,11 +275,19 @@
             FolderHierarchy.Clear();
 
             // Get all categories from the database
-            var categories = await _context.Categories
+            var query = _context.Categories
                 .Include(c => c.Areas)
                     .ThenInclude(a => a.Courses)
                         .ThenInclude(c => c.YearFolders)
-                .ToListAsync();
+                .AsQueryable();
+
+            // Filter by accessible categories if not admin
+            if (!IsAdmin && AccessibleCategoryIds.Any())
+            {
+                query = query.Where(c => AccessibleCategoryIds.Contains(c.CategoryId));
+            }
+
+            var categories = await query.ToListAsync();
 
             foreach (var category in categories)
             {
@@ -392,6 +454,13 @@
             {
                 try
                 {
+                    // Check if user has admin rights
+                    if (!User.IsInRole("Admin"))
+                    {
+                        TempData["ErrorMessage"] = "You do not have permission to create categories";
+                        return RedirectToPage();
+                    }
+
                     // Check if category already exists
                     if (await _context.Categories.AnyAsync(c => c.Name == categoryName))
                     {
@@ -440,6 +509,16 @@
                     if (category == null)
                     {
                         TempData["ErrorMessage"] = "Category not found";
+                        return RedirectToPage();
+                    }
+
+                    // Load accessible categories for permission check
+                    await LoadAccessibleCategoriesAsync();
+
+                    // Check if user has access to this category
+                    if (!IsAdmin && !AccessibleCategoryIds.Contains(category.CategoryId))
+                    {
+                        TempData["ErrorMessage"] = "You do not have permission to add areas to this category";
                         return RedirectToPage();
                     }
 
@@ -501,6 +580,16 @@
                         return RedirectToPage();
                     }
 
+                    // Load accessible categories for permission check
+                    await LoadAccessibleCategoriesAsync();
+
+                    // Check if user has access to this category
+                    if (!IsAdmin && !AccessibleCategoryIds.Contains(area.CategoryId))
+                    {
+                        TempData["ErrorMessage"] = "You do not have permission to add courses to this area";
+                        return RedirectToPage();
+                    }
+
                     // Check if course already exists in this area
                     if (await _context.Courses.AnyAsync(c => c.AreaId == area.AreaId && c.Name == courseName))
                     {
@@ -522,7 +611,6 @@
                     if (!Directory.Exists(coursePath))
                     {
                         Directory.CreateDirectory(coursePath);
-                        // Removed the automatic creation of year folders
                     }
 
                     TempData["SuccessMessage"] = "Course created successfully";
@@ -568,6 +656,16 @@
                         return RedirectToPage();
                     }
 
+                    // Load accessible categories for permission check
+                    await LoadAccessibleCategoriesAsync();
+
+                    // Check if user has access to this category
+                    if (!IsAdmin && !AccessibleCategoryIds.Contains(course.Area.CategoryId))
+                    {
+                        TempData["ErrorMessage"] = "You do not have permission to add years to this course";
+                        return RedirectToPage();
+                    }
+
                     // Check if the year folder already exists
                     if (await _context.YearFolders.AnyAsync(y => y.CourseId == course.CourseId && y.Year == year))
                     {
@@ -608,10 +706,27 @@
 
 
         // Handler for adding a new folder
-        public IActionResult OnPostAddFolder(string folderName, string category, string currentPath)
+        public async Task<IActionResult> OnPostAddFolder(string folderName, string category, string currentPath)
+        {
+            if (!string.IsNullOrWhiteSpace(folderName) && !string.IsNullOrWhiteSpace(category))
             {
-                if (!string.IsNullOrWhiteSpace(folderName) && !string.IsNullOrWhiteSpace(category))
+                try
                 {
+                    // Load accessible categories for permission check
+                    await LoadAccessibleCategoriesAsync();
+
+                    // Check if user has access to this category
+                    var categoryId = await _context.Categories
+                        .Where(c => c.Name == category)
+                        .Select(c => c.CategoryId)
+                        .FirstOrDefaultAsync();
+
+                    if (!IsAdmin && !AccessibleCategoryIds.Contains(categoryId))
+                    {
+                        TempData["ErrorMessage"] = "You do not have permission to add folders to this category";
+                        return RedirectToPage();
+                    }
+
                     string newFolderPath;
 
                     if (string.IsNullOrWhiteSpace(currentPath) || currentPath == category)
@@ -623,22 +738,50 @@
                         newFolderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", currentPath, folderName);
                     }
 
-                    if (!Directory.Exists(newFolderPath))
+                    // Check if folder already exists
+                    if (Directory.Exists(newFolderPath))
                     {
-                        Directory.CreateDirectory(newFolderPath);
+                        TempData["ErrorMessage"] = $"Folder '{folderName}' already exists in this location";
+                        return RedirectToPage(new { category, folderPath = currentPath });
                     }
 
-                    return RedirectToPage(new { category, folderPath = currentPath });
+                    Directory.CreateDirectory(newFolderPath);
+                    TempData["SuccessMessage"] = "Folder created successfully";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Error creating folder: {ex.Message}";
                 }
 
-                return RedirectToPage();
+                return RedirectToPage(new { category, folderPath = currentPath });
             }
 
-            // Handler for uploading a file
-            public async Task<IActionResult> OnPostUploadFileAsync(IFormFile file, string category, string currentPath)
+            TempData["ErrorMessage"] = "Folder name cannot be empty";
+            return RedirectToPage();
+        }
+
+        // Handler for uploading a file
+        public async Task<IActionResult> OnPostUploadFileAsync(IFormFile file, string category, string currentPath)
+        {
+            if (file != null && file.Length > 0)
             {
-                if (file != null && file.Length > 0)
+                try
                 {
+                    // Load accessible categories for permission check
+                    await LoadAccessibleCategoriesAsync();
+
+                    // Check if user has access to this category
+                    var categoryId = await _context.Categories
+                        .Where(c => c.Name == category)
+                        .Select(c => c.CategoryId)
+                        .FirstOrDefaultAsync();
+
+                    if (!IsAdmin && !AccessibleCategoryIds.Contains(categoryId))
+                    {
+                        TempData["ErrorMessage"] = "You do not have permission to upload files to this category";
+                        return RedirectToPage();
+                    }
+
                     string uploadPath;
 
                     if (string.IsNullOrWhiteSpace(currentPath) || currentPath == category)
@@ -657,50 +800,31 @@
 
                     string filePath = Path.Combine(uploadPath, file.FileName);
 
+                    // Check if file already exists
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        TempData["ErrorMessage"] = $"File '{file.FileName}' already exists in this location";
+                        return RedirectToPage(new { category, folderPath = currentPath });
+                    }
+
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
                     }
 
-                    return RedirectToPage(new { category, folderPath = currentPath });
+                    TempData["SuccessMessage"] = "File uploaded successfully";
                 }
-
-                return RedirectToPage();
-            }
-
-            // Handler for downloading a file
-            public IActionResult OnGetDownloadFile(string fileId)
-            {
-                if (string.IsNullOrEmpty(fileId))
-                    return NotFound();
-
-                string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", fileId.Replace("/", Path.DirectorySeparatorChar.ToString()));
-
-                if (!System.IO.File.Exists(filePath))
-                    return NotFound();
-
-                var fileBytes = System.IO.File.ReadAllBytes(filePath);
-                string fileName = Path.GetFileName(filePath);
-
-                return File(fileBytes, "application/octet-stream", fileName);
-            }
-
-            // Handler for deleting a file
-            public IActionResult OnPostDeleteFile(string fileId)
-            {
-                if (string.IsNullOrEmpty(fileId))
-                    return new JsonResult(new { success = false });
-
-                string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", fileId.Replace("/", Path.DirectorySeparatorChar.ToString()));
-
-                if (System.IO.File.Exists(filePath))
+                catch (Exception ex)
                 {
-                    System.IO.File.Delete(filePath);
-                    return new JsonResult(new { success = true });
+                    TempData["ErrorMessage"] = $"Error uploading file: {ex.Message}";
                 }
 
-                return new JsonResult(new { success = false });
+                return RedirectToPage(new { category, folderPath = currentPath });
             }
+
+            TempData["ErrorMessage"] = "No file selected for upload";
+            return RedirectToPage();
+        }
 
         // Handler for deleting a folder
         public async Task<IActionResult> OnPostDeleteFolder(string folderPath)
@@ -710,12 +834,34 @@
 
             try
             {
-                // Parse the folder path to determine what type of folder it is
-                string[] pathParts = folderPath.Split('/');
+                // Load accessible categories for permission check
+                await LoadAccessibleCategoriesAsync();
 
+                // Extract category from folderPath to check permissions
+                string[] pathParts = folderPath.Split('/');
+                if (pathParts.Length > 0)
+                {
+                    string categoryName = pathParts[0];
+                    var categoryId = await _context.Categories
+                        .Where(c => c.Name == categoryName)
+                        .Select(c => c.CategoryId)
+                        .FirstOrDefaultAsync();
+
+                    if (!IsAdmin && !AccessibleCategoryIds.Contains(categoryId))
+                    {
+                        return new JsonResult(new { success = false, message = "You do not have permission to delete this folder" });
+                    }
+                }
+
+                // Parse the folder path to determine what type of folder it is
                 if (pathParts.Length == 1)
                 {
-                    // This is a category
+                    // This is a category - only admins can delete categories
+                    if (!IsAdmin)
+                    {
+                        return new JsonResult(new { success = false, message = "Only administrators can delete categories" });
+                    }
+
                     var category = await _context.Categories
                         .Include(c => c.Areas)
                             .ThenInclude(a => a.Courses)
