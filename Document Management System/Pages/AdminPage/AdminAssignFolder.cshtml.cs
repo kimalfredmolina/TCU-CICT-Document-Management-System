@@ -9,9 +9,11 @@ using Document_Management_System.Data;
 using Microsoft.AspNetCore.Identity;
 using Document_Management_System.Models;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Document_Management_System.Pages.AdminPage
 {
+    [Authorize(Roles = "Admin")]
     public class AdminSharedModel : PageModel
     {
         private readonly AppDbContext _context;
@@ -25,7 +27,7 @@ namespace Document_Management_System.Pages.AdminPage
 
         public List<Category> Categories { get; set; }
         public List<Users> Users { get; set; }
-        public List<FolderAccess> FolderAccessList { get; set; } 
+        public List<FolderAccess> FolderAccessList { get; set; }
 
         [BindProperty]
         public FolderAssignmentInput Input { get; set; }
@@ -42,6 +44,11 @@ namespace Document_Management_System.Pages.AdminPage
 
         public async Task OnGetAsync()
         {
+            await LoadDataAsync();
+        }
+
+        private async Task LoadDataAsync()
+        {
             Categories = await _context.Categories.ToListAsync();
             Users = await _userManager.Users.ToListAsync();
             FolderAccessList = await _context.FolderAccess
@@ -55,12 +62,7 @@ namespace Document_Management_System.Pages.AdminPage
         {
             if (!ModelState.IsValid)
             {
-                Categories = await _context.Categories.ToListAsync();
-                Users = await _userManager.Users.ToListAsync();
-                FolderAccessList = await _context.FolderAccess
-                    .Include(f => f.Category)
-                    .Include(f => f.User)
-                    .ToListAsync();
+                await LoadDataAsync();
                 return Page();
             }
 
@@ -95,6 +97,32 @@ namespace Document_Management_System.Pages.AdminPage
             }
 
             return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostDeleteAccessAsync([FromBody] DeleteAccessRequest request)
+        {
+            try
+            {
+                var access = await _context.FolderAccess.FindAsync(request.AccessId);
+                if (access == null)
+                {
+                    return new JsonResult(new { success = false, message = "Access record not found" });
+                }
+
+                _context.FolderAccess.Remove(access);
+                await _context.SaveChangesAsync();
+
+                return new JsonResult(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = ex.Message });
+            }
+        }
+
+        public class DeleteAccessRequest
+        {
+            public int AccessId { get; set; }
         }
     }
 }
