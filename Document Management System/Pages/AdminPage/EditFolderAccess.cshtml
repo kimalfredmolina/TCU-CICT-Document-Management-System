@@ -1,0 +1,83 @@
+﻿@page
+@model Document_Management_System.Pages.AdminPage.EditFolderAccessModel
+@{
+    ViewData["Title"] = "Edit Folder Access";
+    Layout = "_LayoutDashboard";
+}
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Bootstrap Table CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css">
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Edit Folder Access</h2>
+            <p class="text-muted">Modify folder permissions for user</p>
+        </div>
+    </div
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit Assignment</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" asp-for="Input.AccessId" />
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Folder</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" value="@Model.CurrentFolderName" readonly />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">User</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" value="@Model.CurrentUserName (@Model.CurrentUserEmail)" readonly />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="categorySelect" class="col-sm-2 col-form-label">Change Folder</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" asp-for="Input.NewCategoryId" required>
+                            <option value="">-- Select a new folder --</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.CategoryId" selected="@(category.CategoryId == Model.CurrentCategoryId)">
+                                    @category.Name
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="Input.NewCategoryId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-10 offset-sm-2">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a asp-page="/AdminPage/AdminAssignFolder" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
