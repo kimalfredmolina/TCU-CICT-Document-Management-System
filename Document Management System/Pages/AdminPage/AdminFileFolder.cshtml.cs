@@ -288,46 +288,83 @@ namespace Document_Management_System.Pages.AdminPage
             }
 
             var categories = await query.ToListAsync();
+            string fileStoragePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage");
 
             foreach (var category in categories)
             {
                 var categoryFolders = new List<FolderModel>();
                 FolderHierarchy[category.Name] = categoryFolders;
 
+                // Get category directory info for last modified date and item count
+                string categoryPath = Path.Combine(fileStoragePath, category.Name);
+                DateTime categoryModifiedDate = Directory.Exists(categoryPath)
+                    ? Directory.GetLastWriteTime(categoryPath)
+                    : DateTime.Now;
+
                 // Add areas as subfolders
                 foreach (var area in category.Areas)
                 {
+                    string areaPath = Path.Combine(categoryPath, area.Name);
+                    DateTime areaModifiedDate = Directory.Exists(areaPath)
+                        ? Directory.GetLastWriteTime(areaPath)
+                        : DateTime.Now;
+
+                    // Calculate actual item count for area (files + directories)
+                    int areaItemCount = Directory.Exists(areaPath)
+                        ? Directory.GetFiles(areaPath).Length + Directory.GetDirectories(areaPath).Length
+                        : area.Courses.Count;
+
                     var areaFolder = new FolderModel
                     {
                         Name = area.Name,
                         Path = $"{category.Name}/{area.Name}",
                         Category = category.Name,
-                        ModifiedDate = DateTime.Now,
-                        ItemCount = area.Courses.Count
+                        ModifiedDate = areaModifiedDate,
+                        ItemCount = areaItemCount
                     };
 
                     // Add courses as sub-subfolders
                     foreach (var course in area.Courses)
                     {
+                        string coursePath = Path.Combine(areaPath, course.Name);
+                        DateTime courseModifiedDate = Directory.Exists(coursePath)
+                            ? Directory.GetLastWriteTime(coursePath)
+                            : DateTime.Now;
+
+                        // Calculate actual item count for course (files + directories)
+                        int courseItemCount = Directory.Exists(coursePath)
+                            ? Directory.GetFiles(coursePath).Length + Directory.GetDirectories(coursePath).Length
+                            : course.YearFolders.Count;
+
                         var courseFolder = new FolderModel
                         {
                             Name = course.Name,
                             Path = $"{category.Name}/{area.Name}/{course.Name}",
                             Category = category.Name,
-                            ModifiedDate = DateTime.Now,
-                            ItemCount = course.YearFolders.Count
+                            ModifiedDate = courseModifiedDate,
+                            ItemCount = courseItemCount
                         };
 
                         // Add year folders
                         foreach (var yearFolder in course.YearFolders)
                         {
+                            string yearPath = Path.Combine(coursePath, yearFolder.Year.ToString());
+                            DateTime yearModifiedDate = Directory.Exists(yearPath)
+                                ? Directory.GetLastWriteTime(yearPath)
+                                : yearFolder.CreatedAt;
+
+                            // Calculate actual item count for year folder (files + directories)
+                            int yearItemCount = Directory.Exists(yearPath)
+                                ? Directory.GetFiles(yearPath).Length + Directory.GetDirectories(yearPath).Length
+                                : 0;
+
                             courseFolder.SubFolders.Add(new FolderModel
                             {
                                 Name = yearFolder.Year.ToString(),
                                 Path = $"{category.Name}/{area.Name}/{course.Name}/{yearFolder.Year}",
                                 Category = category.Name,
-                                ModifiedDate = yearFolder.CreatedAt,
-                                ItemCount = 0 // You might want to add a Files collection to YearFolder to count files
+                                ModifiedDate = yearModifiedDate,
+                                ItemCount = yearItemCount
                             });
                         }
 
@@ -421,17 +458,27 @@ namespace Document_Management_System.Pages.AdminPage
                 return new JsonResult(new { success = true, folders });
             }
 
-            public int GetFileCount(string category)
+        public int GetFileCount(string category)
+        {
+            string categoryPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", category);
+
+            if (!Directory.Exists(categoryPath))
+                return 0;
+
+            // Count both files and folders at the top level
+            int fileCount = Directory.GetFiles(categoryPath).Length;
+            int folderCount = Directory.GetDirectories(categoryPath).Length;
+
+            // Count files in subdirectories
+            foreach (var dir in Directory.GetDirectories(categoryPath))
             {
-                string categoryPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", category);
-
-                if (!Directory.Exists(categoryPath))
-                    return 0;
-
-                return CountFilesInDirectory(categoryPath);
+                fileCount += CountFilesInDirectory(dir);
             }
 
-            private int CountFilesInDirectory(string path)
+            return fileCount + folderCount;
+        }
+
+        private int CountFilesInDirectory(string path)
             {
                 int count = 0;
 
@@ -543,6 +590,9 @@ namespace Document_Management_System.Pages.AdminPage
                     if (!Directory.Exists(areaPath))
                     {
                         Directory.CreateDirectory(areaPath);
+
+                        // Set the last write time to now for just this directory
+                        Directory.SetLastWriteTime(areaPath, DateTime.Now);
                     }
 
                     TempData["SuccessMessage"] = "Area created successfully";
@@ -961,6 +1011,11 @@ namespace Document_Management_System.Pages.AdminPage
             {
                 return new JsonResult(new { success = false, message = $"Error deleting folder: {ex.Message}" });
             }
+        }
+        public DateTime GetCategoryLastModifiedDate(string categoryName)
+        {
+            string categoryPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", categoryName);
+            return Directory.Exists(categoryPath) ? Directory.GetLastWriteTime(categoryPath) : DateTime.Now;
         }
     }
 
