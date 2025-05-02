@@ -342,7 +342,7 @@
                                         <span class="toggle-icon"><i class="fas fa-chevron-right caret-icon"></i></span>
                                         <i class="fas fa-folder folder-icon file-icon"></i> @category
                                     </td>
-                                    <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
+                                    <td>@Model.GetCategoryLastModifiedDate(category).ToString("MM/dd/yyyy h:mm tt")</td>
                                     <td>File folder</td>
                                     <td>@Model.GetFileCount(category) items</td>
                                     <td class="file-actions">
@@ -420,7 +420,6 @@
                                                                                 <td class="file-name add-folder-btn">
                                                                                     <i class="fas fa-folder-plus file-icon"></i> Add Year
                                                                                 </td>
-                                                                                <td>@DateTime.Now.ToString("MM/dd/yyyy h:mm tt")</td>
                                                                                 <td>Action</td>
                                                                                 <td></td>
                                                                                 <td></td>
