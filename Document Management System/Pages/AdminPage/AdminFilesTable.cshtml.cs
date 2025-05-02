@@ -61,17 +61,27 @@ namespace Document_Management_System.Pages.AdminPage
                     query = query.Where(d => d.CategoryId == category.CategoryId);
                 }
             }
-
             // Filter by search query if provided
             if (!string.IsNullOrEmpty(SearchQuery))
             {
-                query = query.Where(d => d.Filename.Contains(SearchQuery) ||
-                                        d.FileType.Contains(SearchQuery) ||
-                                        d.ContentType.Contains(SearchQuery));
+                query = query.Where(d =>
+                    (d.Filename != null && d.Filename.Contains(SearchQuery)) ||
+                    (d.FileType != null && d.FileType.Contains(SearchQuery)) ||
+                    (d.ContentType != null && d.ContentType.Contains(SearchQuery)));
             }
 
-            // Load the documents - execute the query only once
-            Documents = await query.ToListAsync();
+            try
+            {
+                // Load the documents - execute the query only once
+                Documents = await query.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle the error gracefully
+                Documents = new List<Document>();
+                TempData["ErrorMessage"] = "An error occurred while loading files. Please try again.";
+                // You could log the actual error here
+            }
 
             // If no documents found in the specified folder and no search is active, check if there are files in the filesystem
             if (!Documents.Any() && !string.IsNullOrEmpty(FolderPath) && string.IsNullOrEmpty(SearchQuery))
@@ -83,7 +93,8 @@ namespace Document_Management_System.Pages.AdminPage
         private async Task ImportFilesFromFolder()
         {
             // Check if the folder exists in the filesystem
-            string folderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage", FolderPath.Replace("/", Path.DirectorySeparatorChar.ToString()));
+            string folderPath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage",
+                FolderPath?.Replace("/", Path.DirectorySeparatorChar.ToString()) ?? "");
             if (!Directory.Exists(folderPath))
             {
                 return;
@@ -196,7 +207,7 @@ namespace Document_Management_System.Pages.AdminPage
         }
 
         // Handler for deleting a file
-        public async Task<IActionResult> OnPostDeleteFileAsync(int id)
+        public async Task<IActionResult> OnPostDeleteFile(int id)
         {
             var document = await _context.Documents.FindAsync(id);
             if (document == null)
@@ -206,8 +217,8 @@ namespace Document_Management_System.Pages.AdminPage
 
             // Delete the file from the filesystem
             string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage",
-                document.FolderPath.Replace("/", Path.DirectorySeparatorChar.ToString()),
-                document.Filename);
+                document.FolderPath?.Replace("/", Path.DirectorySeparatorChar.ToString()) ?? "",
+                document.Filename ?? "");
 
             if (System.IO.File.Exists(filePath))
             {
