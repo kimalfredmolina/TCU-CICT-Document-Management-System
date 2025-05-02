@@ -14,11 +14,14 @@
     <div class="dashboard">
         <!-- Sidebar -->
         <div class="dashboard-nav">
-            <header>
-                <a href="~/src/document-logo.png" class="brand-logo"><i class="fas fa-file-upload"></i> <span>Dms</span></a>
+            <header class="sidebar-header">
+                <div class="logo-container">
+                    <img src="~/src/TCU-logo.png" alt="TCU Dms Logo" class="logo-img"
+                         onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<span>TCU Dms</span>');">
+                    <div class="logo-text">TCU DMS</div>
+                </div>
             </header>
             <div class="container">
-                <button class="upload-btn"><i class="fas fa-plus"></i> New</button>
                 <nav class="dashboard-nav-list">
                     <a href="AdminDashboard" class="dashboard-nav-item">
                         <i class="fas fa-home"></i> Admin Dashboard
@@ -39,8 +42,7 @@
                         </div>
                     </div>
 
-                    <a href="AdminAssignFolder" class="dashboard-nav-item"><i class="fas fa-folder"></i> Assign Folders</a>
-                    <a href="AdminRecent" class="dashboard-nav-item"><i class="fas fa-history"></i> Recent</a>               
+                    <a href="AdminAssignFolder" class="dashboard-nav-item"><i class="fas fa-folder"></i> Assign Folders</a>              
 
                     <!-- Manage Users Dropdown -->
                     <div class="dashboard-nav-dropdown">
@@ -61,7 +63,6 @@
                         </div>
                     </div>
 
-                    <a href="AdminSetting" class="dashboard-nav-item"><i class="fas fa-cogs"></i> Settings</a>
                     <a asp-page="/Index" asp-page-handler="Logout" class="dashboard-nav-item">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </a>

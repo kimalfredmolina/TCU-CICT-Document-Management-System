@@ -423,3 +423,29 @@ body {
     background-color: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
 }
+
+.sidebar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+.logo-img {
+    height: 100px;
+    display: block;
+    margin: 0 auto;
+}
+
+.logo-text {
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
