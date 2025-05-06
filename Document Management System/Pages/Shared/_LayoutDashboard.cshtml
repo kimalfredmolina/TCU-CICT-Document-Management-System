@@ -42,7 +42,10 @@
                         </div>
                     </div>
 
-                    <a href="AdminAssignFolder" class="dashboard-nav-item"><i class="fas fa-folder"></i> Assign Folders</a>              
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="AdminAssignFolder" class="dashboard-nav-item"><i class="fas fa-folder"></i> Assign Folders</a>
+                    }
 
                     <!-- Manage Users Dropdown -->
                     <div class="dashboard-nav-dropdown">
@@ -55,9 +58,9 @@
                             </span>
                         </div>
                         <div class="dashboard-nav-dropdown-menu">
-                            <a href="AdminUserTable" class="dashboard-nav-dropdown-item">Users Table</a>
                             @if (User.IsInRole("Admin"))
                              {
+                                <a href="AdminUserTable" class="dashboard-nav-dropdown-item">Users Table</a>
                             <a asp-page="/AdminPage/AdminAddUser" class="dashboard-nav-dropdown-item">Add New User</a>
                              }
                         </div>
