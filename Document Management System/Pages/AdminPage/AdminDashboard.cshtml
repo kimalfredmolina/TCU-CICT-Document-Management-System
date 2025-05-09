@@ -4,7 +4,6 @@
     ViewData["Title"] = "Admin Dashboard";
     Layout = "_LayoutDashboard";
 }
-
 <style>
     .user-info-card {
         background: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%);
@@ -207,10 +206,57 @@
     }
 
     .task-item {
+        transition: background-color 0.3s ease;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        padding: 15px;
+        border: 1px solid #eee;
+    }
+
+        .task-item[data-status="Completed"] {
+            background-color: rgba(40, 167, 69, 0.1);
+            border-left: 4px solid #28a745;
+        }
+
+        .task-item[data-status="In Progress"] {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+        }
+
+        .task-item[data-status="Overdue"] {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid #dc3545;
+        }
+
+        .task-item[data-status="Pending"] {
+            border-left: 4px solid #6c757d;
+        }
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .task-description {
+        margin-bottom: 10px;
+    }
+
+    .task-meta {
         display: flex;
         gap: 15px;
-        padding: 10px 0;
-        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .update-status-btn {
+        white-space: nowrap;
+    }
+
+    .status-dropdown {
+        min-width: 120px;
     }
 
     .task-number {
@@ -261,7 +307,7 @@
         margin: 10px auto;
     }
 </style>
-
+@Html.AntiForgeryToken()
 <div class="dashboard-content">
     <!-- User Info Card -->
     <div class="user-info-card">
@@ -446,6 +492,9 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Completion Pie Chart
@@ -530,6 +579,66 @@
                     }
                 });
             });
+                    $('.update-status-btn').click(function() {
+            var btn = $(this);
+            var taskId = $(this).data('taskid');
+            var dropdown = $('.status-dropdown[data-taskid="' + taskId + '"]');
+            var newStatus = dropdown.val();
+            var taskItem = $(this).closest('.task-item');
+
+            // Disable button and show loading state
+            btn.prop('disabled', true);
+            btn.html('<i class="fas fa-spinner fa-spin"></i> Updating...');
+
+            $.ajax({
+                url: '?handler=UpdateTaskStatus',
+                type: 'POST',
+                data: {
+                    taskId: taskId,
+                    status: newStatus
+                },
+                headers: {
+                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Show success message
+                        toastr.success('Task status updated successfully');
+
+                        // Update the task item status attribute
+                        taskItem.attr('data-status', newStatus);
+
+                        // Update the status text in the task meta
+                        taskItem.find('.task-meta span:contains("Status:")').html('<i class="fas fa-tag"></i> Status: ' + newStatus);
+
+                        // Flash effect to indicate success
+                        taskItem.css('transition', 'background-color 0.5s');
+                        taskItem.css('background-color', 'rgba(40, 167, 69, 0.2)');
+                        setTimeout(function() {
+                            taskItem.css('background-color', '');
+                        }, 1000);
+                    } else {
+                        toastr.error('Error updating task status');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                    toastr.error('Error updating task status: ' + (xhr.responseJSON?.message || 'Server error'));
+                },
+                complete: function() {
+                    // Re-enable button and restore text
+                    btn.prop('disabled', false);
+                    btn.html('<i class="fas fa-save"></i> Update');
+                }
+            });
         });
+        });
+        // Configure toastr options
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000"
+        };
     </script>
 }

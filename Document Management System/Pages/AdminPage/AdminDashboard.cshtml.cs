@@ -120,19 +120,29 @@ namespace Document_Management_System.Pages.AdminPage
 
         public async Task<IActionResult> OnPostUpdateTaskStatusAsync(int taskId, string status)
         {
-            var task = await _context.AssignTask
-                .FirstOrDefaultAsync(t => t.Id == taskId);
-
-            if (task == null)
+            try
             {
-                return NotFound();
+                var task = await _context.AssignTask
+                    .FirstOrDefaultAsync(t => t.Id == taskId);
+
+                if (task == null)
+                {
+                    return new JsonResult(new { success = false, message = "Task not found" });
+                }
+
+                // Update the status
+                task.Status = status;
+                _context.Update(task);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"Task {taskId} status updated to {status}");
+                return new JsonResult(new { success = true });
             }
-
-            task.Status = status;
-            _context.Update(task);
-            await _context.SaveChangesAsync();
-
-            return new JsonResult(new { success = true });
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error updating task status: {ex.Message}");
+                return new JsonResult(new { success = false, message = ex.Message });
+            }
         }
     }
 }
