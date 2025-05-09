@@ -408,41 +408,43 @@
 
     <!-- Bottom Section -->
     <div class="charts-section">
-        <!-- User Assign Folders -->
-        <div class="chart-card">
-            <div class="card-header">
-                <i class="fas fa-folder-open"></i> User Assign Folders
-            </div>
-            <div class="card-body">
-                <div class="priority-tasks">
-                    @if (Model.FolderAssignmentsCount != null && Model.FolderAssignmentsCount.Any())
-                    {
-                        var count = 1;
-                        foreach (var folder in Model.FolderAssignmentsCount)
+        @if (User.IsInRole("Admin"))
+        {
+                   <!-- User Assign Folders -->
+                <div class="chart-card">
+                    <div class="card-header">
+                        <i class="fas fa-folder-open"></i> User Assign Folders
+                    </div>
+                    <div class="card-body">
+                        <div class="priority-tasks">
+                        @if (Model.FolderAssignmentsCount != null && Model.FolderAssignmentsCount.Any())
                         {
-                            <div class="task-item">
-                                <div class="task-number">@count.</div>
-                                <div class="task-content">
-                                    <div class="task-title">@folder.Key</div>
-                                    <div class="task-meta">
-                                        Assign User in this Folder: @folder.Value
-                                    </div>
-                                </div>
-                            </div>
-                            count++;
+                            var count = 1;
+                            foreach (var folder in Model.FolderAssignmentsCount)
+                            {
+                                            <div class="task-item">
+                                                <div class="task-number">@count.</div>
+                                                <div class="task-content">
+                                                    <div class="task-title">@folder.Key</div>
+                                                    <div class="task-meta">
+                                                        Assign User in this Folder: @folder.Value
+                                                    </div>
+                                                </div>
+                                            </div>
+                                count++;
+                            }
                         }
-                    }
-                    else
-                    {
-                        <div>No new assignments found.</div>
-                    }
-                </div>
-                <div class="view-all">
-                    <a asp-page="/AdminPage/AdminAssignFolder" class="btn btn-outline-secondary btn-block">Assign New User</a>
-                </div>
-            </div>
-        </div>
-
+                        else
+                        {
+                                    <div>No new assignments found.</div>
+                        }
+                        </div>
+                        <div class="view-all">
+                            <a asp-page="/AdminPage/AdminAssignFolder" class="btn btn-outline-secondary btn-block">Assign New User</a>
+                        </div>
+                    </div>
+                </div>               
+        }
         <div class="chart-card">
             <div class="card-header">
                 <i class="fas fa-tasks"></i> My Tasks

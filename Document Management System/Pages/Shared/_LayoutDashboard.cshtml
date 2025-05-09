@@ -19,7 +19,7 @@
             <header class="sidebar-header">
                 <div class="logo-container">
                     <img src="~/src/TCU-logo.png" alt="TCU Dms Logo" class="logo-img"
-                         onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<span>TCU Dms</span>');">
+                    onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<span>TCU Dms</span>');">
                     <div class="logo-text">TCU DMS</div>
                 </div>
             </header>
@@ -43,10 +43,12 @@
                             <a href="AdminFileFolder" class="dashboard-nav-dropdown-item">File Folder</a>
                         </div>
                     </div>
-
-                    <a href="AdminAssignTask" class="dashboard-nav-item">
-                        <i class="fas fa-pen"></i> Assign Task
-                    </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="AdminAssignTask" class="dashboard-nav-item">
+                            <i class="fas fa-pen"></i> Assign Task
+                        </a>
+                    }
 
                     @if (User.IsInRole("Admin"))
                     {
