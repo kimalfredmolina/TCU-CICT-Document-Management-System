@@ -34,6 +34,8 @@ namespace Document_Management_System.Pages.AdminPage
 
         public class TaskAssignmentInput
         {
+            public int TaskId { get; set; }
+
             [Required(ErrorMessage = "Please select a folder")]
             public int CategoryId { get; set; }
 
@@ -66,14 +68,20 @@ namespace Document_Management_System.Pages.AdminPage
         {
             Categories = await _context.Categories.ToListAsync();
 
-            UsersWithAccess = new List<Users>();
+            // Load users with access to any folder
+            UsersWithAccess = await _context.FolderAccess
+                .Include(fa => fa.User)
+                .Select(fa => fa.User)
+                .Distinct()
+                .ToListAsync();
 
             TaskAssignments = await _context.AssignTask
-            .Include(t => t.FolderAccess)
-                .ThenInclude(fa => fa.Category)
-            .Include(t => t.User)
-            .Include(t => t.CreatedByUser)
-            .ToListAsync();
+                .Include(t => t.FolderAccess)
+                    .ThenInclude(fa => fa.Category)
+                .Include(t => t.User)
+                .Include(t => t.CreatedByUser)
+                .OrderByDescending(t => t.CreatedDate)
+                .ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -167,6 +175,35 @@ namespace Document_Management_System.Pages.AdminPage
         public class DeleteTaskRequest
         {
             public int TaskId { get; set; }
+        }
+
+        // This method is used to load the task for editing
+        public async Task<IActionResult> OnGetEditTaskAsync(int id)
+        {
+            var task = await _context.AssignTask
+                .Include(t => t.FolderAccess)
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                TempData["ErrorMessage"] = "Task not found.";
+                return RedirectToPage();
+            }
+
+            Input = new TaskAssignmentInput
+            {
+                TaskId = task.Id,
+                CategoryId = task.CategoryId,
+                UserId = task.UserId,
+                TaskName = task.TaskName,
+                Description = task.Description,
+                StartDate = task.StartDate.ToLocalTime(),
+                Deadline = task.Deadline.ToLocalTime(),
+                Status = task.Status
+            };
+
+            return Page();
         }
     }
 }
