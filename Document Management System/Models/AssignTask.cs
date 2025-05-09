@@ -14,8 +14,8 @@ public class AssignTask
     public string Status { get; set; }
     public DateTime CreatedDate { get; set; }
     public string CreatedByUserId { get; set; }
-
     public FolderAccess FolderAccess { get; set; }
+    public int CategoryId { get; set; }
     public Category Category { get; set; }
     public Users User { get; set; }
     public Users CreatedByUser { get; set; }

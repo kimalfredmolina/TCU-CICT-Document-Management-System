@@ -41,6 +41,24 @@ namespace Document_Management_System.Data
                       .HasForeignKey(f => f.AssignedByUserId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+
+            modelBuilder.Entity<AssignTask>(entity =>
+            {
+                entity.HasOne(a => a.Category)
+                      .WithMany()
+                      .HasForeignKey(a => a.CategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(a => a.User)
+                      .WithMany()
+                      .HasForeignKey(a => a.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(a => a.CreatedByUser)
+                      .WithMany()
+                      .HasForeignKey(a => a.CreatedByUserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 

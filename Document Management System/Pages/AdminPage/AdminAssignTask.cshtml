@@ -145,7 +145,7 @@
                     foreach (var task in Model.TaskAssignments)
                     {
                         <tr>
-                            <td>@task.Category?.Name</td>
+                            <td>@task.FolderAccess?.Category?.Name</td>
                             <td>@task.TaskName</td>
                             <td>@task.User?.UserName</td>
                             <td>@task.StartDate.ToLocalTime().ToString("yyyy-MM-dd")</td>

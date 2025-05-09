@@ -69,10 +69,11 @@ namespace Document_Management_System.Pages.AdminPage
             UsersWithAccess = new List<Users>();
 
             TaskAssignments = await _context.AssignTask
-                .Include(t => t.Category)
-                .Include(t => t.User)
-                .Include(t => t.CreatedByUser)
-                .ToListAsync();
+            .Include(t => t.FolderAccess)
+                .ThenInclude(fa => fa.Category)
+            .Include(t => t.User)
+            .Include(t => t.CreatedByUser)
+            .ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -90,7 +91,6 @@ namespace Document_Management_System.Pages.AdminPage
                 // Verify the user has access to the selected folder
                 var folderAccess = await _context.FolderAccess
                     .FirstOrDefaultAsync(fa => fa.CategoryId == Input.CategoryId && fa.UserId == Input.UserId);
-
                 if (folderAccess == null)
                 {
                     TempData["ErrorMessage"] = "The selected user doesn't have access to this folder.";
@@ -101,6 +101,7 @@ namespace Document_Management_System.Pages.AdminPage
                 var newTask = new AssignTask
                 {
                     FolderAccessId = folderAccess.Id,
+                    CategoryId = Input.CategoryId,
                     UserId = Input.UserId, // Add this line
                     TaskName = Input.TaskName,
                     Description = Input.Description,
