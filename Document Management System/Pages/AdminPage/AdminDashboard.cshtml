@@ -325,6 +325,17 @@
 
         <div class="stat-card">
             <div class="stat-info">
+                <h3>Total Assigned Tasks</h3>
+                <div class="stat-value">@Model.TotalAssignedTasksCount</div>
+                <a asp-page="/AdminPage/AdminAssignTask" class="stat-link">View All</a>
+            </div>
+            <div class="stat-icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-info">
                 <h3>Avg. Completion</h3>
                 <div class="pie-chart-container">
                     <canvas id="completionPieChart"></canvas>

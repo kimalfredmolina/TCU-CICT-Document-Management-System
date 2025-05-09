@@ -25,6 +25,7 @@ namespace Document_Management_System.Pages.AdminPage
         public int ActiveUsersCount { get; private set; }
         public int CategoriesCount { get; private set; }
         public int AreasCount { get; private set; }
+        public int TotalAssignedTasksCount { get; set; }
         public int TotalDocumentsCount { get; private set; } // New property for document count
         public Dictionary<string, int> FolderAssignmentsCount { get; private set; }
         public Dictionary<string, int> AreasByCategoryCount { get; private set; }
@@ -71,6 +72,9 @@ namespace Document_Management_System.Pages.AdminPage
 
             // Count all documents in the Documents table
             TotalDocumentsCount = await _context.Documents.CountAsync();
+
+            // Count all assigned tasks
+            TotalAssignedTasksCount = await _context.AssignTask.CountAsync();
 
             FolderAssignmentsCount = await _context.FolderAccess
                 .Include(f => f.Category)
