@@ -397,33 +397,48 @@
             </div>
         </div>
 
-        <!-- Recent Activity -->
         <div class="chart-card">
             <div class="card-header">
-                <i class="fas fa-history"></i> Recent Activity
+                <i class="fas fa-tasks"></i> My Tasks
             </div>
             <div class="card-body">
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-time">10:32</div>
-                        <div class="activity-content">Jane approved "Thesis_Final"</div>
+                @if (Model.UserTasks != null && Model.UserTasks.Any())
+                {
+                    <div class="task-list">
+                        @foreach (var task in Model.UserTasks)
+                        {
+                        <div class="task-item">
+                            <div class="task-header">
+                                <h5>@task.TaskName</h5>
+                                <div class="task-status">
+                                    <select class="form-select form-select-sm status-dropdown" data-taskid="@task.Id">
+                                        <option value="Pending" selected="@(task.Status == "Pending")">Pending</option>
+                                        <option value="In Progress" selected="@(task.Status == "In Progress")">In Progress</option>
+                                        <option value="Completed" selected="@(task.Status == "Completed")">Completed</option>
+                                        <option value="Overdue" selected="@(task.Status == "Overdue")">Overdue</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="task-description">@task.Description</div>
+                                <div class="task-meta">
+                                    <span><i class="fas fa-folder"></i> @task.CategoryName</span>
+                                    <span><i class="fas fa-calendar-alt"></i> Due: @task.Deadline.ToString("yyyy-MM-dd")</span>
+                                </div>
+                                <div class="task-meta">
+                                    <span><i class="fas fa-user"></i> Assigned by: @task.CreatedBy</span>
+                                    <span><i class="fas fa-tag"></i> Status: @task.Status</span>
+                                </div>
+                        </div>
+                        }
                     </div>
-                    <div class="activity-item">
-                        <div class="activity-time">09:15</div>
-                        <div class="activity-content">Mark uploaded "ALCU_Report"</div>
+                }
+                else
+                {
+                    <div class="no-tasks">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No tasks assigned to you</p>
                     </div>
-                    <div class="activity-item">
-                        <div class="activity-time">08:50</div>
-                        <div class="activity-content">New user "Lisa" registered</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-time">Yesterday</div>
-                        <div class="activity-content">Storage limit at 85%</div>
-                    </div>
-                </div>
-                <div class="view-all">
-                    <a href="#" class="btn btn-outline-secondary btn-block">View Full Log</a>
-                </div>
+                }
             </div>
         </div>
     </div>
@@ -489,6 +504,31 @@
             // Refresh button functionality
             document.getElementById('refreshBtn')?.addEventListener('click', function() {
                 location.reload();
+            });
+        });
+
+        $(document).ready(function() {
+            $('.status-dropdown').change(function() {
+                var taskId = $(this).data('taskid');
+                var newStatus = $(this).val();
+
+                $.ajax({
+                    url: '?handler=UpdateTaskStatus',
+                    type: 'POST',
+                    data: {
+                        taskId: taskId,
+                        status: newStatus
+                    },
+                    headers: {
+                        RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        toastr.success('Task status updated successfully');
+                    },
+                    error: function() {
+                        toastr.error('Error updating task status');
+                    }
+                });
             });
         });
     </script>

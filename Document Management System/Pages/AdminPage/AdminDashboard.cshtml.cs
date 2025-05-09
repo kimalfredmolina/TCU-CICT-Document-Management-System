@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Document_Management_System.Data;
 using System.Collections.Generic;
+using System;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -26,9 +27,10 @@ namespace Document_Management_System.Pages.AdminPage
         public int CategoriesCount { get; private set; }
         public int AreasCount { get; private set; }
         public int TotalAssignedTasksCount { get; set; }
-        public int TotalDocumentsCount { get; private set; } // New property for document count
+        public int TotalDocumentsCount { get; private set; }
         public Dictionary<string, int> FolderAssignmentsCount { get; private set; }
         public Dictionary<string, int> AreasByCategoryCount { get; private set; }
+        public List<TaskViewModel> UserTasks { get; set; } = new List<TaskViewModel>();
 
         public AdminDashboardModel(
             UserManager<Users> userManager,
@@ -69,11 +71,7 @@ namespace Document_Management_System.Pages.AdminPage
             ActiveUsersCount = _userManager.Users.Count();
             CategoriesCount = await _context.Categories.CountAsync();
             AreasCount = await _context.Areas.CountAsync();
-
-            // Count all documents in the Documents table
             TotalDocumentsCount = await _context.Documents.CountAsync();
-
-            // Count all assigned tasks
             TotalAssignedTasksCount = await _context.AssignTask.CountAsync();
 
             FolderAssignmentsCount = await _context.FolderAccess
@@ -87,12 +85,54 @@ namespace Document_Management_System.Pages.AdminPage
                 .GroupBy(a => a.Category.Name)
                 .Select(g => new { CategoryName = g.Key, Count = g.Count() })
                 .ToDictionaryAsync(x => x.CategoryName, x => x.Count);
+
+            UserTasks = await _context.AssignTask
+                .Include(t => t.Category)  // This loads the Category relationship
+                .Include(t => t.CreatedByUser)
+                .Where(t => t.UserId == user.Id)
+                .OrderByDescending(t => t.Deadline)
+                .Select(t => new TaskViewModel
+                {
+                    Id = t.Id,
+                    TaskName = t.TaskName,
+                    Description = t.Description,
+                    CategoryName = t.Category.Name,  // Accessing Category name directly
+                    Deadline = t.Deadline,
+                    Status = t.Status,
+                    CreatedBy = t.CreatedByUser.UserName
+                })
+                .ToListAsync();
+
+            // Check for overdue tasks
+            foreach (var task in UserTasks.Where(t => t.Deadline < DateTime.Now && t.Status != "Completed"))
+            {
+                task.Status = "Overdue";
+                _context.Update(task);
+            }
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IActionResult> OnPostLogoutAsync()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToPage("/Index");
+        }
+
+        public async Task<IActionResult> OnPostUpdateTaskStatusAsync(int taskId, string status)
+        {
+            var task = await _context.AssignTask
+                .FirstOrDefaultAsync(t => t.Id == taskId);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            task.Status = status;
+            _context.Update(task);
+            await _context.SaveChangesAsync();
+
+            return new JsonResult(new { success = true });
         }
     }
 }
