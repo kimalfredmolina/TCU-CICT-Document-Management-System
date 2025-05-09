@@ -192,7 +192,7 @@
             <tbody>
                 @foreach (var document in Model.Documents)
                 {
-                    <tr>
+                    <tr data-file-id="@document.Id">
                         <td>
                             <span class="file-icon">
                                 @{
@@ -241,6 +241,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <input type="hidden" id="deleteFileId" value="" />
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -252,10 +253,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form method="post" asp-page-handler="DeleteFile">
-                        <input type="hidden" id="deleteFileId" name="id" />
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
                 </div>
             </div>
         </div>
@@ -340,6 +338,61 @@
         var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
         deleteModal.show();
     }
+        // Add this new function to handle the actual delete operation
+    function deleteFile() {
+        const fileId = document.getElementById('deleteFileId').value;
+
+        // Create form data
+        const formData = new FormData();
+        formData.append('id', fileId);
+
+        // Send AJAX request
+        fetch('/AdminPage/AdminFilesTable?handler=DeleteFile', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Find and remove only the specific row
+                const row = document.querySelector(`tr[data-file-id="${fileId}"]`);
+                if (row) {
+                    row.remove();
+                }
+
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success mt-3';
+                alertDiv.textContent = data.message || 'File deleted successfully.';
+                document.querySelector('.container-fluid').appendChild(alertDiv);
+
+                // Auto-hide the alert after 5 seconds
+                setTimeout(() => {
+                    alertDiv.style.opacity = '0';
+                    alertDiv.style.transition = 'opacity 0.5s';
+                    setTimeout(() => alertDiv.remove(), 500);
+                }, 5000);
+
+                // Hide the modal
+                const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                deleteModal.hide();
+            } else {
+                alert(data.message || 'Error deleting file.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the file.');
+        });
+    }
+
+    // Add event listener to the delete button
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('confirmDeleteBtn').addEventListener('click', deleteFile);
+    });
 
     // Auto-hide alerts after 5 seconds
     window.setTimeout(function() {

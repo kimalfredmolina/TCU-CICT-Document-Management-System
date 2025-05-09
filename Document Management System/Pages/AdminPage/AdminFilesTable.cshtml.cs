@@ -110,7 +110,7 @@ namespace Document_Management_System.Pages.AdminPage
             // Get category information
             var categoryName = FolderPath.Split('/').FirstOrDefault();
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
-
+              
             // Import each file to the database
             foreach (var file in files)
             {
@@ -212,25 +212,31 @@ namespace Document_Management_System.Pages.AdminPage
             var document = await _context.Documents.FindAsync(id);
             if (document == null)
             {
-                return NotFound();
+                return new JsonResult(new { success = false, message = "File not found" });
             }
 
-            // Delete the file from the filesystem
-            string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage",
-                document.FolderPath?.Replace("/", Path.DirectorySeparatorChar.ToString()) ?? "",
-                document.Filename ?? "");
-
-            if (System.IO.File.Exists(filePath))
+            try
             {
-                System.IO.File.Delete(filePath);
+                // Delete the file from the filesystem
+                string filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "FileStorage",
+                    document.FolderPath?.Replace("/", Path.DirectorySeparatorChar.ToString()) ?? "",
+                    document.Filename ?? "");
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+
+                // Remove from the database
+                _context.Documents.Remove(document);
+                await _context.SaveChangesAsync();
+
+                return new JsonResult(new { success = true, message = "File deleted successfully" });
             }
-
-            // Remove from the database
-            _context.Documents.Remove(document);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "File deleted successfully.";
-            return RedirectToPage(new { folderPath = FolderPath, category = Category });
+            catch (Exception ex)
+            {
+                return new JsonResult(new { success = false, message = "Error deleting file: " + ex.Message });
+            }
         }
 
         // Handler for downloading a file
