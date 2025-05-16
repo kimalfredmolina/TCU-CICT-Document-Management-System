@@ -57,6 +57,10 @@ namespace Document_Management_System.Pages.AdminPage
 
             [Required(ErrorMessage = "Please select a status")]
             public string Status { get; set; } = "Pending";
+
+            [Required(ErrorMessage = "Please enter a task amount")]
+            [Range(1, int.MaxValue, ErrorMessage = "Task amount must be greater than 0")]
+            public int TaskAmount { get; set; } = 100;
         }
 
         public async Task OnGetAsync()
@@ -117,11 +121,23 @@ namespace Document_Management_System.Pages.AdminPage
                     Deadline = Input.Deadline.ToUniversalTime(),
                     Status = Input.Status,
                     CreatedDate = DateTime.UtcNow,
-                    CreatedByUserId = currentUserId
+                    CreatedByUserId = currentUserId,
+                    TaskAmount = Input.TaskAmount
                 };
 
                 _context.AssignTask.Add(newTask);
                 await _context.SaveChangesAsync();
+
+                //// Create the TaskAmount record
+                //var taskAmount = new TaskAmount
+                //{
+                //    AssignTaskId = newTask.Id,
+                //    Amount = Input.TaskAmount,
+                //    CurrentProgress = 0
+                //};
+
+                //_context.TaskAmounts.Add(taskAmount);
+                //await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Task has been successfully assigned.";
                 return RedirectToPage();
@@ -200,7 +216,8 @@ namespace Document_Management_System.Pages.AdminPage
                 Description = task.Description,
                 StartDate = task.StartDate.ToLocalTime(),
                 Deadline = task.Deadline.ToLocalTime(),
-                Status = task.Status
+                Status = task.Status,
+                TaskAmount = task.TaskAmount ?? 100
             };
 
             return Page();

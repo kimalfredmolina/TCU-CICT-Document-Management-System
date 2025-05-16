@@ -19,4 +19,5 @@ public class AssignTask
     public Category Category { get; set; }
     public Users User { get; set; }
     public Users CreatedByUser { get; set; }
+    public int? TaskAmount { get; set; }
 }

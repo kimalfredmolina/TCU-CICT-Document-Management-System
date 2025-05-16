@@ -306,6 +306,16 @@
         height: 100px;
         margin: 10px auto;
     }
+
+    .progress-container {
+        margin-top: 10px;
+    }
+
+    .task-progress-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 </style>
 @Html.AntiForgeryToken()
 <div class="dashboard-content">
@@ -449,6 +459,63 @@
             <div class="card-header">
                 <i class="fas fa-tasks"></i> My Tasks
             </div>
+        <div class="chart-card">
+            <div class="card-header">
+                <i class="fas fa-tasks"></i> Task Progress
+            </div>
+            <div class="card-body">
+                @if (Model.TaskProgressList != null && Model.TaskProgressList.Any())
+                {
+                    <div class="task-progress-list">
+                        @foreach (var task in Model.TaskProgressList)
+                        {
+                            <div class="task-item" data-status="@task.Status" data-id="@task.Id">
+                                <div class="task-header">
+                                    <h5>@task.TaskName</h5>
+                                    <span class="badge @(task.Status == "Completed" ? "bg-success" :
+                                               task.Status == "In Progress" ? "bg-primary" :
+                                               task.Status == "Overdue" ? "bg-danger" : "bg-secondary")">
+                                        @task.Status
+                                    </span>
+                                </div>
+                                <div class="task-description mb-2">@task.Description</div>
+                                <div class="progress-container mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Progress: @task.ProgressText</span>
+                                        <span>@task.ProgressPercentage%</span>
+                                    </div>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar @task.ProgressBarColor"
+                                             role="progressbar"
+                                             style="width: @(task.ProgressPercentage)%;"
+                                             aria-valuenow="@task.CurrentProgress"
+                                             aria-valuemin="0"
+                                             aria-valuemax="@task.TaskAmount">
+                                            @task.ProgressPercentage%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="task-meta">
+                                    <span><i class="fas fa-folder"></i> @task.CategoryName</span>
+                                    <span><i class="fas fa-calendar-alt"></i> Due: @task.Deadline.ToString("yyyy-MM-dd")</span>
+                                </div>
+                                <div class="task-meta">
+                                    <span><i class="fas fa-user"></i> Assigned by: @task.CreatedBy</span>
+                                    <span><i class="fas fa-file"></i> Files: @task.CurrentProgress</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="no-tasks">
+                        <i class="fas fa-check-circle"></i>
+                        <p>No tasks with progress to display</p>
+                    </div>
+                }
+            </div>
+        </div>
             <div class="card-body">
                 @if (Model.UserTasks != null && Model.UserTasks.Any())
                 {

@@ -110,6 +110,15 @@
                     </div>
                 </div>
 
+                <div class="form-group row mb-3">
+                    <label for="taskAmount" class="col-sm-2 col-form-label">Task Amount</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="taskAmount" asp-for="Input.TaskAmount" min="1" required>
+                        <small class="form-text text-muted">Enter the total amount or scope of the task (e.g., 100 for 100 items)</small>
+                        <span asp-validation-for="Input.TaskAmount" class="text-danger"></span>
+                    </div>
+                </div>
+
                 <div class="form-group row">
                     <div class="col-sm-10 offset-sm-2">
                         <button type="submit" class="btn btn-primary">Assign Task</button>
@@ -137,6 +146,7 @@
                     <th>Created Date</th>
                     <th>Created By</th>
                     <th>Actions</th>
+                    <th>Task Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -168,6 +178,7 @@
                                 </a>
                                 <i class="fas fa-trash action-btn delete-btn" data-taskid="@task.Id" data-bs-toggle="modal" data-bs-target="#deleteModal"></i>
                             </td>
+                            <td>@(task.TaskAmount ?? 0)</td>
                         </tr>
                     }
                 }

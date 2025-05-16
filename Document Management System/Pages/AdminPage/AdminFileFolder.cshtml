@@ -346,6 +346,9 @@
                                     <td>File folder</td>
                                     <td>@Model.GetFileCount(category) items</td>
                                     <td class="file-actions">
+                                        <a href="/AdminPage/AdminFilesTable?folderPath=@category&category=@category" class="action-btn" title="View Files">
+                                            <i class="fas fa-file-alt"></i>
+                                        </a>
                                         <button class="action-btn" title="Delete" onclick="deleteFolder('@category')">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -366,6 +369,9 @@
                                                     <td>File folder</td>
                                                     <td>@areaFolder.ItemCount items</td>
                                                     <td class="file-actions">
+                                                        <a href="/AdminPage/AdminFilesTable?folderPath=@areaFolder.Path&category=@areaFolder.Category" class="action-btn" title="View Files">
+                                                            <i class="fas fa-file-alt"></i>
+                                                        </a>
                                                         <button class="action-btn" title="Delete" onclick="deleteFolder('@areaFolder.Path')">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
@@ -386,6 +392,9 @@
                                                                     <td>File folder</td>
                                                                     <td>@courseFolder.ItemCount items</td>
                                                                     <td class="file-actions">
+                                                                        <a href="/AdminPage/AdminFilesTable?folderPath=@courseFolder.Path&category=@courseFolder.Category" class="action-btn" title="View Files">
+                                                                            <i class="fas fa-file-alt"></i>
+                                                                        </a>
                                                                         <button class="action-btn" title="Delete" onclick="deleteFolder('@courseFolder.Path')">
                                                                             <i class="fas fa-trash"></i>
                                                                         </button>

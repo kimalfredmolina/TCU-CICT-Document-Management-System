@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Document_Management_System.Data;
 using System.Collections.Generic;
 using System;
+using System.IO;
 
 namespace Document_Management_System.Pages.AdminPage
 {
@@ -31,6 +32,39 @@ namespace Document_Management_System.Pages.AdminPage
         public Dictionary<string, int> FolderAssignmentsCount { get; private set; }
         public Dictionary<string, int> AreasByCategoryCount { get; private set; }
         public List<TaskViewModel> UserTasks { get; set; } = new List<TaskViewModel>();
+        public List<TaskProgressViewModel> TaskProgressList { get; set; } = new List<TaskProgressViewModel>();
+        public class TaskProgressViewModel
+        {
+            public int Id { get; set; }
+            public string TaskName { get; set; }
+            public string Description { get; set; }
+            public string CategoryName { get; set; }
+            public string FolderPath { get; set; }
+            public int CurrentProgress { get; set; }
+            public int TaskAmount { get; set; }
+            public DateTime Deadline { get; set; }
+            public string Status { get; set; }
+            public string CreatedBy { get; set; }
+
+            // Calculate percentage for progress bar
+            public int ProgressPercentage => TaskAmount > 0 ? (int)Math.Min(100, (CurrentProgress * 100) / TaskAmount) : 0;
+
+            // Format for display
+            public string ProgressText => $"{CurrentProgress}/{TaskAmount}";
+
+            // Progress bar color based on percentage and status
+            public string ProgressBarColor
+            {
+                get
+                {
+                    if (Status == "Completed") return "bg-success";
+                    if (Status == "Overdue") return "bg-danger";
+                    if (ProgressPercentage < 30) return "bg-danger";
+                    if (ProgressPercentage < 70) return "bg-warning";
+                    return "bg-success";
+                }
+            }
+        }
 
         public AdminDashboardModel(
             UserManager<Users> userManager,
@@ -107,9 +141,103 @@ namespace Document_Management_System.Pages.AdminPage
             foreach (var task in UserTasks.Where(t => t.Deadline < DateTime.Now && t.Status != "Completed"))
             {
                 task.Status = "Overdue";
-                _context.Update(task);
             }
             await _context.SaveChangesAsync();
+
+            // Calculate task progress for each task
+            TaskProgressList.Clear();
+            foreach (var task in await _context.AssignTask
+                .Include(t => t.Category)
+                .Include(t => t.CreatedByUser)
+                .Include(t => t.FolderAccess)
+                .Where(t => t.UserId == user.Id)
+                .ToListAsync())
+            {
+                // Construct the folder path based on the task's category
+                string folderPath = task.Category?.Name;
+
+                // If there's a FolderAccess record, use its path
+                if (task.FolderAccess != null && task.FolderAccess.Category != null)
+                {
+                    folderPath = task.FolderAccess.Category.Name;
+
+                    // Try to get more specific path if available
+                    var area = await _context.Areas
+                        .FirstOrDefaultAsync(a => a.CategoryId == task.FolderAccess.CategoryId);
+                    if (area != null)
+                    {
+                        folderPath = $"{folderPath}/{area.Name}";
+                    }
+                }
+
+                // Count files in the directory
+                int currentProgress = 0;
+                if (!string.IsNullOrEmpty(folderPath))
+                {
+                    currentProgress = CountFilesInDirectory(folderPath);
+                }
+
+                // Create the view model
+                TaskProgressList.Add(new TaskProgressViewModel
+                {
+                    Id = task.Id,
+                    TaskName = task.TaskName,
+                    Description = task.Description,
+                    CategoryName = task.Category?.Name,
+                    FolderPath = folderPath,
+                    CurrentProgress = currentProgress,
+                    TaskAmount = task.TaskAmount ?? 100, // Default to 100 if not set
+                    Deadline = task.Deadline,
+                    Status = task.Status,
+                    CreatedBy = task.CreatedByUser?.UserName
+                });
+            }
+        }
+
+        private int CountFilesInDirectory(string relativePath)
+        {
+            try
+            {
+                string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "FileStorage");
+                string fullPath = Path.Combine(rootPath, relativePath);
+
+                if (!Directory.Exists(fullPath))
+                {
+                    return 0;
+                }
+
+                // Count files directly in this directory
+                int count = Directory.GetFiles(fullPath).Length;
+
+                // Count files in subdirectories
+                foreach (var dir in Directory.GetDirectories(fullPath))
+                {
+                    count += CountFilesInSubDirectory(dir);
+                }
+
+                return count;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error counting files: {ex.Message}");
+                return 0;
+            }
+        }
+
+        private int CountFilesInSubDirectory(string path)
+        {
+            int count = 0;
+
+            // Count files directly in this directory
+            count += Directory.GetFiles(path).Length;
+
+            // Count files in subdirectories
+            foreach (var dir in Directory.GetDirectories(path))
+            {
+                count += CountFilesInSubDirectory(dir);
+            }
+
+            return count;
         }
 
         public async Task<IActionResult> OnPostLogoutAsync()
